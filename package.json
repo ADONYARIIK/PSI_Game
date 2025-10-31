@@ -1,0 +1,21 @@
+{
+  "name": "rogue-snake",
+  "version": "1.0.0",
+  "description": "Rogue-like snake game made with Phaser 3 and Vite",
+  "main": "src/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "phaser": "^3.86.0",
+    "easystarjs": "^0.4.4"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0"
+  },
+  "author": "YourName",
+  "license": "MIT"
+}
