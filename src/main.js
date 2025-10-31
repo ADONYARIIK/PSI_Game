@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import BootScene from './scenes/BootScene.js';
+import MainMenu from './scenes/MainMenuScene.js';
 import GameScene from './scenes/GameScene.js';
 import UIScene from './scenes/UIScene.js';
 
@@ -17,7 +18,7 @@ const config = {
       gravity: { y: 0 }
     }
   },
-  scene: [BootScene, GameScene, UIScene],
+  scene: [BootScene, MainMenu, GameScene, UIScene],
   scale: {
     autoCenter: Phaser.Scale.CENTER_BOTH
   }
