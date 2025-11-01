@@ -6,7 +6,7 @@ export default class UIScene extends Phaser.Scene {
     }
 
     create() {
-
+        
     }
 
     update() {

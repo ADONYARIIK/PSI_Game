@@ -1,0 +1,145 @@
+{
+	"textures": [
+		{
+			"image": "gui_spritesheet",
+			"format": "RGBA8888",
+			"size": {
+				"w": 1536,
+				"h": 2048
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "mainMenuLogo.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 1536,
+						"h": 1024
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 1536,
+						"h": 1024
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 1536,
+						"h": 1024
+					}
+				},
+				{
+					"filename": "mainMenuBackground.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 1024,
+						"h": 1024
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 1024,
+						"h": 1024
+					},
+					"frame": {
+						"x": 0,
+						"y": 1024,
+						"w": 1024,
+						"h": 1024
+					}
+				},
+				{
+					"filename": "gui_coin.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 16,
+						"h": 16
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 1024,
+						"y": 1024,
+						"w": 16,
+						"h": 16
+					}
+				},
+				{
+					"filename": "gui_heart.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 16,
+						"h": 16
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 1040,
+						"y": 1024,
+						"w": 16,
+						"h": 16
+					}
+				},
+				{
+					"filename": "gui_key1.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 16,
+						"h": 16
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 1056,
+						"y": 1024,
+						"w": 16,
+						"h": 16
+					}
+				},
+				{
+					"filename": "gui_key2.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 16,
+						"h": 16
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 1072,
+						"y": 1024,
+						"w": 16,
+						"h": 16
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "http://free-tex-packer.com",
+		"version": "0.6.7"
+	}
+}
