@@ -10,7 +10,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "phaser": "^3.86.0",
+    "phaser": "^3.86.0"
   },
   "devDependencies": {
     "vite": "^5.4.0"

@@ -6,7 +6,7 @@ export default class MainMenuScene extends Phaser.Scene {
     }
 
     create() {
-
+        this.scene.start('GameScene');
     }
 
     update() {
