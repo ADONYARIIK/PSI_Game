@@ -159,19 +159,19 @@
          "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 25, 10, 0, 0, 0, 25, 10, 25, 0, 0, 0, 10, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 20, 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 22, 0, 0, 0, 0, 0, 0, 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2147483653, 0, 10, 0, 0, 0, 25, 25, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2147483653, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 5, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2147483653, 0, 10, 0, 0, 0, 25, 25, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 22, 0, 2147483653, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 5, 0, 0, 0, 5, 2, 0, 21, 0, 0, 2, 0, 2147483653, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 2147483653, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 2147483653, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 5, 0, 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 22, 0, 0, 2147483653, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2147483677, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -208,20 +208,595 @@
         }, 
         {
          "draworder":"topdown",
+         "id":7,
+         "name":"Decor",
+         "objects":[
+                {
+                 "height":0,
+                 "id":5,
+                 "name":"flag",
+                 "point":true,
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":72,
+                 "y":40
+                }, 
+                {
+                 "height":0,
+                 "id":6,
+                 "name":"flag",
+                 "point":true,
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":152,
+                 "y":40
+                }, 
+                {
+                 "height":0,
+                 "id":7,
+                 "name":"flag",
+                 "point":true,
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":232,
+                 "y":40
+                }, 
+                {
+                 "height":0,
+                 "id":8,
+                 "name":"flag",
+                 "point":true,
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":280,
+                 "y":120
+                }, 
+                {
+                 "height":0,
+                 "id":9,
+                 "name":"flag",
+                 "point":true,
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":424,
+                 "y":120
+                }, 
+                {
+                 "height":0,
+                 "id":10,
+                 "name":"sideTorch",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"flipX",
+                         "type":"bool",
+                         "value":false
+                        }],
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":56,
+                 "y":120
+                }, 
+                {
+                 "height":0,
+                 "id":11,
+                 "name":"sideTorch",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"flipX",
+                         "type":"bool",
+                         "value":false
+                        }],
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":56,
+                 "y":184
+                }, 
+                {
+                 "height":0,
+                 "id":12,
+                 "name":"sideTorch",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"flipX",
+                         "type":"bool",
+                         "value":false
+                        }],
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":120,
+                 "y":184
+                }, 
+                {
+                 "height":0,
+                 "id":13,
+                 "name":"sideTorch",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"flipX",
+                         "type":"bool",
+                         "value":false
+                        }],
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":136,
+                 "y":104
+                }, 
+                {
+                 "height":0,
+                 "id":14,
+                 "name":"sideTorch",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"flipX",
+                         "type":"bool",
+                         "value":true
+                        }],
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":136,
+                 "y":232
+                }, 
+                {
+                 "height":0,
+                 "id":15,
+                 "name":"sideTorch",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"flipX",
+                         "type":"bool",
+                         "value":false
+                        }],
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":184,
+                 "y":216
+                }, 
+                {
+                 "height":0,
+                 "id":16,
+                 "name":"sideTorch",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"flipX",
+                         "type":"bool",
+                         "value":true
+                        }],
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":168,
+                 "y":136
+                }, 
+                {
+                 "height":0,
+                 "id":17,
+                 "name":"sideTorch",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"flipX",
+                         "type":"bool",
+                         "value":true
+                        }],
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":248,
+                 "y":184
+                }, 
+                {
+                 "height":0,
+                 "id":24,
+                 "name":"sideTorch",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"flipX",
+                         "type":"bool",
+                         "value":true
+                        }],
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":248,
+                 "y":120
+                }, 
+                {
+                 "height":0,
+                 "id":18,
+                 "name":"torch",
+                 "point":true,
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":56,
+                 "y":40
+                }, 
+                {
+                 "height":0,
+                 "id":19,
+                 "name":"torch",
+                 "point":true,
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":136,
+                 "y":40
+                }, 
+                {
+                 "height":0,
+                 "id":20,
+                 "name":"torch",
+                 "point":true,
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":168,
+                 "y":40
+                }, 
+                {
+                 "height":0,
+                 "id":21,
+                 "name":"torch",
+                 "point":true,
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":248,
+                 "y":40
+                }, 
+                {
+                 "height":0,
+                 "id":22,
+                 "name":"torch",
+                 "point":true,
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":344,
+                 "y":120
+                }, 
+                {
+                 "height":0,
+                 "id":23,
+                 "name":"torch",
+                 "point":true,
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":360,
+                 "y":120
+                }, 
+                {
+                 "height":0,
+                 "id":25,
+                 "name":"web",
+                 "point":true,
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":56,
+                 "y":248
+                }, 
+                {
+                 "height":0,
+                 "id":26,
+                 "name":"web",
+                 "point":true,
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":248,
+                 "y":248
+                }, 
+                {
+                 "height":0,
+                 "id":27,
+                 "name":"bones",
+                 "point":true,
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":56,
+                 "y":56
+                }, 
+                {
+                 "height":0,
+                 "id":28,
+                 "name":"bones",
+                 "point":true,
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":136,
+                 "y":56
+                }, 
+                {
+                 "height":0,
+                 "id":29,
+                 "name":"bones",
+                 "point":true,
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":184,
+                 "y":88
+                }, 
+                {
+                 "height":0,
+                 "id":30,
+                 "name":"bones",
+                 "point":true,
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":248,
+                 "y":56
+                }, 
+                {
+                 "height":0,
+                 "id":31,
+                 "name":"bones",
+                 "point":true,
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":72,
+                 "y":120
+                }, 
+                {
+                 "height":0,
+                 "id":32,
+                 "name":"bones",
+                 "point":true,
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":136,
+                 "y":184
+                }, 
+                {
+                 "height":0,
+                 "id":33,
+                 "name":"bones",
+                 "point":true,
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":72,
+                 "y":216
+                }, 
+                {
+                 "height":0,
+                 "id":34,
+                 "name":"bones",
+                 "point":true,
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":216,
+                 "y":184
+                }, 
+                {
+                 "height":0,
+                 "id":35,
+                 "name":"bones",
+                 "point":true,
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":200,
+                 "y":232
+                }, 
+                {
+                 "height":0,
+                 "id":36,
+                 "name":"rocks",
+                 "point":true,
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":72,
+                 "y":72
+                }, 
+                {
+                 "height":0,
+                 "id":37,
+                 "name":"rocks",
+                 "point":true,
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":200,
+                 "y":76
+                }, 
+                {
+                 "height":0,
+                 "id":38,
+                 "name":"rocks",
+                 "point":true,
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":232,
+                 "y":88
+                }, 
+                {
+                 "height":0,
+                 "id":39,
+                 "name":"rocks",
+                 "point":true,
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":136,
+                 "y":136
+                }, 
+                {
+                 "height":0,
+                 "id":40,
+                 "name":"rocks",
+                 "point":true,
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":72,
+                 "y":168
+                }, 
+                {
+                 "height":0,
+                 "id":41,
+                 "name":"rocks",
+                 "point":true,
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":168,
+                 "y":184
+                }, 
+                {
+                 "height":0,
+                 "id":42,
+                 "name":"rocks",
+                 "point":true,
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":88,
+                 "y":232
+                }, 
+                {
+                 "height":0,
+                 "id":43,
+                 "name":"rocks",
+                 "point":true,
+                 "rotation":0,
+                 "type":"decor",
+                 "visible":true,
+                 "width":0,
+                 "x":232,
+                 "y":216
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
          "id":6,
-         "name":"Spawn",
+         "name":"Objects",
          "objects":[
                 {
                  "height":0,
                  "id":1,
-                 "name":"player",
+                 "name":"snake",
                  "point":true,
+                 "properties":[
+                        {
+                         "name":"direction",
+                         "type":"string",
+                         "value":"Right"
+                        }],
                  "rotation":0,
-                 "type":"spawn",
+                 "type":"player",
                  "visible":true,
                  "width":0,
                  "x":104,
                  "y":152
+                }, 
+                {
+                 "height":0,
+                 "id":3,
+                 "name":"doorHorizontalTop1",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }],
+                 "rotation":0,
+                 "type":"doorHorizontalTop",
+                 "visible":true,
+                 "width":0,
+                 "x":264,
+                 "y":136
+                }, 
+                {
+                 "height":0,
+                 "id":4,
+                 "name":"doorHorizontalDown",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }],
+                 "rotation":0,
+                 "type":"doorHorizontalDown",
+                 "visible":true,
+                 "width":0,
+                 "x":264,
+                 "y":168
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -229,8 +804,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":7,
- "nextobjectid":3,
+ "nextlayerid":8,
+ "nextobjectid":44,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.11.2",
@@ -247,107 +822,6 @@
          "spacing":0,
          "tilecount":30,
          "tileheight":16,
-         "tiles":[
-                {
-                 "animation":[
-                        {
-                         "duration":200,
-                         "tileid":4
-                        }, 
-                        {
-                         "duration":200,
-                         "tileid":22
-                        }, 
-                        {
-                         "duration":200,
-                         "tileid":10
-                        }, 
-                        {
-                         "duration":200,
-                         "tileid":16
-                        }],
-                 "id":4
-                }, 
-                {
-                 "animation":[
-                        {
-                         "duration":200,
-                         "tileid":6
-                        }, 
-                        {
-                         "duration":200,
-                         "tileid":7
-                        }, 
-                        {
-                         "duration":200,
-                         "tileid":2
-                        }, 
-                        {
-                         "duration":200,
-                         "tileid":8
-                        }],
-                 "id":6
-                }, 
-                {
-                 "animation":[
-                        {
-                         "duration":200,
-                         "tileid":9
-                        }, 
-                        {
-                         "duration":200,
-                         "tileid":15
-                        }, 
-                        {
-                         "duration":200,
-                         "tileid":18
-                        }, 
-                        {
-                         "duration":200,
-                         "tileid":0
-                        }],
-                 "id":9
-                }, 
-                {
-                 "animation":[
-                        {
-                         "duration":200,
-                         "tileid":12
-                        }, 
-                        {
-                         "duration":200,
-                         "tileid":13
-                        }, 
-                        {
-                         "duration":200,
-                         "tileid":14
-                        }, 
-                        {
-                         "duration":200,
-                         "tileid":3
-                        }],
-                 "id":12
-                }, 
-                {
-                 "animation":[
-                        {
-                         "duration":200,
-                         "tileid":24
-                        }, 
-                        {
-                         "duration":200,
-                         "tileid":25
-                        }, 
-                        {
-                         "duration":200,
-                         "tileid":26
-                        }, 
-                        {
-                         "duration":200,
-                         "tileid":27
-                        }],
-                 "id":24
-                }],
          "tilewidth":16
         }, 
         {
@@ -367,7 +841,7 @@
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":3,
+                     "id":2,
                      "name":"",
                      "objects":[
                             {
@@ -377,8 +851,8 @@
                              "rotation":0,
                              "type":"",
                              "visible":true,
-                             "width":8,
-                             "x":8,
+                             "width":16,
+                             "x":0,
                              "y":0
                             }],
                      "opacity":1,
@@ -386,14 +860,19 @@
                      "visible":true,
                      "x":0,
                      "y":0
-                    }
+                    },
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }]
                 }, 
                 {
                  "id":7,
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
@@ -412,14 +891,19 @@
                      "visible":true,
                      "x":0,
                      "y":0
-                    }
+                    },
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }]
                 }, 
                 {
                  "id":8,
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
@@ -438,7 +922,13 @@
                      "visible":true,
                      "x":0,
                      "y":0
-                    }
+                    },
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }]
                 }, 
                 {
                  "id":9,
@@ -455,8 +945,8 @@
                              "rotation":0,
                              "type":"",
                              "visible":true,
-                             "width":8,
-                             "x":8,
+                             "width":16,
+                             "x":0,
                              "y":0
                             }],
                      "opacity":1,
@@ -464,14 +954,19 @@
                      "visible":true,
                      "x":0,
                      "y":0
-                    }
+                    },
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }]
                 }, 
                 {
                  "id":15,
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
@@ -490,14 +985,19 @@
                      "visible":true,
                      "x":0,
                      "y":0
-                    }
+                    },
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }]
                 }, 
                 {
                  "id":23,
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
@@ -533,14 +1033,19 @@
                      "visible":true,
                      "x":0,
                      "y":0
-                    }
+                    },
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }]
                 }, 
                 {
                  "id":30,
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
@@ -559,14 +1064,19 @@
                      "visible":true,
                      "x":0,
                      "y":0
-                    }
+                    },
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }]
                 }, 
                 {
                  "id":31,
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
@@ -602,14 +1112,19 @@
                      "visible":true,
                      "x":0,
                      "y":0
-                    }
+                    },
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }]
                 }, 
                 {
                  "id":38,
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
@@ -628,14 +1143,19 @@
                      "visible":true,
                      "x":0,
                      "y":0
-                    }
+                    },
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }]
                 }, 
                 {
                  "id":39,
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
@@ -654,14 +1174,19 @@
                      "visible":true,
                      "x":0,
                      "y":0
-                    }
+                    },
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }]
                 }, 
                 {
                  "id":41,
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
@@ -680,14 +1205,19 @@
                      "visible":true,
                      "x":0,
                      "y":0
-                    }
+                    },
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }]
                 }, 
                 {
                  "id":46,
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
@@ -706,14 +1236,19 @@
                      "visible":true,
                      "x":0,
                      "y":0
-                    }
+                    },
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }]
                 }, 
                 {
                  "id":47,
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
@@ -732,14 +1267,19 @@
                      "visible":true,
                      "x":0,
                      "y":0
-                    }
+                    },
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }]
                 }, 
                 {
                  "id":48,
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
@@ -758,14 +1298,19 @@
                      "visible":true,
                      "x":0,
                      "y":0
-                    }
+                    },
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }]
                 }, 
                 {
                  "id":49,
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
@@ -784,14 +1329,19 @@
                      "visible":true,
                      "x":0,
                      "y":0
-                    }
+                    },
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }]
                 }, 
                 {
                  "id":50,
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
@@ -810,14 +1360,19 @@
                      "visible":true,
                      "x":0,
                      "y":0
-                    }
+                    },
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }]
                 }, 
                 {
                  "id":51,
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
@@ -836,14 +1391,19 @@
                      "visible":true,
                      "x":0,
                      "y":0
-                    }
+                    },
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }]
                 }, 
                 {
                  "id":52,
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
@@ -862,14 +1422,19 @@
                      "visible":true,
                      "x":0,
                      "y":0
-                    }
+                    },
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }]
                 }, 
                 {
                  "id":53,
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
@@ -888,14 +1453,19 @@
                      "visible":true,
                      "x":0,
                      "y":0
-                    }
+                    },
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }]
                 }, 
                 {
                  "id":54,
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
@@ -914,14 +1484,19 @@
                      "visible":true,
                      "x":0,
                      "y":0
-                    }
+                    },
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }]
                 }, 
                 {
                  "id":55,
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
@@ -940,14 +1515,19 @@
                      "visible":true,
                      "x":0,
                      "y":0
-                    }
+                    },
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }]
                 }, 
                 {
                  "id":56,
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
@@ -966,14 +1546,19 @@
                      "visible":true,
                      "x":0,
                      "y":0
-                    }
+                    },
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }]
                 }, 
                 {
                  "id":57,
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
@@ -992,14 +1577,19 @@
                      "visible":true,
                      "x":0,
                      "y":0
-                    }
+                    },
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }]
                 }, 
                 {
                  "id":58,
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
@@ -1018,14 +1608,19 @@
                      "visible":true,
                      "x":0,
                      "y":0
-                    }
+                    },
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }]
                 }, 
                 {
                  "id":59,
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
@@ -1044,14 +1639,19 @@
                      "visible":true,
                      "x":0,
                      "y":0
-                    }
+                    },
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }]
                 }, 
                 {
                  "id":60,
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
@@ -1070,14 +1670,19 @@
                      "visible":true,
                      "x":0,
                      "y":0
-                    }
+                    },
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }]
                 }, 
                 {
                  "id":61,
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
@@ -1096,14 +1701,19 @@
                      "visible":true,
                      "x":0,
                      "y":0
-                    }
+                    },
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }]
                 }, 
                 {
                  "id":62,
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
@@ -1122,7 +1732,13 @@
                      "visible":true,
                      "x":0,
                      "y":0
-                    }
+                    },
+                 "properties":[
+                        {
+                         "name":"collides",
+                         "type":"bool",
+                         "value":true
+                        }]
                 }],
          "tilewidth":16
         }],

@@ -3,18 +3,44 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "",
+    "activeFile": "maps/guideLevel.json",
     "expandedProjectPaths": [
+        "maps",
+        "tilesets",
+        "."
     ],
     "fileStates": {
         "": {
-            "scaleInDock": 1
+            "scaleInDock": 1,
+            "scaleInEditor": 5.5
         },
         "#spritesheet": {
             "scaleInEditor": 3
         },
+        "maps/guideLevel.json": {
+            "scale": 2,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 205.5,
+                "y": 102.75
+            }
+        },
+        "maps/guideLevel.json#decor": {
+            "scaleInDock": 3
+        },
+        "maps/guideLevel.json#tiles": {
+            "scaleInDock": 3
+        },
         "tilesets/tileset.tsx": {
             "scaleInDock": 4,
+            "scaleInEditor": 5.5
+        },
+        "tilesets/tileset_decor.tsx": {
+            "scaleInDock": 3,
+            "scaleInEditor": 5.5
+        },
+        "tilesets/tileset_tiles.tsx": {
+            "scaleInDock": 1,
             "scaleInEditor": 5.5
         }
     },
@@ -26,9 +52,16 @@
     "map.tileWidth": 16,
     "map.width": 100,
     "openFiles": [
+        "maps/guideLevel.json",
+        "tilesets/tileset_decor.tsx",
+        "tilesets/tileset_tiles.tsx"
     ],
     "project": "PSI_game.tiled-project",
+    "property.type": "string",
     "recentFiles": [
+        "tilesets/tileset_tiles.tsx",
+        "tilesets/tileset_decor.tsx",
+        "maps/guideLevel.json",
         "tilesets/tileset.tsx"
     ],
     "tileset.embedInMap": false,
