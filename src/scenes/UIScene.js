@@ -27,10 +27,12 @@ export default class UIScene extends Phaser.Scene {
         })
 
         const key = this.add.image(0,60,"gui","gui_key1.png").setOrigin(0).setScale(2).setVisible(false);
+
+        //переменная следящая за подбором предмета
+        let keyPicked = false;
         
     }
 
     update() {
-
     }
 }
