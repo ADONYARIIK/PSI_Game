@@ -33,5 +33,8 @@ export default class BootScene extends Phaser.Scene {
         this.load.tilemapTiledJSON('guide', './src/assets/maps/guideLevel.json');
         this.load.image('tiles', './src/assets/tilesets/tileset_tiles.png');
         this.load.image('decor', './src/assets/tilesets/tileset_decor.png');
+
+        //Добавление фонтов
+        this.load.script('webfont', 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js');
     }
 }
