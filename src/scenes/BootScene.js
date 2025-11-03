@@ -36,5 +36,8 @@ export default class BootScene extends Phaser.Scene {
 
         //Добавление фонтов
         this.load.script('webfont', 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js');
+
+        //временное добавление иконок (пока их нет в атласе)
+        this.load.image('itemBox','./src/assets/sprites/newSprites/player_frame_1.png')
     }
 }

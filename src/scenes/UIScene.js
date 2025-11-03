@@ -30,7 +30,15 @@ export default class UIScene extends Phaser.Scene {
 
         //переменная следящая за подбором предмета
         let keyPicked = false;
-        
+
+        const shopItemsBox ={
+            box1: this.add.image(1070,0,"itemBox").setOrigin(0).setScale(2),
+            box2: this.add.image(1020,0,"itemBox").setOrigin(0).setScale(2),
+            box3: this.add.image(970,0,"itemBox").setOrigin(0).setScale(2),
+
+        }
+    
+         
     }
 
     update() {
