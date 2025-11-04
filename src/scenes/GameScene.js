@@ -21,12 +21,10 @@ export default class GameScene extends Phaser.Scene {
 
         const guideLevel = this.make.tilemap({ key: 'guide' });
         const tiles = guideLevel.addTilesetImage('tiles', 'tiles');
-        const decor = guideLevel.addTilesetImage('decor', 'decor');
 
         const backgroundLayer = guideLevel.createLayer('Background', tiles, 0, 0);
         const floorLayer = guideLevel.createLayer('Floor', tiles, 0, 0);
         const wallsLayer = guideLevel.createLayer('Walls', tiles, 0, 0);
-        const decorLayer = guideLevel.createLayer('Decor', decor, 0, 0);
 
         this.cameras.main.setBounds(0, 0, guideLevel.widthInPixels, guideLevel.heightInPixels);
         this.cameras.main.zoom = 2.5;
@@ -36,7 +34,7 @@ export default class GameScene extends Phaser.Scene {
 
         this.player = objects.snake;
         this.enemies = objects.enemies || [];
-        // this.player.debugLog();
+        console.log(this.decor);
 
         this.turnManager = new TurnManager(this, this.player, this.enemies);
 
@@ -61,7 +59,6 @@ export default class GameScene extends Phaser.Scene {
 
             if (!dir) return;
 
-            // console.log('pressed', event.code, '->', dir);
             this.player.enqueueDirection(dir);
 
             this.turnManager.processTurn(dir, {

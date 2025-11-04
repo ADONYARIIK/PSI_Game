@@ -5,9 +5,9 @@
     },
     "activeFile": "maps/guideLevel.json",
     "expandedProjectPaths": [
+        ".",
         "maps",
-        "tilesets",
-        "."
+        "tilesets"
     ],
     "fileStates": {
         "": {
@@ -57,7 +57,7 @@
         "tilesets/tileset_tiles.tsx"
     ],
     "project": "PSI_game.tiled-project",
-    "property.type": "string",
+    "property.type": "bool",
     "recentFiles": [
         "tilesets/tileset_tiles.tsx",
         "tilesets/tileset_decor.tsx",
