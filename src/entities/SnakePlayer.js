@@ -5,7 +5,8 @@ import { frameSequenceFor } from '../utils/frameUtils.js';
 export default class SnakePlayer {
     constructor(scene, startX = 6, startY = 9, opts = {}) {
         this.scene = scene;
-        this.tileSize = opts.tileSize || TILE_SIZE;
+        this.tileSize = TILE_SIZE;
+        this.atlas = FRAME_CONFIG.atlasKey;
         this.maxInputQueue = opts.maxInputQueue || 3;
 
         this.state = SnakeState.IDLE;
@@ -26,7 +27,7 @@ export default class SnakePlayer {
         this.headSprite = this.scene.add.image(
             this.segments[0].x * this.tileSize,
             this.segments[0].y * this.tileSize,
-            FRAME_CONFIG.atlasKey,
+            this.atlas,
             frameName(`snake_head${this.direction.name}`)
         ).setOrigin(0).setDepth(20);
 
@@ -37,7 +38,7 @@ export default class SnakePlayer {
             const spr = this.scene.add.image(
                 seg.x * this.tileSize,
                 seg.y * this.tileSize,
-                FRAME_CONFIG.atlasKey,
+                this.atlas,
                 frameName('snake_bodyHorizontal')
             ).setOrigin(0).setDepth(10);
             this.sprites.push(spr);
@@ -208,7 +209,7 @@ export default class SnakePlayer {
 
     _syncSpritesToSegments() {
         while (this.sprites.length < this.segments.length) {
-            const spr = this.scene.add.image(0, 0, FRAME_CONFIG.atlasKey, frameName('snake_bodyHorizontal')).setOrigin(0).setDepth(10);
+            const spr = this.scene.add.image(0, 0, this.atlas, frameName('snake_bodyHorizontal')).setOrigin(0).setDepth(10);
             this.sprites.push(spr);
         }
         while (this.sprites.length > this.segments.length) {

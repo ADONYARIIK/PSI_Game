@@ -1,4 +1,4 @@
-import { createSnake } from './createHelper.js';
+import { createSnake, createDecor } from './createHelper.js';
 
 export function loadTiledObjects(scene, map) {
     const objectsLayer = map.getObjectLayer('Objects')?.objects || [];
@@ -12,8 +12,8 @@ export function loadTiledObjects(scene, map) {
 
         if (obj.type === 'player' && obj.name === 'snake') {
             objects.snake = createSnake(scene, obj.x, obj.y, props.direction || 'Right');
-        } else if (obj.type === 'enemy') {
-
+        } else if (obj.type === 'decor') {
+            objects[obj.name] = createDecor(scene, obj.x, obj.y, props, obj.name);
         }
     });
 

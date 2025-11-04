@@ -5,24 +5,24 @@
     },
     "activeFile": "maps/guideLevel.json",
     "expandedProjectPaths": [
-        "maps",
+        ".",
         "tilesets",
-        "."
+        "maps"
     ],
     "fileStates": {
         "": {
-            "scaleInDock": 1,
+            "scaleInDock": 3,
             "scaleInEditor": 5.5
         },
         "#spritesheet": {
             "scaleInEditor": 3
         },
         "maps/guideLevel.json": {
-            "scale": 2,
+            "scale": 4.5687,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": 205.5,
-                "y": 102.75
+                "x": 233.98340884715566,
+                "y": 256.4186748965789
             }
         },
         "maps/guideLevel.json#decor": {
@@ -57,7 +57,7 @@
         "tilesets/tileset_tiles.tsx"
     ],
     "project": "PSI_game.tiled-project",
-    "property.type": "string",
+    "property.type": "bool",
     "recentFiles": [
         "tilesets/tileset_tiles.tsx",
         "tilesets/tileset_decor.tsx",
