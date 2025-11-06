@@ -11,7 +11,7 @@ export default class MainMenuScene extends Phaser.Scene {
         const gameName = this.add.image(200, -100, "gui", "mainMenuLogo.png").setOrigin(0).setScale(0.5);
 
 
-        let startBtn = this.add.image(460, 450, "startBtn").setOrigin(0).setScale(0.15).setInteractive({ useHandCursor: true });
+        const startBtn = this.add.image(460, 450, "startBtn").setOrigin(0).setScale(0.15).setInteractive({ useHandCursor: true });
         startBtn.on('pointerover', () => {
             this.scaleUpBtn(startBtn, 0.16);
         });
@@ -54,6 +54,10 @@ export default class MainMenuScene extends Phaser.Scene {
         });
         authors.on('pointerout',()=>{
             this.scaleDownBtn(authors, 0.1);
+        });
+
+        authors.on('pointerdown',()=>{
+            this.scene.start('AuthorsScene');
         });
     }
 
