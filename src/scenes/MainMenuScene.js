@@ -21,6 +21,17 @@ export default class MainMenuScene extends Phaser.Scene {
         startBtn.on('pointerdown',()=>{
             this.scene.start('GameScene');
         });
+
+        const soundOn = this.add.image(1000,400,"soundOn").setScale(0.1).setInteractive({ useHandCursor: true });
+        const soundOff = this.add.image(1000,400,"soundOff").setScale(0.1).setVisible(false).setInteractive({ useHandCursor: true });
+        
+        soundOn.on('pointerdown', ()=>{
+            soundOff.setVisible(true);
+
+            soundOff.on('pointerdown', ()=>{
+            soundOff.setVisible(false);
+        })
+        })
     }
 
     update() {
