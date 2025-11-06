@@ -11,5 +11,6 @@ export default class MainMenuScene extends Phaser.Scene {
 
     update() {
         const bg = this.add.image(0,-200,"gui","mainMenuBackground.png").setOrigin(0).setScale(1.1);
+        const gameName = this.add.image(200,-100,"gui","mainMenuLogo.png").setOrigin(0).setScale(0.5);
     }
 }
