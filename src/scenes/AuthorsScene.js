@@ -7,6 +7,10 @@ export default class AuthorsScene extends Phaser.Scene {
 
     create() {
         const bg = this.add.image(0, 0, "walls").setOrigin(0).setScale(1.1);
+        const exit = this.add.image(0,0,"exit").setOrigin(0).setScale(0.04).setInteractive({useHandCursor: true});
+        exit.on('pointerdown', ()=>{
+            this.scene.start('MainMenuScene');
+        })
         
         WebFont.load({
             google: {
@@ -14,9 +18,9 @@ export default class AuthorsScene extends Phaser.Scene {
             },
             active: () => {
                 const signTextT = this.add.text(225, 250, `Tymofii Sova`, { fontFamily: '"Jacquard 12"', fontSize: '32px', fill: '#ffffffff' });
-                const signTextJ = this.add.text(710, 250, `Jaroslav Tyrchenko`, { fontFamily: '"Jacquard 12"', fontSize: '28px', fill: '#ffffffff' });
+                const signTextJ = this.add.text(730, 250, `Jaroslav Tyrchenko`, { fontFamily: '"Jacquard 12"', fontSize: '22px', fill: '#ffffffff' });
                 this.signInfoTextT = this.add.text(280, 400, `2A`, { fontFamily: '"Jacquard 12"', fontSize: '64px', fill: '#fff' }).setAlpha(0);
-                this.signInfoTextJ = this.add.text(800, 400, `2A`, { fontFamily: '"Jacquard 12"', fontSize: '64px', fill: '#fff' }).setAlpha(0);
+                this.signInfoTextJ = this.add.text(780, 400, `2A`, { fontFamily: '"Jacquard 12"', fontSize: '64px', fill: '#fff' }).setAlpha(0);
 
             }
 
