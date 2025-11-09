@@ -46,5 +46,8 @@ export default class BootScene extends Phaser.Scene {
         this.load.image('sign', './src/assets/sprites/newSprites/sign.png');
         this.load.image('chains', './src/assets/sprites/newSprites/chains.png');
         this.load.image('exit', './src/assets/sprites/newSprites/exit.png');
+
+        //добавление музыки и аудио
+        this.load.audio('theme', './src/assets/audio/music/cottagecore.mp3');
     }
 }
