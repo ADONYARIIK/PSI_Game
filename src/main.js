@@ -5,6 +5,7 @@ import GameScene from './scenes/GameScene.js';
 import UIScene from './scenes/UIScene.js';
 import AuthorsScene from './scenes/AuthorsScene.js';
 import MusicScene from './scenes/MusicScene.js';
+import SettingsScene from './scenes/SettingsScene.js';
 const config = {
   type: Phaser.AUTO,
   width: 1120,
@@ -19,7 +20,7 @@ const config = {
       gravity: { y: 0 }
     }
   },
-  scene: [BootScene, MainMenu, GameScene, UIScene, AuthorsScene, MusicScene],
+  scene: [BootScene, MainMenu, GameScene, UIScene, AuthorsScene, MusicScene, SettingsScene],
   scale: {
     autoCenter: Phaser.Scale.CENTER_BOTH
   }
