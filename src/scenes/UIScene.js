@@ -14,17 +14,11 @@ export default class UIScene extends Phaser.Scene {
         const coin = this.add.image(0, 30, "gui", "gui_coin.png").setOrigin(0).setScale(2.1);
         const coinsCount = this.registry.get('coins');
         //текст худа
-        WebFont.load({
-            google: {
-                families: ['Jacquard 12']
-            },
-            active: () => {
-                const heartText = this.add.text(40, -10, `${heartCount}`, { fontFamily: '"Jacquard 12"', fontSize: '48px', fill: '#fff' });
-                const coinText = this.add.text(35, 20, `${coinsCount}`, { fontFamily: '"Jacquard 12"', fontSize: '48px', fill: '#fff' });
 
-            }
+        const heartText = this.add.text(40, -10, `${heartCount}`, { fontFamily: '"Jacquard 12"', fontSize: '48px', fill: '#fff' });
+        const coinText = this.add.text(35, 20, `${coinsCount}`, { fontFamily: '"Jacquard 12"', fontSize: '48px', fill: '#fff' });
 
-        })
+
 
         const key = this.add.image(0, 60, "gui", "gui_key1.png").setOrigin(0).setScale(2).setVisible(false);
 

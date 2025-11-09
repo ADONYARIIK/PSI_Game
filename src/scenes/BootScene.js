@@ -35,13 +35,15 @@ export default class BootScene extends Phaser.Scene {
         this.load.image('decor', './src/assets/tilesets/tileset_decor.png');
 
         //Добавление фонтов
-        this.load.script('webfont', 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js');
+        WebFont.load({
+            google: { families: ['Jacquard 12'] }
+        });
 
         //временное добавление спрайтов (к изменению)
         this.load.image('startBtn', './src/assets/sprites/newSprites/startButtonSprite.png');
         this.load.image('soundOn', './src/assets/sprites/newSprites/soundOn.png');
         this.load.image('soundOff', './src/assets/sprites/newSprites/soundOff.png');
-        this.load.image('authors', './src/assets/sprites/newSprites/authors.png'); 
+        this.load.image('authors', './src/assets/sprites/newSprites/authors.png');
         this.load.image('walls', './src/assets/sprites/newSprites/walls.png');
         this.load.image('sign', './src/assets/sprites/newSprites/sign.png');
         this.load.image('chains', './src/assets/sprites/newSprites/chains.png');

@@ -13,21 +13,15 @@ export default class SettingsScene extends Phaser.Scene {
         const exit = this.add.image(155, -215, "exit").setScale(0.05).setInteractive({ useHandCursor: true });
 
         //контейнер
-        const container = this.add.container(500, 300, [settingsBox, exit]).setAlpha(0);
+        const container = this.add.container(500, 300, [settingsBox, exit]).setAlpha(0).setVisible(false);
 
         //текст
-        WebFont.load({
-           google: {
-               families: ['Jacquard 12']
-           },
-           active: () => {
-               const soundText = this.add.text(-40,-80,'Sound',{ fontFamily: '"Jacquard 12"', fontSize: '32px', fill: '#ffffffff' });
-                container.add(soundText);
-           }
 
-        })
+        const soundText = this.add.text(-40, -80, 'Sound', { fontFamily: '"Jacquard 12"', fontSize: '32px', fill: '#ffffffff' });
+        container.add(soundText);
+
         // вкл/выкл музыку
-        this.time.delayedCall(100, ()=>{
+        this.time.delayedCall(100, () => {
 
             const music = this.registry.get('music');
 
@@ -61,7 +55,7 @@ export default class SettingsScene extends Phaser.Scene {
         });
 
 
-        
+
         //иконка слева снизу экрана
         const settingsIcon = this.add.image(25, 610, 'settingsIcon').setScale(0.05).setInteractive({ useHandCursor: true });
 
@@ -89,6 +83,7 @@ export default class SettingsScene extends Phaser.Scene {
 
     }
     showSettings(obj) {
+        obj.setVisible(true)
         this.tweens.add({
             targets: obj,
             alpha: 1,
@@ -97,6 +92,7 @@ export default class SettingsScene extends Phaser.Scene {
         })
     }
     hideSettings(obj) {
+        obj.setVisible(false)
         this.tweens.add({
             targets: obj,
             alpha: 0,
@@ -104,21 +100,21 @@ export default class SettingsScene extends Phaser.Scene {
             ease: 'Back.In'
         })
     }
-    scaleUpBtn(obj, scale){
+    scaleUpBtn(obj, scale) {
         this.tweens.add({
-                targets: obj,
-                scale: scale,
-                duration: 150,
-                ease: 'Power1'
-            });
+            targets: obj,
+            scale: scale,
+            duration: 150,
+            ease: 'Power1'
+        });
     }
-    scaleDownBtn(obj, scale){
+    scaleDownBtn(obj, scale) {
         this.tweens.add({
-                targets: obj,
-                scale: scale,
-                duration: 150,
-                ease: 'Power2'
-            });
+            targets: obj,
+            scale: scale,
+            duration: 150,
+            ease: 'Power2'
+        });
     }
 
 }

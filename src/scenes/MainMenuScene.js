@@ -66,7 +66,7 @@ export default class MainMenuScene extends Phaser.Scene {
         });
 
         authors.on('pointerdown',()=>{
-            this.scene.start('SettingsScene');
+            this.scene.start('AuthorsScene');
         });
     }
 
