@@ -16,7 +16,6 @@ export default class SettingsScene extends Phaser.Scene {
         const container = this.add.container(500, 300, [settingsBox, exit]).setAlpha(0).setVisible(false);
 
         //текст
-
         const soundText = this.add.text(-40, -80, 'Sound', { fontFamily: '"Jacquard 12"', fontSize: '32px', fill: '#ffffffff' });
         container.add(soundText);
 
@@ -25,6 +24,16 @@ export default class SettingsScene extends Phaser.Scene {
 
             const music = this.registry.get('music');
 
+            const soundOff = this.add.image(0, 0, "soundOff").setScale(0.1).setVisible(false).setInteractive({ useHandCursor: true });
+            soundOff.on('pointerover', () => {
+                this.scaleUpBtn(soundOff, 0.12);
+            });
+            soundOff.on('pointerout', () => {
+                this.scaleDownBtn(soundOff, 0.1);
+            });
+            if(!music.isPlaying){
+                soundOff.setVisible(true);
+            }
             const soundOn = this.add.image(0, 0, "soundOn").setScale(0.1).setInteractive({ useHandCursor: true });
             soundOn.on('pointerover', () => {
                 this.scaleUpBtn(soundOn, 0.12);
@@ -34,13 +43,6 @@ export default class SettingsScene extends Phaser.Scene {
             });
 
 
-            const soundOff = this.add.image(0, 0, "soundOff").setScale(0.1).setVisible(false).setInteractive({ useHandCursor: true });
-            soundOff.on('pointerover', () => {
-                this.scaleUpBtn(soundOff, 0.12);
-            });
-            soundOff.on('pointerout', () => {
-                this.scaleDownBtn(soundOff, 0.1);
-            });
 
 
             soundOn.on('pointerdown', () => {
