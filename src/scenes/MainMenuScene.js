@@ -6,10 +6,12 @@ export default class MainMenuScene extends Phaser.Scene {
     }
 
     create() {
-       
+        //запуск сцены 
+        if(!this.scene.isActive('MusicScene')){
+            this.scene.launch('MusicScene');
+        }
         const bg = this.add.image(0, -200, "gui", "mainMenuBackground.png").setOrigin(0).setScale(1.1);
         const gameName = this.add.image(200, -100, "gui", "mainMenuLogo.png").setOrigin(0).setScale(0.5);
-
 
         const startBtn = this.add.image(460, 450, "startBtn").setOrigin(0).setScale(0.15).setInteractive({ useHandCursor: true });
         startBtn.on('pointerover', () => {
@@ -22,31 +24,38 @@ export default class MainMenuScene extends Phaser.Scene {
             this.scene.start('GameScene');
         });
 
-        const soundOn = this.add.image(1000,400,"soundOn").setScale(0.1).setInteractive({ useHandCursor: true });
-        soundOn.on('pointerover', () => {
-            this.scaleUpBtn(soundOn, 0.12);
-        });
-        soundOn.on('pointerout',()=>{
-            this.scaleDownBtn(soundOn, 0.1);
-        });
+        //задержка что бы create успел проверить есть ли музыка
+        this.time.delayedCall(100, () => {
 
+            const music = this.registry.get('music');
 
-        const soundOff = this.add.image(1000,400,"soundOff").setScale(0.1).setVisible(false).setInteractive({ useHandCursor: true });
-        soundOff.on('pointerover', () => {
-            this.scaleUpBtn(soundOff, 0.12);
-        });
-        soundOff.on('pointerout',()=>{
-            this.scaleDownBtn(soundOff, 0.1);
-        });
-
-
-        soundOn.on('pointerdown', ()=>{
-            soundOff.setVisible(true);
-            
-            soundOff.on('pointerdown', ()=>{
-                soundOff.setVisible(false);
+            const soundOn = this.add.image(1000,400,"soundOn").setScale(0.1).setInteractive({ useHandCursor: true });
+            soundOn.on('pointerover', () => {
+                this.scaleUpBtn(soundOn, 0.12);
+            });
+            soundOn.on('pointerout',()=>{
+                this.scaleDownBtn(soundOn, 0.1);
+            });
+    
+    
+            const soundOff = this.add.image(1000,400,"soundOff").setScale(0.1).setVisible(false).setInteractive({ useHandCursor: true });
+            soundOff.on('pointerover', () => {
+                this.scaleUpBtn(soundOff, 0.12);
+            });
+            soundOff.on('pointerout',()=>{
+                this.scaleDownBtn(soundOff, 0.1);
+            });
+    
+    
+            soundOn.on('pointerdown', ()=>{
+                soundOff.setVisible(true);
+                music.stop();
+                soundOff.on('pointerdown', ()=>{
+                    soundOff.setVisible(false);
+                    music.play();
+                })
             })
-        })
+        });
 
         const authors = this.add.image(125,400,"authors").setScale(0.1).setInteractive({ useHandCursor: true });
         authors.on('pointerover', () => {
