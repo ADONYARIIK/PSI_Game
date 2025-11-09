@@ -9,6 +9,9 @@ export default class GameScene extends Phaser.Scene {
     }
 
     create() {
+        this.scene.launch('SettingsScene');
+        this.scene.bringToTop('SettingsScene');
+        
         this.scene.launch('UIScene');
         this.scene.bringToTop('UIScene');
 
