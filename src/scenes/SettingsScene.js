@@ -16,7 +16,7 @@ export default class SettingsScene extends Phaser.Scene {
         const container = this.add.container(500, 300, [settingsBox, exit]).setAlpha(0).setVisible(false);
 
         //текст
-        const soundText = this.add.text(-40, -80, 'Sound', { fontFamily: '"Jacquard 12"', fontSize: '32px', fill: '#ffffffff' });
+        const soundText = this.add.text(-40, -10, 'Sound', { fontFamily: '"Jacquard 12"', fontSize: '32px', fill: '#ffffffff' });
         container.add(soundText);
 
         // вкл/выкл музыку
@@ -24,17 +24,17 @@ export default class SettingsScene extends Phaser.Scene {
 
             const music = this.registry.get('music');
 
-            const soundOff = this.add.image(0, 0, "soundOff").setScale(0.1).setVisible(false).setInteractive({ useHandCursor: true });
+            const soundOff = this.add.image(0, 70, "soundOff").setScale(0.1).setVisible(false).setInteractive({ useHandCursor: true });
             soundOff.on('pointerover', () => {
                 this.scaleUpBtn(soundOff, 0.12);
             });
             soundOff.on('pointerout', () => {
                 this.scaleDownBtn(soundOff, 0.1);
             });
-            if(!music.isPlaying){
+            if (!music.isPlaying) {
                 soundOff.setVisible(true);
             }
-            const soundOn = this.add.image(0, 0, "soundOn").setScale(0.1).setInteractive({ useHandCursor: true });
+            const soundOn = this.add.image(0, 70, "soundOn").setScale(0.1).setInteractive({ useHandCursor: true });
             soundOn.on('pointerover', () => {
                 this.scaleUpBtn(soundOn, 0.12);
             });
@@ -55,6 +55,29 @@ export default class SettingsScene extends Phaser.Scene {
             })
             container.add([soundOn, soundOff]);
         });
+
+        //кнопка домой
+        const home = this.add.image(0, -80, 'home').setScale(0.07).setInteractive({useHandCursor: true});
+        container.add(home);
+
+
+        home.on('pointerover', () => {
+            this.scaleUpBtn(home, 0.09);
+        });
+        home.on('pointerout', () => {
+            this.scaleDownBtn(home, 0.07);
+        });
+
+        //закрытие всех сцен и возвращение в главное меню
+        home.on('pointerdown', ()=>{
+            this.scene.stop('GameScene');
+            this.scene.stop('UIScene');
+            this.scene.start('MainMenuScene');
+        });
+        
+        //текст домой
+        const homeText = this.add.text(-40, -160, 'Home', { fontFamily: '"Jacquard 12"', fontSize: '32px', fill: '#ffffffff' });
+        container.add(homeText);
 
 
 
