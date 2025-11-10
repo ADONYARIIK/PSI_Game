@@ -14,12 +14,6 @@ export default class ShopScene extends Phaser.Scene {
         // фон магазина
         this.add.image(0, 0, 'walls').setOrigin(0).setScale(1.1);
 
-        // кнопка выхода
-        const exit = this.add.image(0, 0, "exit").setOrigin(0).setScale(0.04).setInteractive({ useHandCursor: true });
-        exit.on('pointerdown', () => {
-            this.scene.start('GameScene');
-        });
-
         // вывеска и анимации
         const shopSign = this.add.image(0, -100, 'sign').setScale(0.1).setAlpha(0);
         const chains = this.add.image(-50, -300, "chains").setOrigin(0).setScale(0.1).setAlpha(0);
@@ -27,6 +21,11 @@ export default class ShopScene extends Phaser.Scene {
         this.add.container(550, 100, [shopSign, shopText, chains]);
         this.showInfo(chains, shopSign, shopText);
 
+        // кнопка перехода на уровень
+        const nextLvl = this.add.image(770,570,'nextLvl').setScale(0.2).setInteractive({useHandCursor: true});
+        nextLvl.on('pointerdown', () => {
+            this.scene.start('GameScene');
+        });
         // создаём слоты для купленных предметов
         this.shopSlots = [
             this.add.image(1070, 0, 'gui', 'player_frame_1.png').setOrigin(0).setScale(2),
