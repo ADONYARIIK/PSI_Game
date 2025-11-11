@@ -4,13 +4,13 @@
 			"image": "gui_spritesheet",
 			"format": "RGBA8888",
 			"size": {
-				"w": 1536,
-				"h": 2048
+				"w": 4608,
+				"h": 4608
 			},
 			"scale": 1,
 			"frames": [
 				{
-					"filename": "mainMenuLogo.png",
+					"filename": "startButtonSprite.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -31,6 +31,174 @@
 					}
 				},
 				{
+					"filename": "sign.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 1536,
+						"h": 1024
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 1536,
+						"h": 1024
+					},
+					"frame": {
+						"x": 0,
+						"y": 1024,
+						"w": 1536,
+						"h": 1024
+					}
+				},
+				{
+					"filename": "mainMenuLogo.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 1536,
+						"h": 1024
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 1536,
+						"h": 1024
+					},
+					"frame": {
+						"x": 1536,
+						"y": 0,
+						"w": 1536,
+						"h": 1024
+					}
+				},
+				{
+					"filename": "chains.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 1024,
+						"h": 1536
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 1024,
+						"h": 1536
+					},
+					"frame": {
+						"x": 0,
+						"y": 2048,
+						"w": 1024,
+						"h": 1536
+					}
+				},
+				{
+					"filename": "settingsBox.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 900,
+						"h": 1200
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 900,
+						"h": 1200
+					},
+					"frame": {
+						"x": 1024,
+						"y": 2048,
+						"w": 900,
+						"h": 1200
+					}
+				},
+				{
+					"filename": "nextLvl.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 1024,
+						"h": 1024
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 1024,
+						"h": 1024
+					},
+					"frame": {
+						"x": 1536,
+						"y": 1024,
+						"w": 1024,
+						"h": 1024
+					}
+				},
+				{
+					"filename": "exit.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 1024,
+						"h": 1024
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 1024,
+						"h": 1024
+					},
+					"frame": {
+						"x": 1924,
+						"y": 2048,
+						"w": 1024,
+						"h": 1024
+					}
+				},
+				{
+					"filename": "home.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 1024,
+						"h": 1024
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 1024,
+						"h": 1024
+					},
+					"frame": {
+						"x": 2560,
+						"y": 1024,
+						"w": 1024,
+						"h": 1024
+					}
+				},
+				{
+					"filename": "itemBox.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 1024,
+						"h": 1024
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 1024,
+						"h": 1024
+					},
+					"frame": {
+						"x": 3072,
+						"y": 0,
+						"w": 1024,
+						"h": 1024
+					}
+				},
+				{
 					"filename": "mainMenuBackground.png",
 					"rotated": false,
 					"trimmed": false,
@@ -45,7 +213,112 @@
 						"h": 1024
 					},
 					"frame": {
+						"x": 2948,
+						"y": 2048,
+						"w": 1024,
+						"h": 1024
+					}
+				},
+				{
+					"filename": "authors.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 1024,
+						"h": 1024
+					},
+					"spriteSourceSize": {
 						"x": 0,
+						"y": 0,
+						"w": 1024,
+						"h": 1024
+					},
+					"frame": {
+						"x": 0,
+						"y": 3584,
+						"w": 1024,
+						"h": 1024
+					}
+				},
+				{
+					"filename": "soundOn.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 1024,
+						"h": 1024
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 1024,
+						"h": 1024
+					},
+					"frame": {
+						"x": 1024,
+						"y": 3248,
+						"w": 1024,
+						"h": 1024
+					}
+				},
+				{
+					"filename": "soundOff.PNG",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 1024,
+						"h": 1024
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 1024,
+						"h": 1024
+					},
+					"frame": {
+						"x": 2048,
+						"y": 3072,
+						"w": 1024,
+						"h": 1024
+					}
+				},
+				{
+					"filename": "settingsIcon.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 1024,
+						"h": 1024
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 1024,
+						"h": 1024
+					},
+					"frame": {
+						"x": 3072,
+						"y": 3072,
+						"w": 1024,
+						"h": 1024
+					}
+				},
+				{
+					"filename": "walls.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 1024,
+						"h": 1024
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 1024,
+						"h": 1024
+					},
+					"frame": {
+						"x": 3584,
 						"y": 1024,
 						"w": 1024,
 						"h": 1024
@@ -66,8 +339,8 @@
 						"h": 36
 					},
 					"frame": {
-						"x": 1024,
-						"y": 1024,
+						"x": 1924,
+						"y": 3072,
 						"w": 24,
 						"h": 36
 					}
@@ -87,8 +360,8 @@
 						"h": 36
 					},
 					"frame": {
-						"x": 1048,
-						"y": 1024,
+						"x": 1948,
+						"y": 3072,
 						"w": 24,
 						"h": 36
 					}
@@ -108,8 +381,8 @@
 						"h": 24
 					},
 					"frame": {
-						"x": 1072,
-						"y": 1024,
+						"x": 1972,
+						"y": 3072,
 						"w": 24,
 						"h": 24
 					}
@@ -129,14 +402,14 @@
 						"h": 24
 					},
 					"frame": {
-						"x": 1096,
-						"y": 1024,
+						"x": 1996,
+						"y": 3072,
 						"w": 24,
 						"h": 24
 					}
 				},
 				{
-					"filename": "gui_coin.png",
+					"filename": "gui_key2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -150,29 +423,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 1120,
-						"y": 1024,
-						"w": 16,
-						"h": 16
-					}
-				},
-				{
-					"filename": "gui_heart.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 16,
-						"h": 16
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 16,
-						"h": 16
-					},
-					"frame": {
-						"x": 1136,
-						"y": 1024,
+						"x": 2020,
+						"y": 3072,
 						"w": 16,
 						"h": 16
 					}
@@ -192,14 +444,14 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 1152,
-						"y": 1024,
+						"x": 2020,
+						"y": 3088,
 						"w": 16,
 						"h": 16
 					}
 				},
 				{
-					"filename": "gui_key2.png",
+					"filename": "gui_heart.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -213,8 +465,29 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 1168,
-						"y": 1024,
+						"x": 1972,
+						"y": 3096,
+						"w": 16,
+						"h": 16
+					}
+				},
+				{
+					"filename": "gui_coin.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 16,
+						"h": 16
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 1988,
+						"y": 3096,
 						"w": 16,
 						"h": 16
 					}
