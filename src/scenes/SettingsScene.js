@@ -7,10 +7,10 @@ export default class SettingsScene extends Phaser.Scene {
 
     create() {
         //видимый контейнер
-        const settingsBox = this.add.image(0, 0, 'settingsBox').setScale(0.4);
+        const settingsBox = this.add.image(0, 0, 'gui', 'settingsBox.png').setScale(0.4);
 
         //кнопка выхода 
-        const exit = this.add.image(155, -215, "exit").setScale(0.05).setInteractive({ useHandCursor: true });
+        const exit = this.add.image(155, -215, 'gui', "exit.png").setScale(0.05).setInteractive({ useHandCursor: true });
 
         //контейнер
         const container = this.add.container(500, 300, [settingsBox, exit]).setAlpha(0).setVisible(false);
@@ -24,7 +24,7 @@ export default class SettingsScene extends Phaser.Scene {
 
             const music = this.registry.get('music');
 
-            const soundOff = this.add.image(0, 70, "soundOff").setScale(0.1).setVisible(false).setInteractive({ useHandCursor: true });
+            const soundOff = this.add.image(0, 70, 'gui', "soundOff.png").setScale(0.1).setVisible(false).setInteractive({ useHandCursor: true });
             soundOff.on('pointerover', () => {
                 this.scaleUpBtn(soundOff, 0.12);
             });
@@ -34,7 +34,7 @@ export default class SettingsScene extends Phaser.Scene {
             if (!music.isPlaying) {
                 soundOff.setVisible(true);
             }
-            const soundOn = this.add.image(0, 70, "soundOn").setScale(0.1).setInteractive({ useHandCursor: true });
+            const soundOn = this.add.image(0, 70, 'gui', "soundOn.png").setScale(0.1).setInteractive({ useHandCursor: true });
             soundOn.on('pointerover', () => {
                 this.scaleUpBtn(soundOn, 0.12);
             });
@@ -57,7 +57,7 @@ export default class SettingsScene extends Phaser.Scene {
         });
 
         //кнопка домой
-        const home = this.add.image(0, -80, 'home').setScale(0.07).setInteractive({useHandCursor: true});
+        const home = this.add.image(0, -80, 'gui', 'home.png').setScale(0.07).setInteractive({ useHandCursor: true });
         container.add(home);
 
 
@@ -69,12 +69,12 @@ export default class SettingsScene extends Phaser.Scene {
         });
 
         //закрытие всех сцен и возвращение в главное меню
-        home.on('pointerdown', ()=>{
+        home.on('pointerdown', () => {
             this.scene.stop('GameScene');
             this.scene.stop('UIScene');
             this.scene.start('MainMenuScene');
         });
-        
+
         //текст домой
         const homeText = this.add.text(-40, -160, 'Home', { fontFamily: '"Jacquard 12"', fontSize: '32px', fill: '#ffffffff' });
         container.add(homeText);
@@ -82,7 +82,7 @@ export default class SettingsScene extends Phaser.Scene {
 
 
         //иконка слева снизу экрана
-        const settingsIcon = this.add.image(25, 610, 'settingsIcon').setScale(0.05).setInteractive({ useHandCursor: true });
+        const settingsIcon = this.add.image(25, 610, 'gui', 'settingsIcon.png').setScale(0.05).setInteractive({ useHandCursor: true });
 
         //переменная следящая за видимостью настроек
         let settingsVisible = false;

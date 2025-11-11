@@ -6,22 +6,22 @@ export default class AuthorsScene extends Phaser.Scene {
     }
 
     create() {
-        const bg = this.add.image(0, 0, "walls").setOrigin(0).setScale(1.1);
-        const exit = this.add.image(0, 0, "exit").setOrigin(0).setScale(0.04).setInteractive({ useHandCursor: true });
+        const bg = this.add.image(0, 0, 'gui', "walls.png").setOrigin(0).setScale(1.1);
+        const exit = this.add.image(0, 0, 'gui', "exit.png").setOrigin(0).setScale(0.04).setInteractive({ useHandCursor: true });
         exit.on('pointerdown', () => {
             this.scene.start('MainMenuScene');
         })
 
-        const chains = this.add.image(270, 200, "chains").setOrigin(0).setScale(0.1).setAlpha(0);
-        const signT = this.add.image(200, 200, "sign").setOrigin(0).setScale(0.15).setInteractive({ useHandCursor: true });
-        const signKlasaT = this.add.image(200, 300, "sign").setOrigin(0).setScale(0.15).setAlpha(0);
+        const chains = this.add.image(270, 200, 'gui', "chains.png").setOrigin(0).setScale(0.1).setAlpha(0);
+        const signT = this.add.image(200, 200, 'gui', "sign.png").setOrigin(0).setScale(0.15).setInteractive({ useHandCursor: true });
+        const signKlasaT = this.add.image(200, 300, 'gui', "sign.png").setOrigin(0).setScale(0.15).setAlpha(0);
         signT.on('pointerdown', () => {
             this.showInfo(chains, signKlasaT, signInfoTextT);
         })
 
-        const chains2 = this.add.image(760, 300, "chains").setOrigin(0).setScale(0.1).setAlpha(0);
-        const signJ = this.add.image(700, 200, "sign").setOrigin(0).setScale(0.15).setInteractive({ useHandCursor: true });
-        const signKlasaJ = this.add.image(700, 300, "sign").setOrigin(0).setScale(0.15).setAlpha(0);
+        const chains2 = this.add.image(760, 300, 'gui', "chains.png").setOrigin(0).setScale(0.1).setAlpha(0);
+        const signJ = this.add.image(700, 200, 'gui', "sign.png").setOrigin(0).setScale(0.15).setInteractive({ useHandCursor: true });
+        const signKlasaJ = this.add.image(700, 300, 'gui', "sign.png").setOrigin(0).setScale(0.15).setAlpha(0);
         signJ.on('pointerdown', () => {
             this.showInfo(chains2, signKlasaJ, signInfoTextJ);
         })

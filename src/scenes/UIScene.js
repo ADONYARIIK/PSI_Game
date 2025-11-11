@@ -3,7 +3,7 @@ import Phaser from 'phaser';
 export default class UIScene extends Phaser.Scene {
     constructor() {
         super('UIScene');
-         this.activeItems = [];
+        this.activeItems = [];
     }
 
     create() {
@@ -55,7 +55,7 @@ export default class UIScene extends Phaser.Scene {
             const itemSprite = this.add.image(slot.x + 25, slot.y + 25, 'sprites', itemKey)
                 .setScale(2)
                 .setInteractive({ useHandCursor: true });
-                this.activeItems.push(itemSprite);
+            this.activeItems.push(itemSprite);
         });
 
 
