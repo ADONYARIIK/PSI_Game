@@ -12,25 +12,25 @@ export default class ShopScene extends Phaser.Scene {
 
     create() {
         // фон магазина
-        this.add.image(0, 0, 'walls').setOrigin(0).setScale(1.1);
+        this.add.image(0, 0, 'gui', 'walls.png').setOrigin(0).setScale(1.1);
 
         // вывеска и анимации
-        const shopSign = this.add.image(0, -100, 'sign').setScale(0.1).setAlpha(0);
-        const chains = this.add.image(-50, -300, "chains").setOrigin(0).setScale(0.1).setAlpha(0);
+        const shopSign = this.add.image(0, -100, 'gui', 'sign.png').setScale(0.1).setAlpha(0);
+        const chains = this.add.image(-50, -300, 'gui', "chains.png").setOrigin(0).setScale(0.1).setAlpha(0);
         const shopText = this.add.text(-50, -100, 'SHOP', { fontFamily: '"Jacquard 12"', fontSize: '32px', fill: '#ffffffff' }).setAlpha(0);
         this.add.container(550, 100, [shopSign, shopText, chains]);
         this.showInfo(chains, shopSign, shopText);
 
         // кнопка перехода на уровень
-        const nextLvl = this.add.image(770,570,'nextLvl').setScale(0.2).setInteractive({useHandCursor: true});
+        const nextLvl = this.add.image(770, 570, 'gui', 'nextLvl.png').setScale(0.2).setInteractive({ useHandCursor: true });
         nextLvl.on('pointerdown', () => {
             this.scene.start('GameScene');
         });
         // создаём слоты для купленных предметов
         this.shopSlots = [
-            this.add.image(1070, 0, 'gui', 'player_frame_1.png').setOrigin(0).setScale(2),
-            this.add.image(1020, 0, 'gui', 'player_frame_1.png').setOrigin(0).setScale(2),
-            this.add.image(970, 0, 'gui', 'player_frame_1.png').setOrigin(0).setScale(2)
+            this.add.image(1070, 0, 'gui', 'slot.png').setOrigin(0).setScale(2),
+            this.add.image(1020, 0, 'gui', 'slot.png').setOrigin(0).setScale(2),
+            this.add.image(970, 0, 'gui', 'slot.png').setOrigin(0).setScale(2)
         ];
 
         // создаём слоты для новых предметов в магазине
@@ -40,7 +40,7 @@ export default class ShopScene extends Phaser.Scene {
         ];
 
         itemBoxesData.forEach(pos => {
-            const boxSprite = this.add.image(0, 0, 'itemBox').setScale(0.2).setAlpha(0);
+            const boxSprite = this.add.image(0, 0, 'gui', 'itemBox.png').setScale(0.2).setAlpha(0);
             const item = this.randItem();
 
             const container = this.add.container(pos.x, pos.y, [boxSprite, item]);
@@ -96,8 +96,8 @@ export default class ShopScene extends Phaser.Scene {
 
     randItem() {
         const itemKeys = [
-            'garlic.png', 'espresso.png', 'flask1_01.png',
-            'flask2_01.png', 'flask3_01.png', 'flask4_01.png', 'jalapeno.png'
+            'garlic.png', 'espresso.png', 'smallBlueFlask_01.png',
+            'bigRedFlask_01.png', 'bigBlueFlask_01.png', 'smallRedFlask_01.png', 'jalapeno.png'
         ];
         const randomKey = Phaser.Math.RND.pick(itemKeys);
         return this.add.image(0, 0, 'sprites', randomKey).setAlpha(1).setScale(2.5).setInteractive({ useHandCursor: true });
