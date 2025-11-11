@@ -33,16 +33,16 @@ export default class UIScene extends Phaser.Scene {
 
         // массив с боксами для предметов из магазина
         const shopItemsBox = {
-            box1: this.add.image(1070, 0, 'gui', 'player_frame_1.png').setOrigin(0).setScale(2),
-            box2: this.add.image(1020, 0, 'gui', 'player_frame_1.png').setOrigin(0).setScale(2),
-            box3: this.add.image(970, 0, 'gui', 'player_frame_1.png').setOrigin(0).setScale(2),
+            box1: this.add.image(1070, 0, 'gui', 'player_frame_2.png').setOrigin(0).setScale(2),
+            box2: this.add.image(1020, 0, 'gui', 'player_frame_2.png').setOrigin(0).setScale(2),
+            box3: this.add.image(970, 0, 'gui', 'player_frame_2.png').setOrigin(0).setScale(2),
         }
 
         // массив с боксами для предметов из инвентаря
         const inventoryItemsBox = {
-            box1: this.add.image(1070, 590, 'gui', 'player_frame_2.png').setOrigin(0).setScale(2),
-            box2: this.add.image(1020, 590, 'gui', 'player_frame_2.png').setOrigin(0).setScale(2),
-            box3: this.add.image(970, 590, 'gui', 'player_frame_2.png').setOrigin(0).setScale(2),
+            box1: this.add.image(1070, 590, 'gui', 'player_frame_1.png').setOrigin(0).setScale(2),
+            box2: this.add.image(1020, 590, 'gui', 'player_frame_1.png').setOrigin(0).setScale(2),
+            box3: this.add.image(970, 590, 'gui', 'player_frame_1.png').setOrigin(0).setScale(2),
         }
 
 

@@ -1,5 +1,3 @@
-import { TILE_SIZE } from "../entities/consts";
-
 export default class TurnManager {
     constructor(scene, player, enemies = []) {
         this.scene = scene;
@@ -22,28 +20,60 @@ export default class TurnManager {
     }
 
     async moveEnemy(enemy, helpers = {}) {
-        const tileSize = TILE_SIZE;
-        const enemyX = (enemy.gridX !== undefined) ? enemy.gridX : Math.floor(enemy.x / tileSize);
-        const enemyY = (enemy.gridY !== undefined) ? enemy.gridY : Math.floor(enemy.y / tileSize);
+        const enemyX = enemy.gridX;
+        const enemyY = enemy.gridY;
 
-        const playerHead = helpers.getPlayerHead ? helpers.getPlayerHead() : null;
-        const playerX = playerHead ? playerHead.x : Math.floor(this.player.segments[0].x);
-        const playerY = playerHead ? playerHead.y : Math.floor(this.player.segments[0].y);
+        const playerHead = helpers.getPlayerHead();
+        const playerX = playerHead.x;
+        const playerY = playerHead.y;
 
-        const dx = playerX - enemyX;
-        const dy = playerY - enemyY;
+        const directions = [
+            { dx: 1, dy: 0 },
+            { dx: -1, dy: 0 },
+            { dx: 0, dy: 1 },
+            { dx: 0, dy: -1 }
+        ];
 
-        const stepX = dx === 0 ? 0 : dx > 0 ? 1 : -1;
-        const stepY = dy === 0 ? 0 : dy > 0 ? 1 : -1;
+        const validDirections = directions.filter(({ dx, dy }) => {
+            const newX = enemyX + dx;
+            const newY = enemyY + dy;
 
-        const newGridX = enemyX + stepX;
-        const newGridY = enemyY + stepY;
+            if (helpers.isWallAt(newX, newY)) return false;
+
+            const hasEnemy = helpers.getEnemyAt ? helpers.getEnemyAt(newX, newY) : false;
+            if (hasEnemy) return false;
+
+            return true;
+        });
+
+        if (validDirections.length === 0) return;
+
+        let bestDirection = validDirections[0];
+        let bestDistance = Infinity;
+
+        for (const dir of validDirections) {
+            const newX = enemyX + dir.dx;
+            const newY = enemyY + dir.dy;
+            const distance = Math.abs(newX - playerX) + Math.abs(newY - playerY);
+
+            if (distance < bestDistance) {
+                bestDistance = distance;
+                bestDirection = dir;
+            }
+        }
+
+        if (Math.random() < 0.2 && validDirections.length > 1) {
+            bestDirection = Phaser.Utils.Array.GetRandom(validDirections);
+        }
+
+        const newGridX = enemyX + bestDirection.dx;
+        const newGridY = enemyY + bestDirection.dy;
 
         enemy.gridX = newGridX;
         enemy.gridY = newGridY;
-        enemy.x = newGridX * tileSize;
-        enemy.y = newGridY * tileSize;
+        enemy.x = newGridX * 16;
+        enemy.y = newGridY * 16;
 
-        await new Promise(res => setTimeout(res, 120));
+        await new Promise(res => setTimeout(res, 150));
     }
 }

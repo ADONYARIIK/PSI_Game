@@ -52,7 +52,7 @@
 					}
 				},
 				{
-					"filename": "player_frame_2.png",
+					"filename": "shopItem.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -73,7 +73,28 @@
 					}
 				},
 				{
-					"filename": "player_frame_1.png",
+					"filename": "shopItemActive.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 24,
+						"h": 36
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 24,
+						"h": 36
+					},
+					"frame": {
+						"x": 1048,
+						"y": 1024,
+						"w": 24,
+						"h": 36
+					}
+				},
+				{
+					"filename": "slot.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -87,7 +108,28 @@
 						"h": 24
 					},
 					"frame": {
-						"x": 1048,
+						"x": 1072,
+						"y": 1024,
+						"w": 24,
+						"h": 24
+					}
+				},
+				{
+					"filename": "slotActive.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 24,
+						"h": 24
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 24,
+						"h": 24
+					},
+					"frame": {
+						"x": 1096,
 						"y": 1024,
 						"w": 24,
 						"h": 24
@@ -108,7 +150,7 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 1072,
+						"x": 1120,
 						"y": 1024,
 						"w": 16,
 						"h": 16
@@ -129,7 +171,7 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 1088,
+						"x": 1136,
 						"y": 1024,
 						"w": 16,
 						"h": 16
@@ -150,7 +192,7 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 1104,
+						"x": 1152,
 						"y": 1024,
 						"w": 16,
 						"h": 16
@@ -171,7 +213,7 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 1120,
+						"x": 1168,
 						"y": 1024,
 						"w": 16,
 						"h": 16

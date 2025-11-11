@@ -1,9 +1,8 @@
-import Phaser from 'phaser';
 import { TILE_SIZE, Directions, SnakeState, frameName, FRAME_CONFIG } from './consts.js';
 import { frameSequenceFor } from '../utils/frameUtils.js';
 
 export default class SnakePlayer {
-    constructor(scene, startX = 6, startY = 9, opts = {}) {
+    constructor(scene, startX, startY, opts = {}) {
         this.scene = scene;
         this.tileSize = TILE_SIZE;
         this.atlas = FRAME_CONFIG.atlasKey;
@@ -108,6 +107,7 @@ export default class SnakePlayer {
         const onCollide = helpers.onCollide || (() => { });
 
         if (isWallAt(newHead.x, newHead.y)) {
+            console.log('Wall collision detected');
             await this._animateHeadShock(this.direction);
             this.locked = false;
             return { died: true, reason: 'wall' };

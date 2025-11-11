@@ -1,5 +1,3 @@
-// import { frameName } from '../entities/consts.js';
-
 export function frameSequenceFor(direction, mode = 'idle') {
     const dir = direction.name;
 

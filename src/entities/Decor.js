@@ -1,41 +1,45 @@
-import { TILE_SIZE, frameName, FRAME_CONFIG } from './consts.js';
+import { frameName, FRAME_CONFIG } from './consts.js';
 
 export default class Decor {
-    constructor(scene, x, y, opts = {}, name) {
+    constructor(scene, x, y, opts = {}, name, depth = 0) {
         this.scene = scene;
-        this.tileSize = TILE_SIZE;
-        this.x = x * this.tileSize;
-        this.y = y * this.tileSize;
+        this.x = x;
+        this.y = y;
         this.atlas = FRAME_CONFIG.atlasKey;
         this.name = name;
         this.anim = opts.animation || false;
         this.flipX = opts.flipX || false;
 
         const random = Math.floor(Phaser.Math.Between(1, 2));
-        let frame = `${name}_01`;
+        let frame = `${this.name}_01`;
 
-        if (name === 'bones' || name === 'rocks') {
-            frame = `${name}_0${random}`;
+        if (this.name === 'bones' || this.name === 'rocks') {
+            frame = `${this.name}_0${random}`;
         }
 
-        this.sprite = this.scene.add.sprite(this.x, this.y, this.atlas, frameName(`${frame}`)).setOrigin(0).setDepth(0);
+        this.sprite = this.scene.add.sprite(this.x, this.y, this.atlas, frameName(`${frame}`))
+            .setOrigin(0)
+            .setDepth(depth);
 
         if (this.flipX) this.sprite.flipX = true;
 
-        if (this.anim && ['torch', 'sideTorch', 'flag'].includes(name)) {
-            this._createAnimation(name);
+        if (this.anim && ['torch', 'sideTorch', 'flag', 'candlestick1', 'candlestick2'].includes(name)) {
+            this._createAnimation(this.name);
 
-            const delay = Phaser.Math.Between(0, 500);
+            const delay = Phaser.Math.Between(0, 1000);
             this.scene.time.delayedCall(delay, () => {
-                this.sprite.play(`${name}_anim`);
+                if (this.sprite && this.sprite.play) {
+                    this.sprite.play(`${this.name}_anim`);
 
-                this.scene.time.delayedCall(Phaser.Math.Between(50, 150), () => {
-                    const anim = this.sprite.anims?.setCurrentAnim;
-                    if (anim && anim.frames.length > 0) {
-                        const randomFrame = Phaser.Math.Between(0, anim.frames.length - 1);
-                        this.sprite.anims.setCurrentFrame(anim.frames[randomFrame]);
-                    }
-                })
+                    const startFrame = Phaser.Math.Between(0, 3);
+                    this.scene.time.delayedCall(50, () => {
+                        const anim = this.sprite.anims?.currentAnim;
+                        if (anim && anim.frames && anim.frames.length > 0) {
+                            const frameIndex = startFrame % anim.frames.length;
+                            this.sprite.anims.setCurrentFrame(anim.frames[frameIndex]);
+                        }
+                    });
+                }
             });
         }
     }
@@ -53,7 +57,7 @@ export default class Decor {
             suffix: '.png'
         });
 
-        const frameRate = Phaser.Math.Between(5, 8);
+        const frameRate = Phaser.Math.Between(4, 7);
 
         this.scene.anims.create({
             key: animKey,
@@ -61,5 +65,9 @@ export default class Decor {
             frameRate,
             repeat: -1
         });
+    }
+
+    setDepth(depth) {
+        this.sprite.setDepth(depth);
     }
 }
