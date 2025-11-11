@@ -32,6 +32,6 @@
     "alphaThreshold": "0",
     "detectIdentical": false,
     "packer": "MaxRectsPacker",
-    "packerMethod": "SmartArea"
+    "packerMethod": "Smart"
   }
 }

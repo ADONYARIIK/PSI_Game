@@ -3,11 +3,15 @@ import BootScene from './scenes/BootScene.js';
 import MainMenu from './scenes/MainMenuScene.js';
 import GameScene from './scenes/GameScene.js';
 import UIScene from './scenes/UIScene.js';
+import AuthorsScene from './scenes/AuthorsScene.js';
+import MusicScene from './scenes/MusicScene.js';
+import SettingsScene from './scenes/SettingsScene.js';
+import ShopScene from './scenes/ShopScene.js';
 
 const config = {
   type: Phaser.AUTO,
-  width: 1600,
-  height: 900,
+  width: 1120,
+  height: 640,
   backgroundColor: '#000000',
   pixelArt: true,
   parent: 'game-container',
@@ -18,7 +22,7 @@ const config = {
       gravity: { y: 0 }
     }
   },
-  scene: [BootScene, MainMenu, GameScene, UIScene],
+  scene: [BootScene, MainMenu, GameScene, UIScene, AuthorsScene, MusicScene, SettingsScene, ShopScene],
   scale: {
     autoCenter: Phaser.Scale.CENTER_BOTH
   }
