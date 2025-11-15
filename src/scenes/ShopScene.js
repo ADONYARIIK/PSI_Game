@@ -43,7 +43,7 @@ export default class ShopScene extends Phaser.Scene {
             const boxSprite = this.add.image(0, 0, 'gui', 'itemBox.png').setScale(0.2).setAlpha(0);
             const item = this.randItem();
 
-            const container = this.add.container(pos.x, pos.y, [boxSprite, item]);
+            this.add.container(pos.x, pos.y, [boxSprite, item]);
             this.items.push(item);
 
             // появление с анимацией

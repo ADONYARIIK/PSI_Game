@@ -10,13 +10,20 @@ export default class TurnManager {
         if (this.locked) return;
         this.locked = true;
 
-        await this.player.takeTurn(direction, helpers);
+        const result = await this.player.takeTurn(direction, helpers);
 
-        for (const enemy of this.enemies) {
-            await this.moveEnemy(enemy, helpers);
+        if (!result.died && !result.skipped) {
+            for (const enemy of this.enemies) {
+                await this.moveEnemy(enemy, helpers);
+            }
+
+            if (this.scene.processEndOfTurnEffects) {
+                this.scene.processEndOfTurnEffects();
+            }
         }
 
         this.locked = false;
+        return result;
     }
 
     async moveEnemy(enemy, helpers = {}) {

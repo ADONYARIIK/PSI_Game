@@ -28,7 +28,7 @@ export default class SnakePlayer {
             this.segments[0].y * this.tileSize,
             this.atlas,
             frameName(`snake_head${this.direction.name}`)
-        ).setOrigin(0).setDepth(20);
+        ).setOrigin(0).setDepth(6);
 
         this.sprites.push(this.headSprite)
 
@@ -39,7 +39,7 @@ export default class SnakePlayer {
                 seg.y * this.tileSize,
                 this.atlas,
                 frameName('snake_bodyHorizontal')
-            ).setOrigin(0).setDepth(10);
+            ).setOrigin(0).setDepth(5);
             this.sprites.push(spr);
         }
 
@@ -124,8 +124,8 @@ export default class SnakePlayer {
         const entity = getEntityAt(newHead.x, newHead.y);
         let ate = false;
         if (entity) {
-            if (entity.isFood) {
-                this.grow += entity.growAmount || 1;
+            if (entity.type && entity.type !== 'enemy') {
+                this.grow += entity.growAmount || 0;
                 await this._animateHeadEat(this.direction);
                 onEat(entity);
                 ate = true;
@@ -149,7 +149,7 @@ export default class SnakePlayer {
             this.occupancy.delete(this._key(tail.x, tail.y));
         }
 
-        this._syncSpritesToSegments();
+        this.syncSpritesToSegments();
 
         this.locked = false;
         return { died: false, ate, collideWith: entity || null };
@@ -207,9 +207,9 @@ export default class SnakePlayer {
         });
     }
 
-    _syncSpritesToSegments() {
+    syncSpritesToSegments() {
         while (this.sprites.length < this.segments.length) {
-            const spr = this.scene.add.image(0, 0, this.atlas, frameName('snake_bodyHorizontal')).setOrigin(0).setDepth(10);
+            const spr = this.scene.add.image(0, 0, this.atlas, frameName('snake_bodyHorizontal')).setOrigin(0).setDepth(5);
             this.sprites.push(spr);
         }
         while (this.sprites.length > this.segments.length) {

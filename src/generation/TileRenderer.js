@@ -3,17 +3,17 @@ import { frameName } from "../entities/consts";
 
 const atlas = FRAME_CONFIG.atlasKey;
 
-export function drawTiles(scene, mapTiles, roomTiles, offset) {
-    drawAbyss(scene, mapTiles, offset);
-    drawAllFloors(scene, mapTiles, offset);
-    drawAllWalls(scene, mapTiles, roomTiles, offset);
+export function drawTiles(scene, mapTiles, roomTiles) {
+    drawAbyss(scene, mapTiles);
+    drawAllFloors(scene, mapTiles);
+    drawAllWalls(scene, mapTiles, roomTiles);
 }
 
-function drawAllFloors(scene, mapTiles, offset) {
+function drawAllFloors(scene, mapTiles) {
     for (const [key, value] of Object.entries(mapTiles)) {
         const [x, y] = key.split(',').map(Number);
-        const wx = (x + offset.offsetX) * TILE_SIZE;
-        const wy = (y + offset.offsetY) * TILE_SIZE;
+        const wx = x * TILE_SIZE;
+        const wy = y * TILE_SIZE;
 
         if (value === '.' || value === 'D' || value === 'C') {
             const textures = getTextures();
@@ -25,14 +25,14 @@ function drawAllFloors(scene, mapTiles, offset) {
     }
 }
 
-function drawAllWalls(scene, mapTiles, roomTiles, offset) {
+function drawAllWalls(scene, mapTiles, roomTiles) {
     const wallData = [];
 
     for (const [key, value] of Object.entries(mapTiles)) {
         if (value === '#') {
             const [x, y] = key.split(',').map(Number);
-            const wx = (x + offset.offsetX) * TILE_SIZE;
-            const wy = (y + offset.offsetY) * TILE_SIZE;
+            const wx = x * TILE_SIZE;
+            const wy = y * TILE_SIZE;
 
             wallData.push({ x, y, wx, wy, roomInfo: roomTiles[key] });
         }
@@ -151,6 +151,9 @@ function drawCorridorWall(scene, mapTiles, x, y, wx, wy) {
     else if (hasUp && hasRight && leftWall && downWall) {
         wallPosition = 'inside-corner-right'
     }
+    else if (hasLeft && !hasRight && upWall && downWall) {
+        wallPosition = 'right';
+    }
     else if (hasDown && !hasUp) {
         wallPosition = 'top';
     }
@@ -220,7 +223,7 @@ function drawWallByPosition(scene, wx, wy, position, textures) {
     }
 }
 
-function drawAbyss(scene, mapTiles, offset) {
+function drawAbyss(scene, mapTiles) {
     const abyssFrame = TEXTURES.abyss;
     const keys = Object.keys(mapTiles);
     const coords = keys.map(k => k.split(',').map(Number));
@@ -234,8 +237,8 @@ function drawAbyss(scene, mapTiles, offset) {
         for (let x = minX; x <= maxX; x++) {
             if (!mapTiles[`${x},${y}`]) {
                 scene.add.image(
-                    (x + offset.offsetX) * TILE_SIZE,
-                    (y + offset.offsetY) * TILE_SIZE,
+                    x * TILE_SIZE,
+                    y * TILE_SIZE,
                     atlas,
                     frameName(`${abyssFrame}`)
                 ).setOrigin(0).setDepth(0);

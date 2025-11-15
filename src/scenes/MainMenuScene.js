@@ -10,8 +10,8 @@ export default class MainMenuScene extends Phaser.Scene {
         if (!this.scene.isActive('MusicScene')) {
             this.scene.launch('MusicScene');
         }
-        const bg = this.add.image(0, -200, "gui", "mainMenuBackground.png").setOrigin(0).setScale(1.1);
-        const gameName = this.add.image(200, -100, "gui", "mainMenuLogo.png").setOrigin(0).setScale(0.5);
+        this.add.image(0, -200, "gui", "mainMenuBackground.png").setOrigin(0).setScale(1.1);
+        this.add.image(200, -100, "gui", "mainMenuLogo.png").setOrigin(0).setScale(0.5);
 
         const startBtn = this.add.image(460, 450, 'gui', "startButtonSprite.png").setOrigin(0).setScale(0.15).setInteractive({ useHandCursor: true });
         startBtn.on('pointerover', () => {
@@ -21,7 +21,7 @@ export default class MainMenuScene extends Phaser.Scene {
             this.scaleDownBtn(startBtn, 0.15);
         });
         startBtn.on('pointerdown', () => {
-            this.scene.start('ShopScene');
+            this.scene.start('GameScene');
         });
 
         //задержка что бы create успел проверить есть ли музыка
@@ -70,9 +70,6 @@ export default class MainMenuScene extends Phaser.Scene {
         });
     }
 
-    update() {
-    }
-
     scaleUpBtn(obj, scale) {
         this.tweens.add({
             targets: obj,
@@ -89,6 +86,5 @@ export default class MainMenuScene extends Phaser.Scene {
             ease: 'Power2'
         });
     }
-
 
 }

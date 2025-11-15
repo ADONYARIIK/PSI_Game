@@ -1,7 +1,7 @@
 export const RoomTemplates = {
     start: {
         chance: 0,
-        size: [8, 8],
+        size: [9, 9],
     },
     normal: {
         chance: 30,

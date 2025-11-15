@@ -1,11 +1,10 @@
-import { TEXTURES, SPAWN_WEIGHTS, ENEMY_STATS, SPAWN_COUNTS, frameName } from '../entities/consts.js';
+import { TEXTURES, SPAWN_WEIGHTS, ENEMY_STATS, SPAWN_COUNTS, ITEM_PROPERTIES, TILE_SIZE, frameName } from '../entities/consts.js';
 
 export class EntitySpawner {
-    constructor(scene, mapTiles, roomTiles, offset, rooms) {
+    constructor(scene, mapTiles, roomTiles, rooms) {
         this.scene = scene;
         this.mapTiles = mapTiles;
         this.roomTiles = roomTiles;
-        this.offset = offset;
         this.rooms = rooms;
 
         this.spawnRates = SPAWN_WEIGHTS.rates;
@@ -18,7 +17,11 @@ export class EntitySpawner {
             key: enemyKey,
             weight: ENEMY_STATS[enemyKey].weight,
             health: ENEMY_STATS[enemyKey].health,
-            damage: ENEMY_STATS[enemyKey].damage
+            damage: ENEMY_STATS[enemyKey].damage,
+            shield: ENEMY_STATS[enemyKey].shield,
+            range: ENEMY_STATS[enemyKey].range,
+            sight: ENEMY_STATS[enemyKey].sight,
+            moveRadius: ENEMY_STATS[enemyKey].moveRadius
         }));
 
         this.occupiedPositions = new Set();
@@ -132,8 +135,8 @@ export class EntitySpawner {
             return;
         }
 
-        const worldX = (x + this.offset.offsetX) * 16;
-        const worldY = (y + this.offset.offsetY) * 16;
+        const worldX = x * TILE_SIZE;
+        const worldY = y * TILE_SIZE;
 
         let entityCreated = false;
 
@@ -163,17 +166,19 @@ export class EntitySpawner {
     createFood(x, y) {
         const foodTypeObj = Phaser.Math.RND.weightedPick(this.foodWeights);
         const foodType = foodTypeObj.key;
+        const foodProps = ITEM_PROPERTIES[foodType];
 
         try {
-            const food = this.scene.add.sprite(x+3, y+3, 'sprites', frameName(`${foodType}`))
+            const food = this.scene.add.sprite(x, y, 'sprites', frameName(`${foodType}`))
                 .setOrigin(0)
                 .setDepth(10)
                 .setScale(0.7);
 
+            Object.assign(food, foodProps);
             food.type = 'food';
             food.subType = foodType;
-            food.gridX = Math.floor(x / 16) - this.offset.offsetX;
-            food.gridY = Math.floor(y / 16) - this.offset.offsetY;
+            food.gridX = Math.floor(x / TILE_SIZE);
+            food.gridY = Math.floor(y / TILE_SIZE);
 
             this.scene.tweens.add({
                 targets: food,
@@ -218,8 +223,9 @@ export class EntitySpawner {
 
             coin.play('coin_anim');
             coin.type = 'coin';
-            coin.gridX = Math.floor(x / 16) - this.offset.offsetX;
-            coin.gridY = Math.floor(y / 16) - this.offset.offsetY;
+            coin.value = Phaser.Math.Between(1, 3);
+            coin.gridX = Math.floor(x / TILE_SIZE);
+            coin.gridY = Math.floor(y / TILE_SIZE);
 
             if (!this.scene.items) this.scene.items = [];
             this.scene.items.push(coin);
@@ -234,6 +240,7 @@ export class EntitySpawner {
         const potionTypeObj = Phaser.Math.RND.weightedPick(this.potionWeights);
         const potionType = potionTypeObj.key;
         const potionFrames = TEXTURES[potionType];
+        const potionProps = ITEM_PROPERTIES[potionType];
 
         if (!potionFrames) {
             console.error('Potion frames not found for type:', potionType);
@@ -261,11 +268,12 @@ export class EntitySpawner {
                 });
             }
 
+            Object.assign(potion, potionProps);
             potion.play(animKey);
             potion.type = 'potion';
             potion.subType = potionType;
-            potion.gridX = Math.floor(x / 16) - this.offset.offsetX;
-            potion.gridY = Math.floor(y / 16) - this.offset.offsetY;
+            potion.gridX = Math.floor(x / TILE_SIZE);
+            potion.gridY = Math.floor(y / TILE_SIZE);
 
             if (!this.scene.items) this.scene.items = [];
             this.scene.items.push(potion);
@@ -280,6 +288,7 @@ export class EntitySpawner {
         const keyTypeObj = Phaser.Math.RND.weightedPick(this.keyWeights);
         const keyType = keyTypeObj.key;
         const keyFrames = TEXTURES[keyType];
+        const keyProps = ITEM_PROPERTIES[keyType];
 
         if (!keyFrames) {
             console.error('Key frames not found for type:', keyType);
@@ -307,11 +316,12 @@ export class EntitySpawner {
                 });
             }
 
+            Object.assign(key, keyProps);
             key.play(animKey);
             key.type = 'key';
             key.subType = keyType;
-            key.gridX = Math.floor(x / 16) - this.offset.offsetX;
-            key.gridY = Math.floor(y / 16) - this.offset.offsetY;
+            key.gridX = Math.floor(x / TILE_SIZE);
+            key.gridY = Math.floor(y / TILE_SIZE);
 
             if (!this.scene.items) this.scene.items = [];
             this.scene.items.push(key);
@@ -355,11 +365,18 @@ export class EntitySpawner {
             enemy.play(animKey);
             enemy.type = 'enemy';
             enemy.subType = enemyData.key;
-            enemy.gridX = Math.floor(x / 16) - this.offset.offsetX;
-            enemy.gridY = Math.floor(y / 16) - this.offset.offsetY;
+            enemy.gridX = Math.floor(x / TILE_SIZE);
+            enemy.gridY = Math.floor(y / TILE_SIZE);
             enemy.health = enemyData.health;
             enemy.maxHealth = enemyData.health;
             enemy.damage = enemyData.damage;
+            enemy.shield = enemyData.shield;
+            enemy.range = enemyData.range;
+            enemy.sight = enemyData.sight;
+            enemy.moveRadius = enemyData.moveRadius;
+
+            if (enemyData.lifesteal) enemy.lifesteal = true;
+            if (enemyData.moveCooldown) enemy.moveCooldown = enemyData.moveCooldown;
 
             if (!this.scene.enemies) this.scene.enemies = [];
             this.scene.enemies.push(enemy);

@@ -1,17 +1,19 @@
 import { createDecor } from '../utils/createHelper.js';
+import { TILE_SIZE } from '../entities/consts.js';
 
 export class MapDecorator {
-    constructor(scene, mapTiles, roomTiles, offset, rooms) {
+    constructor(scene, mapTiles, roomTiles, rooms) {
         this.scene = scene;
         this.mapTiles = mapTiles;
         this.roomTiles = roomTiles;
-        this.offset = offset;
         this.rooms = rooms;
         this.density = 0.03;
 
         this.DEPTH = {
             FLOOR: 1,
-            FLOOR_DECOR: 2,
+            FLOOR_EDGE:2,
+            FLOOR_CORNER:3,
+            FLOOR_DECOR: 4,
             WALL: 10,
             WALL_DECOR: 100,
             CHEST: 6,
@@ -268,8 +270,8 @@ export class MapDecorator {
     }
 
     placeTorch(x, y, position) {
-        const worldX = (x + this.offset.offsetX) * 16;
-        const worldY = (y + this.offset.offsetY) * 16;
+        const worldX = x * TILE_SIZE;
+        const worldY = y * TILE_SIZE;
 
         if (position === 'top') {
             createDecor(this.scene, worldX, worldY, {
@@ -279,8 +281,8 @@ export class MapDecorator {
     }
 
     placeSideTorch(x, y, side) {
-        const worldX = (x + this.offset.offsetX) * 16;
-        const worldY = (y + this.offset.offsetY) * 16;
+        const worldX = x * TILE_SIZE;
+        const worldY = y * TILE_SIZE;
 
         if (side === 'left') {
             createDecor(this.scene, worldX, worldY, {
@@ -296,22 +298,22 @@ export class MapDecorator {
     }
 
     placeFlag(x, y) {
-        const worldX = (x + this.offset.offsetX) * 16;
-        const worldY = (y + this.offset.offsetY) * 16;
+        const worldX = x * TILE_SIZE;
+        const worldY = y * TILE_SIZE;
         createDecor(this.scene, worldX, worldY, {
             animation: true
         }, 'flag', this.DEPTH.WALL_DECOR);
     }
 
     placeChest(x, y) {
-        const worldX = (x + this.offset.offsetX) * 16;
-        const worldY = (y + this.offset.offsetY) * 16;
+        const worldX = x * TILE_SIZE;
+        const worldY = y * TILE_SIZE;
         createDecor(this.scene, worldX, worldY, {}, 'chest', this.DEPTH.CHEST);
     }
 
     placeFloorDecor(x, y, type) {
-        const worldX = (x + this.offset.offsetX) * 16;
-        const worldY = (y + this.offset.offsetY) * 16;
+        const worldX = x * TILE_SIZE;
+        const worldY = y * TILE_SIZE;
 
         const flipX = Math.random() < 0.5;
 

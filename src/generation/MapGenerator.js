@@ -22,23 +22,22 @@ export function generateMap(scene, numRooms = 20) {
 
     addCorridorWalls(mapTiles);
 
-    const offset = centerMap(scene, mapTiles);
-    drawTiles(scene, mapTiles, roomTiles, offset);
+    drawTiles(scene, mapTiles, roomTiles);
 
-    const decorator = new MapDecorator(scene, mapTiles, roomTiles, offset, rooms);
+    const decorator = new MapDecorator(scene, mapTiles, roomTiles, rooms);
     decorator.placeAllDecor();
 
-    const entitySpawner = new EntitySpawner(scene, mapTiles, roomTiles, offset, rooms);
+    const entitySpawner = new EntitySpawner(scene, mapTiles, roomTiles, rooms);
     entitySpawner.spawnAllEntities();
 
     const start = rooms.find(r => r.isStart);
 
-    const bounds = calculateMapBounds(mapTiles, offset);
+    const bounds = calculateMapBounds(mapTiles);
 
-    return { rooms, start, offset, bounds, mapTiles, roomTiles };
+    return { rooms, start, bounds, mapTiles, roomTiles };
 }
 
-function calculateMapBounds(mapTiles, offset) {
+function calculateMapBounds(mapTiles) {
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
 
     for (const key of Object.keys(mapTiles)) {
@@ -50,10 +49,10 @@ function calculateMapBounds(mapTiles, offset) {
     }
 
     const padding = 6;
-    const left = (minX - padding + offset.offsetX) * TILE_SIZE;
-    const top = (minY - padding + offset.offsetY) * TILE_SIZE;
-    const right = (maxX + padding + offset.offsetX) * TILE_SIZE;
-    const bottom = (maxY + padding + offset.offsetY) * TILE_SIZE;
+    const left = (minX - padding) * TILE_SIZE;
+    const top = (minY - padding) * TILE_SIZE;
+    const right = (maxX + padding) * TILE_SIZE;
+    const bottom = (maxY + padding) * TILE_SIZE;
 
     return {
         left,
@@ -255,7 +254,7 @@ function generateRoomsAroundStart(scene, rooms, mapTiles, roomTiles, targetRoomC
 
                 createConnection(baseRoom, newRoom, dir);
 
-                connectRoomsWithOffset(mapTiles, roomTiles, baseRoom, newRoom, dir);
+                connectRooms(mapTiles, roomTiles, baseRoom, newRoom, dir);
 
                 expansionQueue.push(newRoom);
 
@@ -306,7 +305,7 @@ function connectAllRooms(rooms, mapTiles, roomTiles) {
             }
 
             createConnection(closestConnectedRoom, closestRoom, dir);
-            connectRoomsWithOffset(mapTiles, roomTiles, closestConnectedRoom, closestRoom, dir);
+            connectRooms(mapTiles, roomTiles, closestConnectedRoom, closestRoom, dir);
 
             connected.add(closestRoom);
             unconnected.delete(closestRoom);
@@ -331,7 +330,7 @@ function createConnection(roomA, roomB, direction) {
     });
 }
 
-function connectRoomsWithOffset(map, roomTiles, roomA, roomB, dir) {
+function connectRooms(map, roomTiles, roomA, roomB, dir) {
     const corridorWidth = 3;
 
     const centerA = {
@@ -621,7 +620,7 @@ function placeSecretRooms(scene, rooms, mapTiles, roomTiles) {
                 rooms.push(secretRoom);
 
                 fillRoom(mapTiles, roomTiles, secretRoom);
-                connectRoomsWithOffset(mapTiles, roomTiles, hub, secretRoom, dir);
+                connectRooms(mapTiles, roomTiles, hub, secretRoom, dir);
 
                 createConnection(hub, secretRoom, dir);
             }
@@ -675,33 +674,4 @@ function overlapsAny(rooms, x, y, w, h, gap = 1) {
         ) return true;
     }
     return false;
-}
-
-function centerMap(scene, mapTiles) {
-    let minX = Infinity;
-    let maxX = -Infinity;
-    let minY = Infinity;
-    let maxY = -Infinity;
-
-    for (const key of Object.keys(mapTiles)) {
-        const [x, y] = key.split(',').map(Number);
-        minX = Math.min(minX, x);
-        minY = Math.min(minY, y);
-        maxX = Math.max(maxX, x);
-        maxY = Math.max(maxY, y);
-    }
-
-    const mapWidth = maxX - minX + 1;
-    const mapHeight = maxY - minY + 1;
-
-    const screenCenterX = Math.floor(scene.scale.width / TILE_SIZE / 2);
-    const screenCenterY = Math.floor(scene.scale.height / TILE_SIZE / 2);
-
-    const mapCenterX = minX + mapWidth / 2;
-    const mapCenterY = minY + mapHeight / 2;
-
-    const offsetX = screenCenterX - mapCenterX;
-    const offsetY = screenCenterY - mapCenterY;
-
-    return { offsetX, offsetY };
 }

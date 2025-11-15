@@ -11,7 +11,7 @@ export const TEXTURES = {
     wallBottomCorner: ['wallBottomCorner'],
     abyss: ['abyss'],
 
-    food: ['apple', 'banana', 'bellpepper', 'blueberry', 'cake', 'cherry', 'espresso', 'garlic', 'jalapeno', 'orange', 'tomato', 'watermelon'],
+    food: ['apple', 'bellpepper', 'blueberry', 'cake', 'cherry', 'espresso', 'garlic', 'jalapeno', 'orange', 'tomato', 'watermelon'],
     coin: Array.from({ length: 4 }, (_, i) => `coin_${String(i + 1).padStart(2, '0')}`),
     smallRedFlask: Array.from({ length: 4 }, (_, i) => `smallRedFlask_${String(i + 1).padStart(2, '0')}`),
     bigRedFlask: Array.from({ length: 4 }, (_, i) => `bigRedFlask_${String(i + 1).padStart(2, '0')}`),
@@ -29,7 +29,121 @@ export const TEXTURES = {
         skull: Array.from({ length: 4 }, (_, i) => `skull_${String(i + 1).padStart(2, '0')}`),
         vampire: Array.from({ length: 4 }, (_, i) => `vampire_${String(i + 1).padStart(2, '0')}`),
     },
-}
+};
+
+export const ITEM_PROPERTIES = {
+    apple: {
+        type: 'food',
+        healthGain: 1,
+        maxHealthIncrease: 1,
+        lengthGain: 1,
+        immediate: false
+    },
+    bellpepper: {
+        type: 'food',
+        healthGain: 2,
+        maxHealthIncrease: 1,
+        lengthGain: 1,
+        immediate: false
+    },
+    blueberry: {
+        type: 'food',
+        shield: 2,
+        shieldDuration: 3,
+        lengthGain: 1,
+        immediate: false
+    },
+    cake: {
+        type: 'food',
+        healthGain: 4,
+        maxHealthIncrease: 3,
+        lengthGain: 2,
+        immediate: false
+    },
+    cherry: {
+        type: 'food',
+        regen: 1,
+        regenDuration: 3,
+        lengthGain: 1,
+        immediate: false
+    },
+    espresso: {
+        type: 'food',
+        doubleMove: true,
+        doubleMoveDuration: 3,
+        lengthGain: 1,
+        immediate: false
+    },
+    garlic: {
+        type: 'food',
+        healthLoss: 1,
+        vampireDamage: 2,
+        vampireDuration: 3,
+        lengthGain: 1,
+        immediate: false
+    },
+    jalapeno: {
+        type: 'food',
+        healthLoss: 2,
+        damageBoost: 2,
+        damageDuration: 3,
+        lengthLoss: 1,
+        immediate: false
+    },
+    orange: {
+        type: 'food',
+        healthGain: 1,
+        lengthGain: 1,
+        immediate: false
+    },
+    tomato: {
+        type: 'food',
+        healthGain: 1,
+        lengthGain: 1,
+        immediate: false
+    },
+    watermelon: {
+        type: 'food',
+        tempLength: 3,
+        tempLengthDuration: 6,
+        immediate: false
+    },
+
+    smallRedFlask: {
+        type: 'potion',
+        regen: 2,
+        regenDuration: 3,
+        immediate: false
+    },
+    bigRedFlask: {
+        type: 'potion',
+        maxHealthIncrease: 2,
+        immediate: false
+    },
+    smallBlueFlask: {
+        type: 'potion',
+        shield: 1,
+        shieldDuration: 3,
+        immediate: false
+    },
+    bigBlueFlask: {
+        type: 'potion',
+        permanentShield: 1,
+        damageReduction: 1,
+        immediate: false
+    },
+
+    silverKey: {
+        type: 'key',
+        keyType: 'silver',
+        immediate: true
+    },
+    goldKey: {
+        type: 'key',
+        keyType: 'gold',
+        immediate: true
+    }
+};
 
 export const SPAWN_WEIGHTS = {
     rates: {
@@ -41,25 +155,24 @@ export const SPAWN_WEIGHTS = {
     },
 
     food: [
-        { key: 'apple', weight: 10 },
-        { key: 'banana', weight: 8 },
-        { key: 'bellpepper', weight: 7 },
-        { key: 'blueberry', weight: 6 },
-        { key: 'cake', weight: 3 },
-        { key: 'cherry', weight: 9 },
-        { key: 'espresso', weight: 5 },
-        { key: 'garlic', weight: 4 },
-        { key: 'jalapeno', weight: 3 },
-        { key: 'orange', weight: 8 },
-        { key: 'tomato', weight: 7 },
-        { key: 'watermelon', weight: 2 }
+        { key: 'apple', weight: 10 },// должен добавлять один хп к максимуму и регенить, даёт 1 длины
+        { key: 'bellpepper', weight: 7 },// добавляет один хп к максимуму и регенит два, даёт 1 длины
+        { key: 'blueberry', weight: 6 },// даёт щит на одно получение урона(делает минус два урона) который длится три хода, даёт 1 длины
+        { key: 'cake', weight: 3 },// увеличивает макс хп на три, регенит 4, даёт 2 длины
+        { key: 'cherry', weight: 9 },// в течении трёх ходов регенит по одному хп, даёт 1 длины
+        { key: 'espresso', weight: 5 },// во время своего хода игрок может передвигаться два раза подряд или атаковать два раза подряд, даёт 1 длины
+        { key: 'garlic', weight: 4 },// наносит один урон при употреблении но увиличивает урон против вампиров на 2 в течении трёх ходов, даёт 1 длины
+        { key: 'jalapeno', weight: 3 },// наносит два урона при употреблении но увеличивает весь наносимый урон на 2 в течении трёх ходов, отнимает 1 длины
+        { key: 'orange', weight: 8 },// регенит 1 хп, даёт 1 длины
+        { key: 'tomato', weight: 7 },// регенит 1 хп, даёт 1 длины
+        { key: 'watermelon', weight: 2 }// даёт 3 длины которые пропадают через 6 ходов
     ],
 
     potion: [
-        { key: 'smallRedFlask', weight: 6 },
-        { key: 'bigRedFlask', weight: 2 },
-        { key: 'smallBlueFlask', weight: 5 },
-        { key: 'bigBlueFlask', weight: 1 }
+        { key: 'smallRedFlask', weight: 6 },// регенит 2 хп в течении трёх ходов
+        { key: 'bigRedFlask', weight: 2 },// увеличивает макс хп на 2
+        { key: 'smallBlueFlask', weight: 5 },// даёт щит уменьшающий урон на 1 в течении трёх ходов
+        { key: 'bigBlueFlask', weight: 1 }// даёт постоянный щит уменьшающий урон 1 но уменьшает макс урон на 1
     ],
 
     key: [
@@ -69,13 +182,15 @@ export const SPAWN_WEIGHTS = {
 };
 
 export const ENEMY_STATS = {
-    priestSpear: { health: 3, damage: 1, weight: 8 },
-    priestHand: { health: 2, damage: 1, weight: 10 },
-    priestSword: { health: 4, damage: 2, weight: 5 },
-    skeletonScythe: { health: 3, damage: 2, weight: 6 },
-    skeletonSword: { health: 3, damage: 1, weight: 7 },
-    skull: { health: 2, damage: 1, weight: 9 },
-    vampire: { health: 5, damage: 3, weight: 3 }
+    priestSpear: { health: 3, damage: 1, weight: 8, shield: 3, range: 2, sight: 8, moveRadius: 5 },// хп 3, щит 3, атк 2, дальность атаки 2 тайла, если не видит игрока ходит на один тайл в радиусе 5 тайлов от своего спавна, если увидит игрока в пределах 8 тайлов от себя движется в его сторону игнорируя изначальный ограничитель в виде 5 тайлов
+    priestHand: { health: 2, damage: 1, weight: 10, shield: 3, range: 1, sight: 5, moveRadius: 5 },// хп 5, щит 3, атк 1, дальность атаки 1 тайл, если не видит игрока ходит на два тайла в радиусе 5 тайлов от своего спавна, когда увидит игрока в радиусе 5 тайлов от себя движется в его сторону игнорируя ограничитель
+    priestSword: { health: 4, damage: 2, weight: 5, shield: 3, range: 1, sight: 8, moveRadius: 8 },// хп 4, щит 3, атк 3, дальность атаки 1 тайл, ходит на один тайл в радиусе 8 тайлов от спавна, когда видит игрока в радиусе 8 тайлов от себя, идёт в его сторону
+    skeletonScythe: { health: 3, damage: 2, weight: 6, shield: 1, range: 2, sight: 5, moveRadius: 0 },// хп 2, щит 1, атк 4, дальность атаки 2 тайла, ходит на один тайл по всей карте, если видит игрока в пределах 5 тайлов от себя движется к нему
+    skeletonSword: { health: 3, damage: 1, weight: 7, shield: 2, range: 1, sight: 5, moveRadius: 0 },// хп 2, щит 2, атк 3, дальность атаки 1 тайл, ходит на один тайл по всей карте, если видит игрока в пределах пять тайлов идёт к нему
+    skull: { health: 2, damage: 1, weight: 9, shield: 0, range: 1, sight: 0, moveRadius: 0, moveCooldown: 2 },// хп 4, щит 0, атк 2, дальность атаки 1 тайл, ходит на 1 тайл раз в два хода в пределах комнаты спавна, если игрок заходит в комнату движется к нему
+    vampire: { health: 5, damage: 3, weight: 3, shield: 4, range: 1, sight: 10, moveRadius: 6, lifesteal: true }// хп 6, щит 4, атк 3, при атаке регенерирует на 1 хп, дальность атаки 1 тайл, стоит на месте пока игрок не появится в пределах 10 тайлов, начинает двигатся по одному тайлу в его сторону, когда игрок находится в пределах 6 тайлов, двигается на 2 тайла за ход
+
+    // все враги: если становятся боссами все характеристики кроме защиты умножаются на два, защита остаётся прежней у всех кроме черепа и вампира, у черепа увеличивается на 1, а у вампира умножается на полтора
 };
 
 export const SPAWN_COUNTS = {

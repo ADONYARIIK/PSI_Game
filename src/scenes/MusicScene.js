@@ -12,8 +12,4 @@ export default class MusicScene extends Phaser.Scene {
             this.registry.set('music', music);
         }
     }
-
-    update() {
-
-    }
 }

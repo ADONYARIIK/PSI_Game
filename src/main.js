@@ -15,13 +15,6 @@ const config = {
   backgroundColor: '#000000',
   pixelArt: true,
   parent: 'game-container',
-  physics: {
-    default: 'arcade',
-    arcade: {
-      debug: false,
-      gravity: { y: 0 }
-    }
-  },
   scene: [BootScene, MainMenu, GameScene, UIScene, AuthorsScene, MusicScene, SettingsScene, ShopScene],
   scale: {
     autoCenter: Phaser.Scale.CENTER_BOTH
