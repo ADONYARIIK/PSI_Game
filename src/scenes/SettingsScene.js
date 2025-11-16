@@ -82,7 +82,7 @@ export default class SettingsScene extends Phaser.Scene {
 
 
         //иконка слева снизу экрана
-        const settingsIcon = this.add.image(25, 610, 'gui', 'settingsIcon.png').setScale(0.05).setInteractive({ useHandCursor: true });
+        const settingsIcon = this.add.image(0, 589, 'gui', 'settingsIcon.png').setOrigin(0).setScale(0.05).setInteractive({ useHandCursor: true });
 
         //переменная следящая за видимостью настроек
         let settingsVisible = false;

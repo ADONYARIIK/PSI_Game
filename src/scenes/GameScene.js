@@ -18,7 +18,6 @@ export default class GameScene extends Phaser.Scene {
     create() {
         this.scene.launch('SettingsScene');
         this.scene.bringToTop('SettingsScene');
-
         this.scene.launch('UIScene');
         this.scene.bringToTop('UIScene');
 
@@ -27,18 +26,6 @@ export default class GameScene extends Phaser.Scene {
         overlay.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height);
         overlay.setScrollFactor(0);
         overlay.setDepth(999);
-
-        this.registry.set('hp', 10);
-        this.registry.set('maxHP', 10);
-        this.registry.set('dmg', 2);
-        this.registry.set('baseDmg', 2);
-        this.registry.set('coins', 0);
-        this.registry.set('scores', 0);
-        this.registry.set('level', 0);
-        this.registry.set('playerLength', 3);
-        this.registry.set('silverKeys', 0);
-        this.registry.set('goldKeys', 0);
-        this.registry.set('playerInventory', [null, null, null, null, null]);
 
         this.mapData = generateMap(this, Phaser.Math.Between(5, 15));
         // this.mapData = generateMap(this, 3);
@@ -146,7 +133,6 @@ export default class GameScene extends Phaser.Scene {
                     console.log(`Collision with: ${entity.type} ${entity.subType}`);
                     this.handleEnemyCollision(entity);
                 },
-                tileSize: TILE_SIZE,
                 getPlayerHead: () => ({
                     x: this.player.segments[0].x,
                     y: this.player.segments[0].y

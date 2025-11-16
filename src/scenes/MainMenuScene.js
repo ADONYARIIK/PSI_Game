@@ -21,7 +21,7 @@ export default class MainMenuScene extends Phaser.Scene {
             this.scaleDownBtn(startBtn, 0.15);
         });
         startBtn.on('pointerdown', () => {
-            this.scene.start('GameScene');
+            this.scene.start('ShopScene');
         });
 
         //задержка что бы create успел проверить есть ли музыка

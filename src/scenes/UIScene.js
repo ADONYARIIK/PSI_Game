@@ -1,10 +1,11 @@
 import Phaser from 'phaser';
-import { frameName } from '../entities/consts';
+import { frameName, ITEM_PROPERTIES } from '../entities/consts';
 
 export default class UIScene extends Phaser.Scene {
     constructor() {
         super('UIScene');
         this.activeItems = [];
+        this.shopItems = [];
     }
 
     create() {
@@ -32,10 +33,10 @@ export default class UIScene extends Phaser.Scene {
         })
 
         this.createInventorySlots();
-
+        this.createShopSlots();
         this.createEffectsDisplay();
-
         this.updateInventory();
+        this.updateShopItems();
 
         /*const key = this.add.image(0, 60, "gui", "gui_key1.png").setOrigin(0).setScale(2).setVisible(false);
 
@@ -72,8 +73,6 @@ export default class UIScene extends Phaser.Scene {
     createInventorySlots() {
         if (this.inventorySlots) this.inventorySlots.forEach(slot => slot.destroy());
         this.inventorySlots = [];
-        if (this.activeItems) this.activeItems.forEach(item => item.destroy());
-        this.activeItems = [];
 
         const slotPositions = [
             { x: 870, y: 590 },
@@ -233,5 +232,64 @@ export default class UIScene extends Phaser.Scene {
             'doubleMove': '#ffff00'
         };
         return colors[effectType] || '#ffffff';
+    }
+
+    createShopSlots() {
+        if (this.shopSlots) this.shopSlots.forEach(slot => slot.destroy());
+        this.shopSlots = [];
+
+        const slotPositions = [
+            { x: 970, y: 0 },
+            { x: 1020, y: 0 },
+            { x: 1070, y: 0 }
+        ];
+
+        slotPositions.forEach((pos, index) => {
+            const slot = this.add.image(pos.x, pos.y, 'gui', 'slot.png').setOrigin(0).setScale(2);
+
+            this.add.text(pos.x + 12, pos.y + 12, (index + 1).toString(), {
+                fontSize: '16px',
+                fill: '#000000'
+            }).setOrigin(0.5);
+
+            this.shopSlots.push(slot);
+        })
+    }
+
+    updateShopItems() {
+        this.shopItems.forEach(item => item.destroy());
+        this.shopItems = [];
+
+        const purchasedItems = this.registry.get('playerItems') || [];
+
+        purchasedItems.forEach((itemKey, index) => {
+            const slot = this.shopSlots[index];
+            if (!slot || !itemKey) return;
+
+            const itemProperties = ITEM_PROPERTIES[itemKey];
+            let frame;
+            let scale;
+
+            if (itemProperties.type === 'potion') {
+                frame = frameName(`${itemKey}_01`);
+                scale = 2.5;
+            } else {
+                frame = frameName(itemKey);
+                scale = 1.5;
+            }
+
+            const itemData = {
+                type: itemProperties.type,
+                subType: itemKey,
+                properties: itemProperties
+            }
+
+            const purchasedItem = this.add.image(slot.x + 24, slot.y + 24, 'sprites', frameName(`${frame}`)).setScale(scale);
+
+            purchasedItem.itemData = itemData;
+            purchasedItem.slotIndex = index;
+
+            this.shopItems.push(purchasedItem);
+        })
     }
 }
