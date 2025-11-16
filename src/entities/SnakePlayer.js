@@ -4,7 +4,6 @@ import { frameSequenceFor } from '../utils/frameUtils.js';
 export default class SnakePlayer {
     constructor(scene, startX, startY, opts = {}) {
         this.scene = scene;
-        this.tileSize = TILE_SIZE;
         this.atlas = FRAME_CONFIG.atlasKey;
         this.maxInputQueue = opts.maxInputQueue || 3;
 
@@ -24,8 +23,8 @@ export default class SnakePlayer {
         this.sprites = [];
 
         this.headSprite = this.scene.add.image(
-            this.segments[0].x * this.tileSize,
-            this.segments[0].y * this.tileSize,
+            this.segments[0].x * TILE_SIZE,
+            this.segments[0].y * TILE_SIZE,
             this.atlas,
             frameName(`snake_head${this.direction.name}`)
         ).setOrigin(0).setDepth(6);
@@ -35,8 +34,8 @@ export default class SnakePlayer {
         for (let i = 1; i < this.segments.length; i++) {
             const seg = this.segments[i];
             const spr = this.scene.add.image(
-                seg.x * this.tileSize,
-                seg.y * this.tileSize,
+                seg.x * TILE_SIZE,
+                seg.y * TILE_SIZE,
                 this.atlas,
                 frameName('snake_bodyHorizontal')
             ).setOrigin(0).setDepth(5);
@@ -171,8 +170,8 @@ export default class SnakePlayer {
         const duration = options.duration || 180;
         const startX = this.headSprite.x;
         const startY = this.headSprite.y;
-        const endX = startX + direction.x * this.tileSize;
-        const endY = startY + direction.y * this.tileSize;
+        const endX = startX + direction.x * TILE_SIZE;
+        const endY = startY + direction.y * TILE_SIZE;
 
         return new Promise(resolve => {
             let frameIndex = 0;
@@ -218,14 +217,14 @@ export default class SnakePlayer {
         }
 
         const headSeg = this.segments[0];
-        this.headSprite.x = headSeg.x * this.tileSize;
-        this.headSprite.y = headSeg.y * this.tileSize;
+        this.headSprite.x = headSeg.x * TILE_SIZE;
+        this.headSprite.y = headSeg.y * TILE_SIZE;
 
         for (let i = 1; i < this.segments.length; i++) {
             const seg = this.segments[i];
             const spr = this.sprites[i];
-            spr.x = seg.x * this.tileSize;
-            spr.y = seg.y * this.tileSize;
+            spr.x = seg.x * TILE_SIZE;
+            spr.y = seg.y * TILE_SIZE;
         }
 
         this._updateBodyFrames();

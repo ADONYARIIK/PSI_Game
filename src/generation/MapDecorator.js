@@ -10,11 +10,7 @@ export class MapDecorator {
         this.density = 0.03;
 
         this.DEPTH = {
-            FLOOR: 1,
-            FLOOR_EDGE:2,
-            FLOOR_CORNER:3,
             FLOOR_DECOR: 4,
-            WALL: 10,
             WALL_DECOR: 100,
             CHEST: 6,
         };

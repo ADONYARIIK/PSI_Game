@@ -5,11 +5,12 @@ const atlas = FRAME_CONFIG.atlasKey;
 
 export function drawTiles(scene, mapTiles, roomTiles) {
     drawAbyss(scene, mapTiles);
-    drawAllFloors(scene, mapTiles);
+    drawFloor(scene, mapTiles);
+    drawFloorEdges(scene, mapTiles);
     drawAllWalls(scene, mapTiles, roomTiles);
 }
 
-function drawAllFloors(scene, mapTiles) {
+function drawFloor(scene, mapTiles) {
     for (const [key, value] of Object.entries(mapTiles)) {
         const [x, y] = key.split(',').map(Number);
         const wx = x * TILE_SIZE;
@@ -23,6 +24,119 @@ function drawAllFloors(scene, mapTiles) {
                 .setDepth(1);
         }
     }
+}
+
+function drawFloorEdges(scene, mapTiles) {
+    const textures = getFloorTextures();
+
+    for (const [key, value] of Object.entries(mapTiles)) {
+        const [x, y] = key.split(',').map(Number);
+        const wx = x * TILE_SIZE;
+        const wy = y * TILE_SIZE;
+
+        if (value === '.' || value === 'D' || value === 'C') {
+            const up = mapTiles[`${x},${y - 1}`];
+            const down = mapTiles[`${x},${y + 1}`];
+            const left = mapTiles[`${x - 1},${y}`];
+            const right = mapTiles[`${x + 1},${y}`];
+
+            const hasUp = up === '.' || up === 'C' || up === 'D';
+            const hasDown = down === '.' || down === 'C' || down === 'D';
+            const hasLeft = left === '.' || left === 'C' || left === 'D';
+            const hasRight = right === '.' || right === 'C' || right === 'D';
+
+            const upWall = up === '#';
+            const downWall = down === '#';
+            const leftWall = left === '#';
+            const rightWall = right === '#';
+
+            let floorPosition = 'default';
+
+            if (upWall && leftWall && hasDown && hasRight) {
+                floorPosition = 'left-top-corner';
+            }
+            else if (upWall && rightWall && hasDown && hasLeft) {
+                floorPosition = 'right-top-corner';
+            }
+            else if (downWall && leftWall && hasUp && hasRight) {
+                floorPosition = 'left-bottom-corner';
+            }
+            else if (downWall && rightWall && hasUp && hasLeft) {
+                floorPosition = 'right-bottom-corner';
+            }
+            // Края
+            else if (upWall && hasDown && hasLeft && hasRight) {
+                floorPosition = 'top';
+            }
+            else if (downWall && hasUp && hasLeft && hasRight) {
+                floorPosition = 'bottom';
+            }
+            else if (leftWall && hasUp && hasDown && hasRight) {
+                floorPosition = 'left';
+            }
+            else if (rightWall && hasUp && hasDown && hasLeft) {
+                floorPosition = 'right';
+            }
+
+            if (floorPosition !== 'default') {
+                drawFloorEdgeByPosition(scene, wx, wy, floorPosition, textures);
+            }
+        }
+    }
+}
+
+function drawFloorEdgeByPosition(scene, wx, wy, position, textures) {
+    switch (position) {
+        case 'top':
+            addFloorEdge(scene, wx, wy, textures.edge);
+            break;
+        case 'bottom':
+            addFloorEdge(scene, wx, wy, textures.edge, false, true);
+            break;
+        case 'left':
+            addFloorEdge(scene, wx, wy+TILE_SIZE, textures.edge, false, false, -90);
+            break;
+        case 'right':
+            addFloorEdge(scene, wx + TILE_SIZE, wy, textures.edge, false, false, 90);
+            break;
+        case 'left-top-corner':
+            addFloorEdge(scene, wx, wy, textures.corner);
+            break;
+        case 'right-top-corner':
+            addFloorEdge(scene, wx, wy, textures.corner, true);
+            break;
+        case 'left-bottom-corner':
+            addFloorEdge(scene, wx, wy, textures.corner, false, true);
+            break;
+        case 'right-bottom-corner':
+            addFloorEdge(scene, wx, wy, textures.corner, true, true);
+            break;
+        default:
+            break;
+    }
+}
+
+function addFloorEdge(scene, wx, wy, textureList, flipX = false, flipY = false, rotation = 0) {
+    const frame = Phaser.Utils.Array.GetRandom(textureList);
+
+    const img = scene.add.image(wx, wy, atlas, frameName(`${frame}`))
+        .setOrigin(0)
+        .setDepth(3);
+
+    if (flipX) img.flipX = true;
+    if (flipY) img.flipY = true;
+    if (rotation !== 0) {
+        img.setAngle(rotation);
+    }
+}
+
+function getFloorTextures() {
+    const baseTextures = {
+        edge: TEXTURES.floorEdge,
+        corner: TEXTURES.floorEdgeCorner
+    };
+
+    return baseTextures;
 }
 
 function drawAllWalls(scene, mapTiles, roomTiles) {
@@ -217,7 +331,6 @@ function drawWallByPosition(scene, wx, wy, position, textures) {
         case 'inside-corner-right':
             addWall(scene, wx, wy, textures.wallCorner, true);
             break;
-
         default:
             addWall(scene, wx, wy, textures.wallVertical, false);
     }
@@ -250,9 +363,9 @@ function drawAbyss(scene, mapTiles) {
 function addWall(scene, wx, wy, textureList, flipX = false) {
     const frame = Phaser.Utils.Array.GetRandom(textureList);
 
-    const img = scene.add.image(wx, wy, atlas, frameName(`${frame}`));
-    img.setOrigin(0)
-        .setDepth(3);
+    const img = scene.add.image(wx, wy, atlas, frameName(`${frame}`))
+        .setOrigin(0)
+        .setDepth(10);
 
     if (flipX) img.flipX = true;
 }
