@@ -5,7 +5,7 @@ export default class ShopScene extends Phaser.Scene {
     constructor() {
         super('ShopScene');
         this.shopItems = [];
-        this.coinsValue = [];
+        this.values = [];
     }
 
     create() {
@@ -27,7 +27,7 @@ export default class ShopScene extends Phaser.Scene {
         this.add.container(550, 100, [shopSign, shopText, chains]);
         this.showInfo(chains, shopSign, shopText);
 
-        const nextLvl = this.add.image(770, 570, 'gui', 'nextLvl.png')
+        const nextLvl = this.add.image(330, 570, 'gui', 'nextLvl.png')
             .setScale(0.2)
             .setInteractive({ useHandCursor: true });
 
@@ -37,26 +37,41 @@ export default class ShopScene extends Phaser.Scene {
 
         this.createShopSlots();
         this.createShopItems();
-        this.createCoins();
 
-        const refresh = this.add.image(550,610,'refresh')
-            .setScale(4)
-            .setInteractive({useHandCursor: true});
+        this.add.image(550, 590, 'gui', 'itemBox.png').setScale(0.18);
 
-        refresh.on('pointerdown', ()=>{
+        const refresh = this.add.image(526, 590, 'refresh')
+            .setScale(2.5)
+            .setInteractive({ useHandCursor: true });
+
+        const coin = this.add.image(545, 575, "gui", "gui_coin.png")
+            .setOrigin(0)
+            .setScale(2.1);
+
+        const refreshPrice = this.registry.get('refreshPrice');
+        this.refreshPriceText = this.add.text(
+            coin.x + 30,
+            coin.y - 5,
+            refreshPrice,
+            {
+                fontFamily: '"Jacquard 12"',
+                fontSize: '40px',
+                fill: '#fff'
+            });
+
+        refresh.on('pointerdown', () => {
             this.refresh();
-            console.log('aaa')
         });
     }
 
     createShopSlots() {
         const slotPositions = [
-            { x: 150, y: 300 },
-            { x: 550, y: 300 },
-            { x: 950, y: 300 },
-            { x: 150, y: 500 },
-            { x: 550, y: 500 },
-            { x: 950, y: 500 }
+            { x: 150, y: 250 },
+            { x: 550, y: 250 },
+            { x: 950, y: 250 },
+            { x: 150, y: 450 },
+            { x: 550, y: 450 },
+            { x: 950, y: 450 }
         ]
 
         slotPositions.forEach((pos, index) => {
@@ -98,12 +113,12 @@ export default class ShopScene extends Phaser.Scene {
         }
 
         const itemPositions = [
-            { x: 150, y: 300 },
-            { x: 550, y: 300 },
-            { x: 950, y: 300 },
-            { x: 150, y: 500 },
-            { x: 550, y: 500 },
-            { x: 950, y: 500 }
+            { x: 150, y: 250 },
+            { x: 550, y: 250 },
+            { x: 950, y: 250 },
+            { x: 150, y: 450 },
+            { x: 550, y: 450 },
+            { x: 950, y: 450 }
         ];
 
         selectedItems.forEach((itemData, index) => {
@@ -129,6 +144,7 @@ export default class ShopScene extends Phaser.Scene {
 
             item.itemKey = itemKey;
             item.itemProperties = itemProperties;
+            const price = this.generatePrice(itemProperties.price);
 
             this.tweens.add({
                 targets: item,
@@ -137,8 +153,10 @@ export default class ShopScene extends Phaser.Scene {
                 delay: index * 150
             });
 
+            this.createValue(index, price);
+
             item.on('pointerdown', () => {
-                this.purchaseItem(item);
+                this.purchaseItem(item, price);
             });
 
             item.on('pointerover', () => {
@@ -152,64 +170,88 @@ export default class ShopScene extends Phaser.Scene {
             this.shopItems.push(item);
         });
     }
-    
-    createCoins(){
-        let coins = [];
+
+    createValue(index, price) {
+        const coins = [];
 
         const coinPositions = [
-            { x: 200, y: 330 },
-            { x: 600, y: 330 },
-            { x: 1000, y: 330 },
-            { x: 200, y: 530 },
-            { x: 600, y: 530 },
-            { x: 1000, y: 530 }
+            { x: 65, y: 280 },
+            { x: 465, y: 280 },
+            { x: 865, y: 280 },
+            { x: 65, y: 480 },
+            { x: 465, y: 480 },
+            { x: 865, y: 480 }
         ];
 
-        for(let i = 0; i < 6; i++){
+        const coin = this.add.image(coinPositions[index].x, coinPositions[index].y, "gui", "gui_coin.png")
+            .setOrigin(0)
+            .setScale(2.1)
+            .setAlpha(0);
 
-             let coin = this.add.image(coinPositions[i].x, coinPositions[i].y, "gui", "gui_coin.png").setOrigin(0).setScale(2.1).setAlpha(0);
-             coins.push(coin);
-             
-             let coinValue = this.generateCoinsValue(2);
+        coins.push(coin);
 
-             let cost = this.add.text(coinPositions[i].x - 15, coinPositions[i].y - 10, coinValue, { fontFamily: '"Jacquard 12"', fontSize: '48px', fill: '#fff' }).setAlpha(0);
-             this.coinsValue.push(cost);
+        const priceText = this.add.text(
+            coinPositions[index].x + 30,
+            coinPositions[index].y - 5,
+            price,
+            {
+                fontFamily: '"Jacquard 12"',
+                fontSize: '40px',
+                fill: '#fff'
+            }).setAlpha(0);
+
+        this.values.push(priceText);
+
+
+        coins.forEach((coin, index) => {
+            this.tweens.add({
+                targets: coin,
+                alpha: 1,
+                duration: 500,
+                delay: 500 + index * 150
+            });
+        })
+
+        this.values.forEach(value => {
+            this.tweens.add({
+                targets: value,
+                alpha: 1,
+                duration: 500,
+                delay: 500
+            });
+        })
+    }
+
+    generatePrice(value) {
+        const modul = Phaser.Math.Between(1, 3);
+        const price = Math.ceil(value * (this.registry.get('level')) / modul);
+        return price;
+    }
+
+    refresh() {
+        if (this.registry.get('coins') < this.registry.get('refreshPrice')) {
+            this.showMessage('You don\'t have enough coins!', '#ff0000', this.refreshPriceText.x - 20, this.refreshPriceText.y - 20);
+            return;
+        }
+        const refreshPrice = this.registry.get('refreshPrice') + Phaser.Math.Between(1, 2);
+        this.registry.set('refreshPrice', refreshPrice)
+        this.refreshPriceText.setText(`${refreshPrice}`);
+
+        this.shopItems.forEach(item => item.destroy());
+        this.shopItems = [];
+        this.values.forEach(value => value.destroy());
+        this.values = [];
+        this.registry.set('shopRefresh', this.registry.get('shopRefresh') + 1);
+
+        this.createShopItems();
+    }
+
+    purchaseItem(item, price) {
+        if (this.registry.get('coins') < price) {
+            this.showMessage('You don\'t have enough coins!', '#ff0000', item.x, item.y);
+            return;
         }
 
-        
-        coins.forEach((coin, index) =>{
-            this.tweens.add({
-                    targets: coin,
-                    alpha: 1,
-                    duration: 500,
-                    delay: index * 150
-                });
-        })
-
-        this.coinsValue.forEach((coin, index) =>{
-            this.tweens.add({
-                    targets: coin,
-                    alpha: 1,
-                    duration: 500,
-                    delay: 500
-                });
-        })
-    }
-
-    generateCoinsValue(max){
-        let value = Math.floor(Math.random() * max);
-        return value;
-    }
-
-    refresh(){
-        this.shopItems.forEach(item  => item.destroy());
-        this.createShopItems();
-
-        this.coinsValue.forEach(item  => item.destroy());
-        this.createCoins();
-    }
-
-    purchaseItem(item) {
         const playerItems = this.registry.get('playerItems') || [];
 
         if (playerItems.length >= 3) {

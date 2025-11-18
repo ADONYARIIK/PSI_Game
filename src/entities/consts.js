@@ -40,42 +40,48 @@ export const ITEM_PROPERTIES = {
         healthGain: 1,
         maxHealthIncrease: 1,
         lengthGain: 1,
-        immediate: false
+        immediate: false,
+        price: 1
     },
     bellpepper: {
         type: 'food',
         healthGain: 2,
         maxHealthIncrease: 1,
         lengthGain: 1,
-        immediate: false
+        immediate: false,
+        price: 1
     },
     blueberry: {
         type: 'food',
         shield: 2,
         shieldDuration: 3,
         lengthGain: 1,
-        immediate: false
+        immediate: false,
+        price: 2
     },
     cake: {
         type: 'food',
         healthGain: 4,
         maxHealthIncrease: 3,
         lengthGain: 2,
-        immediate: false
+        immediate: false,
+        price: 4
     },
     cherry: {
         type: 'food',
         regen: 1,
         regenDuration: 3,
         lengthGain: 1,
-        immediate: false
+        immediate: false,
+        price: 3
     },
     espresso: {
         type: 'food',
         doubleMove: true,
         doubleMoveDuration: 3,
         lengthGain: 1,
-        immediate: false
+        immediate: false,
+        price: 5
     },
     garlic: {
         type: 'food',
@@ -83,7 +89,8 @@ export const ITEM_PROPERTIES = {
         vampireDamage: 2,
         vampireDuration: 3,
         lengthGain: 1,
-        immediate: false
+        immediate: false,
+        price: 3
     },
     jalapeno: {
         type: 'food',
@@ -91,49 +98,57 @@ export const ITEM_PROPERTIES = {
         damageBoost: 2,
         damageDuration: 3,
         lengthLoss: 1,
-        immediate: false
+        immediate: false,
+        price: 5
     },
     orange: {
         type: 'food',
         healthGain: 1,
         lengthGain: 1,
-        immediate: false
+        immediate: false,
+        price: 1
     },
     tomato: {
         type: 'food',
         healthGain: 1,
         lengthGain: 1,
-        immediate: false
+        immediate: false,
+        price: 1
     },
     watermelon: {
         type: 'food',
         tempLength: 3,
-        tempLengthDuration: 6,
-        immediate: false
+        tempLengthDuration: 10,
+        immediate: false,
+        price: 2
     },
 
     smallRedFlask: {
         type: 'potion',
         regen: 2,
         regenDuration: 3,
-        immediate: false
+        immediate: false,
+        price: 5
     },
     bigRedFlask: {
         type: 'potion',
         maxHealthIncrease: 2,
-        immediate: false
+        immediate: false,
+        price: 7
     },
     smallBlueFlask: {
         type: 'potion',
         shield: 1,
         shieldDuration: 3,
-        immediate: false
+        immediate: false,
+        price: 4
     },
     bigBlueFlask: {
         type: 'potion',
         permanentShield: 1,
         damageReduction: 1,
-        immediate: false
+        immediate: false,
+        price: 10
     },
 
     silverKey: {

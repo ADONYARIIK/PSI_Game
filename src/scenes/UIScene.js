@@ -13,27 +13,27 @@ export default class UIScene extends Phaser.Scene {
 
     create() {
         this.add.image(0, 0, "gui", "gui_heart.png").setOrigin(0).setScale(2);
-        this.heartsCount = this.registry.get('hp');
+        const heartsCount = this.registry.get('hp');
 
         this.add.image(0, 40, "gui", "gui_coin.png").setOrigin(0).setScale(2.1);
-        this.coinsCount = this.registry.get('coins');
+        const coinsCount = this.registry.get('coins');
 
         this.add.image(0, 80, 'sprites', 'snake_headRight.png').setOrigin(0).setScale(2);
-        this.lengthCount = this.registry.get('playerLength');
+        const lengthCount = this.registry.get('playerLength');
 
-        this.heartText = this.add.text(40, -10, `${this.heartsCount}`, { fontFamily: '"Jacquard 12"', fontSize: '48px', fill: '#fff' });
-        this.coinText = this.add.text(35, 30, `${this.coinsCount}`, { fontFamily: '"Jacquard 12"', fontSize: '48px', fill: '#fff' });
-        this.lengthText = this.add.text(40, 70, `${this.lengthCount}`, { fontFamily: '"Jacquard 12"', fontSize: '48px', fill: '#fff' });
+        const heartText = this.add.text(40, -10, `${heartsCount}`, { fontFamily: '"Jacquard 12"', fontSize: '48px', fill: '#fff' });
+        const coinText = this.add.text(35, 30, `${coinsCount}`, { fontFamily: '"Jacquard 12"', fontSize: '48px', fill: '#fff' });
+        const lengthText = this.add.text(40, 70, `${lengthCount}`, { fontFamily: '"Jacquard 12"', fontSize: '48px', fill: '#fff' });
 
         this.registry.events.on('changedata', (parent, key, data) => {
             if (key === 'hp') {
-                this.heartText.setText(`${data}`);
+                heartText.setText(`${data}`);
             } else if (key === 'coins') {
-                this.coinText.setText(`${data}`);
+                coinText.setText(`${data}`);
             } else if (key === 'playerLength') {
-                this.lengthText.setText(`${data}`);
+                lengthText.setText(`${data}`);
             }
-        })
+        });
 
         this.createInventorySlots();
         this.createShopSlots();

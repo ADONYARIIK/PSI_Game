@@ -33,6 +33,8 @@ export default class BootScene extends Phaser.Scene {
             this.registry.set('goldKeys', 0);
             this.registry.set('playerInventory', [null, null, null, null, null]);
             this.registry.set('playerItems', []);
+            this.registry.set('shopRefresh', 1);
+            this.registry.set('refreshPrice', 1);
 
             this.scene.start('MainMenuScene');
         })
