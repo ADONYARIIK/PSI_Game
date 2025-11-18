@@ -12,15 +12,15 @@ export default class UIScene extends Phaser.Scene {
         this.add.image(0, 0, "gui", "gui_heart.png").setOrigin(0).setScale(2);
         this.heartsCount = this.registry.get('hp');
 
-        this.add.image(0, 30, "gui", "gui_coin.png").setOrigin(0).setScale(2.1);
+        this.add.image(0, 40, "gui", "gui_coin.png").setOrigin(0).setScale(2.1);
         this.coinsCount = this.registry.get('coins');
 
-        this.add.image(0, 60, 'sprites', 'snake_headRight.png').setOrigin(0).setScale(2);
+        this.add.image(0, 80, 'sprites', 'snake_headRight.png').setOrigin(0).setScale(2);
         this.lengthCount = this.registry.get('playerLength');
 
         this.heartText = this.add.text(40, -10, `${this.heartsCount}`, { fontFamily: '"Jacquard 12"', fontSize: '48px', fill: '#fff' });
-        this.coinText = this.add.text(35, 20, `${this.coinsCount}`, { fontFamily: '"Jacquard 12"', fontSize: '48px', fill: '#fff' });
-        this.lengthText = this.add.text(40, 50, `${this.lengthCount}`, { fontFamily: '"Jacquard 12"', fontSize: '48px', fill: '#fff' });
+        this.coinText = this.add.text(35, 30, `${this.coinsCount}`, { fontFamily: '"Jacquard 12"', fontSize: '48px', fill: '#fff' });
+        this.lengthText = this.add.text(40, 70, `${this.lengthCount}`, { fontFamily: '"Jacquard 12"', fontSize: '48px', fill: '#fff' });
 
         this.registry.events.on('changedata', (parent, key, data) => {
             if (key === 'hp') {
@@ -141,6 +141,8 @@ export default class UIScene extends Phaser.Scene {
         });
     }
 
+
+
     useInventoryItem(index) {
         this.registry.events.emit('useInventoryItem', index);
     }
@@ -180,18 +182,18 @@ export default class UIScene extends Phaser.Scene {
         const props = item.properties;
         let description = '';
 
-        if (props.healthGain) description += `+${props.healthGain} HP `;
-        if (props.maxHealthIncrease) description += `+${props.maxHealthIncrease} Max HP `;
+        if (props.healthGain) description += `+${props.healthGain} HP \n`;
+        if (props.maxHealthIncrease) description += `+${props.maxHealthIncrease} Max HP \n`;
         if (props.lengthGain) description += `+${props.lengthGain} Length `;
-        if (props.shield) description += `Shield: ${props.shield} `;
-        if (props.regen) description += `Regen: ${props.regen} `;
-        if (props.damageBoost) description += `Dmg+: ${props.damageBoost} `;
+        if (props.shield) description += `Shield: ${props.shield} \n`;
+        if (props.regen) description += `Regen: ${props.regen} \n`;
+        if (props.damageBoost) description += `Dmg+: ${props.damageBoost} \n`;
 
         return description || 'No description';
     }
 
     createEffectsDisplay() {
-        this.effectsContainer = this.add.container(1000, 50);
+        this.effectsContainer = this.add.container(950, 0);
 
         const effectsBackground = this.add.rectangle(0, 0, 200, 100, 0x000000, 0.7).setOrigin(1, 0);
         this.effectsContainer.add(effectsBackground);
@@ -284,12 +286,83 @@ export default class UIScene extends Phaser.Scene {
                 properties: itemProperties
             }
 
-            const purchasedItem = this.add.image(slot.x + 24, slot.y + 24, 'sprites', frameName(`${frame}`)).setScale(scale);
+            const purchasedItem = this.add.image(slot.x + 24, slot.y + 24, 'sprites', frameName(`${frame}`)).setScale(scale).setInteractive({ useHandCursor: true });
 
             purchasedItem.itemData = itemData;
             purchasedItem.slotIndex = index;
 
+
+            purchasedItem.on('pointerover', () => {
+                this.showItemTooltip(purchasedItem, purchasedItem.x, purchasedItem.y + 40);
+            });
+
+            purchasedItem.on('pointerout', () => {
+                this.hideItemTooltip();
+            });
+
             this.shopItems.push(purchasedItem);
         })
+    }
+
+    showItemTooltip(sprite, x, y) {
+        if (sprite.tooltip) {
+            sprite.tooltip.destroy();
+            sprite.tooltip = null;
+        }
+
+        const itemData = sprite.itemData;  
+
+       const tooltip = this.add.container(x - 30, y + 20);
+
+        const background = this.add.graphics();
+        background.fillStyle(0x000000, 0.8);
+        background.fillRect(-80, -40, 160, 80);
+
+        const nameText = this.add.text(0, -25, itemData.subType || 'Unknown', {
+            fontSize: '14px',
+            fill: '#ffffff',
+        }).setOrigin(0.5);
+
+        const typeText = this.add.text(0, -5, `Type: ${itemData.type || '—'}`, {
+            fontSize: '12px',
+            fill: '#cccccc'
+        }).setOrigin(0.5);
+
+        const descText = this.add.text(0, 15, this.getShopItemDescription(itemData.properties), {
+            fontSize: '10px',
+            fill: '#aaaaaa',
+            align: 'center'
+        }).setOrigin(0.5);
+
+        tooltip.add([background, nameText, typeText, descText]);
+
+        tooltip.setDepth(2000);
+
+        sprite.tooltip = tooltip;
+    }
+
+    getShopItemDescription(properties) {
+        let description = '';
+
+        if (properties.healthGain) description += `+${properties.healthGain} HP `;
+        if (properties.maxHealthIncrease) description += `+${properties.maxHealthIncrease} Max HP `;
+        if (properties.lengthGain) description += `+${properties.lengthGain} Length `;
+        if (properties.shield) description += `Shield: ${properties.shield} `;
+        if (properties.regen) description += `Regen: ${properties.regen} `;
+        if (properties.damageBoost) description += `Dmg+: ${properties.damageBoost} `;
+        if (properties.doubleMove) description += `Double Move `;
+        if (properties.vampireDamage) description += `Vampire Dmg: ${properties.vampireDamage} `;
+        if (properties.permanentShield) description += `Perm Shield: ${properties.permanentShield} `;
+        if (properties.damageReduction) description += `Dmg Reduction: ${properties.damageReduction} `;
+
+        return description || 'No special effects';
+    }
+    hideItemTooltip() {
+        this.shopItems.forEach(item => {
+            if (item.tooltip) {
+                item.tooltip.destroy();
+                item.tooltip = null;
+            }
+        });
     }
 }

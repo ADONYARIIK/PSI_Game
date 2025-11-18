@@ -5,6 +5,7 @@ export default class ShopScene extends Phaser.Scene {
     constructor() {
         super('ShopScene');
         this.shopItems = [];
+        this.coinsValue = [];
     }
 
     create() {
@@ -36,6 +37,16 @@ export default class ShopScene extends Phaser.Scene {
 
         this.createShopSlots();
         this.createShopItems();
+        this.createCoins();
+
+        const refresh = this.add.image(550,610,'refresh')
+            .setScale(4)
+            .setInteractive({useHandCursor: true});
+
+        refresh.on('pointerdown', ()=>{
+            this.refresh();
+            console.log('aaa')
+        });
     }
 
     createShopSlots() {
@@ -141,6 +152,62 @@ export default class ShopScene extends Phaser.Scene {
             this.shopItems.push(item);
         });
     }
+    
+    createCoins(){
+        let coins = [];
+
+        const coinPositions = [
+            { x: 200, y: 330 },
+            { x: 600, y: 330 },
+            { x: 1000, y: 330 },
+            { x: 200, y: 530 },
+            { x: 600, y: 530 },
+            { x: 1000, y: 530 }
+        ];
+
+        for(let i = 0; i < 6; i++){
+
+             let coin = this.add.image(coinPositions[i].x, coinPositions[i].y, "gui", "gui_coin.png").setOrigin(0).setScale(2.1).setAlpha(0);
+             coins.push(coin);
+             
+             let coinValue = this.generateCoinsValue(2);
+
+             let cost = this.add.text(coinPositions[i].x - 15, coinPositions[i].y - 10, coinValue, { fontFamily: '"Jacquard 12"', fontSize: '48px', fill: '#fff' }).setAlpha(0);
+             this.coinsValue.push(cost);
+        }
+
+        
+        coins.forEach((coin, index) =>{
+            this.tweens.add({
+                    targets: coin,
+                    alpha: 1,
+                    duration: 500,
+                    delay: index * 150
+                });
+        })
+
+        this.coinsValue.forEach((coin, index) =>{
+            this.tweens.add({
+                    targets: coin,
+                    alpha: 1,
+                    duration: 500,
+                    delay: 500
+                });
+        })
+    }
+
+    generateCoinsValue(max){
+        let value = Math.floor(Math.random() * max);
+        return value;
+    }
+
+    refresh(){
+        this.shopItems.forEach(item  => item.destroy());
+        this.createShopItems();
+
+        this.coinsValue.forEach(item  => item.destroy());
+        this.createCoins();
+    }
 
     purchaseItem(item) {
         const playerItems = this.registry.get('playerItems') || [];
@@ -173,7 +240,7 @@ export default class ShopScene extends Phaser.Scene {
         const tooltip = this.add.container(item.x, item.y - 80);
         const background = this.add.graphics();
         background.fillStyle(0x000000, 0.8);
-        background.fillRect(-80, -40, 160, 80);
+        background.fillRect(-80, -40, 160, 100);
 
         const nameText = this.add.text(0, -25, item.itemKey, {
             fontSize: '14px',
@@ -186,7 +253,7 @@ export default class ShopScene extends Phaser.Scene {
             fill: '#cccccc'
         }).setOrigin(0.5);
 
-        const descText = this.add.text(0, 15, this.getItemDescription(properties), {
+        const descText = this.add.text(0, 25, this.getItemDescription(properties), {
             fontSize: '10px',
             fill: '#aaaaaa',
             align: 'center'
@@ -210,16 +277,16 @@ export default class ShopScene extends Phaser.Scene {
     getItemDescription(properties) {
         let description = '';
 
-        if (properties.healthGain) description += `+${properties.healthGain} HP `;
-        if (properties.maxHealthIncrease) description += `+${properties.maxHealthIncrease} Max HP `;
-        if (properties.lengthGain) description += `+${properties.lengthGain} Length `;
-        if (properties.shield) description += `Shield: ${properties.shield} `;
-        if (properties.regen) description += `Regen: ${properties.regen} `;
-        if (properties.damageBoost) description += `Dmg+: ${properties.damageBoost} `;
-        if (properties.doubleMove) description += `Double Move `;
-        if (properties.vampireDamage) description += `Vampire Dmg: ${properties.vampireDamage} `;
-        if (properties.permanentShield) description += `Perm Shield: ${properties.permanentShield} `;
-        if (properties.damageReduction) description += `Dmg Reduction: ${properties.damageReduction} `;
+        if (properties.healthGain) description += `+${properties.healthGain} HP  \n`;
+        if (properties.maxHealthIncrease) description += `+${properties.maxHealthIncrease} Max HP \n`;
+        if (properties.lengthGain) description += `+${properties.lengthGain} Length  \n`;
+        if (properties.shield) description += `Shield: ${properties.shield}  \n`;
+        if (properties.regen) description += `Regen: ${properties.regen}  \n`;
+        if (properties.damageBoost) description += `Dmg+: ${properties.damageBoost}  \n`;
+        if (properties.doubleMove) description += `Double Move  \n`;
+        if (properties.vampireDamage) description += `Vampire Dmg: ${properties.vampireDamage}  \n`;
+        if (properties.permanentShield) description += `Perm Shield: ${properties.permanentShield}  \n`;
+        if (properties.damageReduction) description += `Dmg Reduction: ${properties.damageReduction}  \n`;
 
         return description || 'No special effects';
     }
