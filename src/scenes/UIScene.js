@@ -194,24 +194,16 @@ export default class UIScene extends Phaser.Scene {
         if (this.effectsContainer) {
             this.effectsContainer.destroy();
         }
+
         this.effectsContainer = this.add.container(1075, 150);
-
-        const effectsBackground = this.add.rectangle(0, 0, 200, 100, 0x000000, 0.7).setOrigin(1, 0);
-        this.effectsContainer.add(effectsBackground);
-
-        const effectsTitle = this.add.text(-190, 5, 'Active Effects:', {
-            fontSize: '14px',
-            fill: '#ffffff'
-        });
-        this.effectsContainer.add(effectsTitle);
         this.effectsContainer.setDepth(1000);
         this.effectsContainer.setScrollFactor(0);
 
-        // const effectsTitle = this.add.text(-100, -30, 'Active Effects', {
-        //     fontSize: '16px',
-        //     fill: '#ffffff',
-        //     fontStyle: 'bold'
-        // }).setOrigin(0, 0);
+        const effectsTitle = this.add.text(-100, -30, 'Active Effects', {
+            fontSize: '16px',
+            fill: '#ffffff',
+            fontStyle: 'bold'
+        }).setOrigin(0, 0);
 
         this.effectsContainer.add(effectsTitle);
 
@@ -224,7 +216,7 @@ export default class UIScene extends Phaser.Scene {
             if (icon.container) icon.container.destroy();
         });
         this.effectIcons = [];
-        
+
         this.hideEffectTooltip();
 
         effects.forEach((effect, index) => {
@@ -422,9 +414,9 @@ export default class UIScene extends Phaser.Scene {
             sprite.tooltip = null;
         }
 
-        const itemData = sprite.itemData;  
+        const itemData = sprite.itemData;
 
-       const tooltip = this.add.container(x - 30, y + 20);
+        const tooltip = this.add.container(x - 30, y + 20);
 
         const background = this.add.graphics();
         background.fillStyle(0x000000, 0.8);
