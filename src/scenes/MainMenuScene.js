@@ -5,6 +5,10 @@ export default class MainMenuScene extends Phaser.Scene {
         super('MainMenuScene');
     }
 
+    preload(){
+         this.music = this.registry.get('music');
+    }
+
     create() {
         //запуск сцены 
         if (!this.scene.isActive('MusicScene')) {
@@ -25,37 +29,35 @@ export default class MainMenuScene extends Phaser.Scene {
         });
 
         //задержка что бы create успел проверить есть ли музыка
-        this.time.delayedCall(100, () => {
-
-            const music = this.registry.get('music');
-
-            const soundOn = this.add.image(1000, 400, 'gui', "soundOn.png").setScale(0.1).setInteractive({ useHandCursor: true });
-            soundOn.on('pointerover', () => {
-                this.scaleUpBtn(soundOn, 0.12);
-            });
-            soundOn.on('pointerout', () => {
-                this.scaleDownBtn(soundOn, 0.1);
-            });
 
 
-            const soundOff = this.add.image(1000, 400, 'gui', "soundOff.png").setScale(0.1).setVisible(false).setInteractive({ useHandCursor: true });
-            soundOff.on('pointerover', () => {
-                this.scaleUpBtn(soundOff, 0.12);
-            });
-            soundOff.on('pointerout', () => {
-                this.scaleDownBtn(soundOff, 0.1);
-            });
 
-
-            soundOn.on('pointerdown', () => {
-                soundOff.setVisible(true);
-                music.stop();
-                soundOff.on('pointerdown', () => {
-                    soundOff.setVisible(false);
-                    music.play();
-                })
-            })
+        const soundOn = this.add.image(1000, 400, 'gui', "soundOn.png").setScale(0.1).setInteractive({ useHandCursor: true });
+        soundOn.on('pointerover', () => {
+            this.scaleUpBtn(soundOn, 0.12);
         });
+        soundOn.on('pointerout', () => {
+            this.scaleDownBtn(soundOn, 0.1);
+        });
+
+
+        const soundOff = this.add.image(1000, 400, 'gui', "soundOff.png").setScale(0.1).setVisible(false).setInteractive({ useHandCursor: true });
+        soundOff.on('pointerover', () => {
+            this.scaleUpBtn(soundOff, 0.12);
+        });
+        soundOff.on('pointerout', () => {
+            this.scaleDownBtn(soundOff, 0.1);
+        });
+
+
+        soundOn.on('pointerdown', () => {
+            soundOff.setVisible(true);
+             this.music.stop();
+            soundOff.on('pointerdown', () => {
+                soundOff.setVisible(false);
+                 this.music.play();
+            })
+        })
 
         const authors = this.add.image(125, 400, 'gui', "authors.png").setScale(0.1).setInteractive({ useHandCursor: true });
         authors.on('pointerover', () => {
