@@ -176,7 +176,7 @@ export class EntitySpawner {
         const foodProps = ITEM_PROPERTIES[foodType];
 
         try {
-            const food = this.scene.add.sprite(x, y, 'sprites', frameName(`${foodType}`))
+            const food = this.scene.add.sprite(x+TILE_SIZE/4, y+TILE_SIZE/4, 'sprites', frameName(`${foodType}`))
                 .setOrigin(0)
                 .setDepth(10)
                 .setScale(0.7);

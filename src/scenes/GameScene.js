@@ -101,11 +101,6 @@ export default class GameScene extends Phaser.Scene {
                     const gridX = Math.round(worldX);
                     const gridY = Math.round(worldY);
 
-                    const playerHead = this.player.getHeadPos();
-                    const distance = Math.abs(playerHead.x - gridX) + Math.abs(playerHead.y - gridY);
-
-                    if (distance > 2) return false;
-
                     const tileKey = `${gridX},${gridY}`;
                     const tile = this.mapData.mapTiles[tileKey];
 
@@ -191,6 +186,12 @@ export default class GameScene extends Phaser.Scene {
         } else if (this.cursors.down.isDown) {
             cam.scrollY += this.cameraSpeed;
         }
+    }
+
+    isWall(gridX, gridY) {
+        const tileKey = `${gridX},${gridY}`;
+        const tile = this.mapData.mapTiles[tileKey];
+        return tile === '#';
     }
 
     useInventoryItem(index) {

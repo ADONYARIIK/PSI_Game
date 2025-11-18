@@ -45,7 +45,7 @@ export default class TurnManager {
             const newX = enemyX + dx;
             const newY = enemyY + dy;
 
-            if (helpers.isWallAt(newX, newY)) return false;
+            if (this.scene.isWall(newX, newY)) return false;
 
             const hasEnemy = helpers.getEnemyAt ? helpers.getEnemyAt(newX, newY) : false;
             if (hasEnemy) return false;
