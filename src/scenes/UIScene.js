@@ -40,37 +40,6 @@ export default class UIScene extends Phaser.Scene {
         this.createEffectsDisplay();
         this.updateInventory();
         this.updateShopItems();
-
-        /*const key = this.add.image(0, 60, "gui", "gui_key1.png").setOrigin(0).setScale(2).setVisible(false);
-
-        let keyPicked = false;
-
-        this.activeItems.forEach(item => item.destroy());
-        this.activeItems = [];
-
-        const shopItemsBox = [
-            this.add.image(1070, 0, 'gui', 'shopItem.png').setOrigin(0).setScale(2),
-            this.add.image(1020, 0, 'gui', 'shopItem.png').setOrigin(0).setScale(2),
-            this.add.image(970, 0, 'gui', 'shopItem.png').setOrigin(0).setScale(2),
-        ]
-
-        const inventoryItemsBox = [
-            this.add.image(1070, 590, 'gui', 'slot.png').setOrigin(0).setScale(2),
-            this.add.image(1020, 590, 'gui', 'slot.png').setOrigin(0).setScale(2),
-            this.add.image(970, 590, 'gui', 'slot.png').setOrigin(0).setScale(2),
-        ]
-
-        const playerItems = this.registry.get('playerItems') || [];
-
-        playerItems.forEach((itemKey, index) => {
-            const slot = shopItemsBox[index];
-            if (!slot) return;
-
-            const itemSprite = this.add.image(slot.x + 25, slot.y + 25, 'sprites', itemKey)
-                .setScale(2)
-                .setInteractive({ useHandCursor: true });
-            this.activeItems.push(itemSprite);
-        });*/
     }
 
     createInventorySlots() {
