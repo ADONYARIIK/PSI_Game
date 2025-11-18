@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import TurnManager from '../systems/TurnManager.js';
-import { Directions, TILE_SIZE } from '../entities/consts.js';
+import { Directions } from '../entities/consts.js';
 import { generateMap } from '../generation/MapGenerator.js';
 import { createSnake } from '../utils/createHelper.js';
 
@@ -9,10 +9,12 @@ export default class GameScene extends Phaser.Scene {
         super('GameScene');
         this.items = [];
         this.enemies = [];
+        this.exits = [];
         this.playerInventory = [];
         this.activeEffects = [];
         this.floatingTextQueue = [];
         this.isShowingFloatingText = false;
+        this.isGameOver = false;
     }
 
     create() {
@@ -27,8 +29,8 @@ export default class GameScene extends Phaser.Scene {
         overlay.setScrollFactor(0);
         overlay.setDepth(999);
 
-        this.mapData = generateMap(this, Phaser.Math.Between(5, 15));
-        // this.mapData = generateMap(this, 3);
+        // this.mapData = generateMap(this, Phaser.Math.Between(5, 15));
+        this.mapData = generateMap(this, 3);
 
         this.mapTiles = this.mapData.mapTiles;
 
@@ -43,8 +45,6 @@ export default class GameScene extends Phaser.Scene {
             console.error('Failed to create snake');
             return;
         }
-
-        this.createCoordinateDebug();
 
         this.cameras.main.setBounds(
             this.mapData.bounds.left,
@@ -98,12 +98,31 @@ export default class GameScene extends Phaser.Scene {
 
             this.turnManager.processTurn(dir, {
                 isWallAt: (worldX, worldY) => {
-                    const tileKey = `${worldX},${worldY}`;
-                    const isWall = this.mapData.mapTiles[tileKey] === '#';
-                    this.gameOver();
-                    return isWall;
+                    const gridX = Math.round(worldX);
+                    const gridY = Math.round(worldY);
+
+                    const playerHead = this.player.getHeadPos();
+                    const distance = Math.abs(playerHead.x - gridX) + Math.abs(playerHead.y - gridY);
+
+                    if (distance > 2) return false;
+
+                    const tileKey = `${gridX},${gridY}`;
+                    const tile = this.mapData.mapTiles[tileKey];
+
+                    if (tile === '#') {
+                        console.log(`Wall collision at (${gridX},${gridY})`);
+                        this.gameOver();
+                        return true;
+                    }
+
+                    return false;
                 },
                 getEntityAt: (worldX, worldY) => {
+                    const exit = this.exits.find(e => e.gridX === worldX && e.gridY === worldY);
+                    if (exit) {
+                        console.log(`Found exit at grid(${worldX},${worldY})`);
+                        return exit;
+                    }
 
                     const item = this.items.find(it => {
                         const itemGridX = it.gridX;
@@ -127,10 +146,22 @@ export default class GameScene extends Phaser.Scene {
                 },
                 onEat: (item) => {
                     console.log(`Eating item: ${item.type}`);
+
+                    if (item.type === 'exit') {
+                        this.completeLevel();
+                        return;
+                    }
+
                     this.handleItemCollection(item);
                 },
                 onCollide: (entity) => {
                     console.log(`Collision with: ${entity.type} ${entity.subType}`);
+
+                    if (entity.type === 'exit') {
+                        this.completeLevel();
+                        return;
+                    }
+
                     this.handleEnemyCollision(entity);
                 },
                 getPlayerHead: () => ({
@@ -160,31 +191,6 @@ export default class GameScene extends Phaser.Scene {
         } else if (this.cursors.down.isDown) {
             cam.scrollY += this.cameraSpeed;
         }
-    }
-
-    createCoordinateDebug() {
-        const debugText = this.add.text(10, 200, '', {
-            fontSize: '12px',
-            color: '#ffffff',
-            backgroundColor: '#000000'
-        });
-        debugText.setScrollFactor(0);
-        debugText.setDepth(1000);
-
-        this.events.on('update', () => {
-            if (this.player) {
-                const head = this.player.segments[0];
-                const gridX = head.x;
-                const gridY = head.y;
-
-                debugText.setText([
-                    `World: ${head.x}, ${head.y}`,
-                    `Grid: ${gridX}, ${gridY}`,
-                    `Tile: ${this.mapTiles[`${gridX},${gridY}`] || 'empty'}`,
-                    `Items: ${this.items.length}, Enemies: ${this.enemies.length}`
-                ]);
-            }
-        });
     }
 
     useInventoryItem(index) {
@@ -344,6 +350,14 @@ export default class GameScene extends Phaser.Scene {
             this.tempLengthSegments = item.tempLength;
             this.tempLengthDuration = item.tempLengthDuration;
             this.registry.set('playerLength', this.player.getLength());
+            this.activeEffects.push({
+                type: 'tempLength',
+                value: item.tempLength,
+                duration: item.tempLengthDuration,
+                turnsLeft: item.tempLengthDuration,
+                description: `Temp Length +${item.tempLength}`,
+                itemSubType: item.subType
+            });
             effects.push({ text: `Temp Length +${item.tempLength}`, color: 'lightblue' })
         }
 
@@ -353,7 +367,8 @@ export default class GameScene extends Phaser.Scene {
                 value: item.regen,
                 duration: item.regenDuration,
                 turnsLeft: item.regenDuration,
-                description: `Regen +${item.regen} HP/turn`
+                description: `Regen +${item.regen} HP/turn`,
+                itemSubType: item.subType
             });
             effects.push({ text: `Regen +${item.regen}/turn`, color: 'lime' })
         }
@@ -364,7 +379,8 @@ export default class GameScene extends Phaser.Scene {
                 value: item.shield,
                 duration: item.shieldDuration,
                 turnsLeft: item.shieldDuration,
-                description: `Shield +${item.shield}`
+                description: `Shield +${item.shield}`,
+                itemSubType: item.subType
             })
             effects.push({ text: `Shield +${item.shield}`, color: 'blue' })
         }
@@ -387,7 +403,8 @@ export default class GameScene extends Phaser.Scene {
                 value: item.damageBoost,
                 duration: item.damageDuration,
                 turnsLeft: item.damageDuration,
-                description: `Dmg +${item.damageBoost}`
+                description: `Dmg +${item.damageBoost}`,
+                itemSubType: item.subType
             });
             effects.push({ text: `Damage +${item.damageBoost}`, color: 'red' })
         }
@@ -398,7 +415,8 @@ export default class GameScene extends Phaser.Scene {
                 value: item.vampireDamage,
                 duration: item.vampireDuration,
                 turnsLeft: item.vampireDuration,
-                description: `Vampire Dmg +${item.vampireDamage}`
+                description: `Vampire Dmg +${item.vampireDamage}`,
+                itemSubType: item.subType
             });
             effects.push({ text: `Vampire Damage +${item.vampireDamage}`, color: 'darkred' })
         }
@@ -409,7 +427,8 @@ export default class GameScene extends Phaser.Scene {
                 value: true,
                 duration: item.doubleMoveDuration,
                 turnsLeft: item.doubleMoveDuration,
-                description: 'Double Move'
+                description: 'Double Move',
+                itemSubType: item.subType
             });
             effects.push({ text: 'Double Move!', color: 'gold' })
         }
@@ -625,7 +644,26 @@ export default class GameScene extends Phaser.Scene {
     //     });
     // }
 
+
+    completeLevel() {
+        console.log('Level completed! Going to shop...');
+
+        this.registry.set('level', this.registry.get('level') + 1);
+
+        this.showFloatingText('Level Complete!', 'gold', this.player.headSprite.x, this.player.headSprite.y - 20);
+
+        this.time.delayedCall(1000, () => {
+            this.scene.start('ShopScene');
+        });
+    }
+
     gameOver() {
-        //stop this scene and show results
+        if (this.isGameOver) return;
+
+        this.isGameOver = true;
+        console.log('Game Over - Player died');
+
+        this.scene.launch('GameOverScene');
+        this.scene.bringToTop('GameOverScene');
     }
 }

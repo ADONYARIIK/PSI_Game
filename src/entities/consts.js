@@ -11,6 +11,9 @@ export const TEXTURES = {
     wallBottomCorner: ['wallBottomCorner'],
     abyss: ['abyss'],
 
+    exitClose: ['hatch'],
+    exitOpen: ['ladder'],
+
     food: ['apple', 'bellpepper', 'blueberry', 'cake', 'cherry', 'espresso', 'garlic', 'jalapeno', 'orange', 'tomato', 'watermelon'],
     coin: Array.from({ length: 4 }, (_, i) => `coin_${String(i + 1).padStart(2, '0')}`),
     smallRedFlask: Array.from({ length: 4 }, (_, i) => `smallRedFlask_${String(i + 1).padStart(2, '0')}`),

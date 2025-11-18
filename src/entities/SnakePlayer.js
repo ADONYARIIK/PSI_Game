@@ -27,7 +27,7 @@ export default class SnakePlayer {
             this.segments[0].y * TILE_SIZE,
             this.atlas,
             frameName(`snake_head${this.direction.name}`)
-        ).setOrigin(0).setDepth(6);
+        ).setOrigin(0).setDepth(7);
 
         this.sprites.push(this.headSprite)
 
@@ -38,7 +38,7 @@ export default class SnakePlayer {
                 seg.y * TILE_SIZE,
                 this.atlas,
                 frameName('snake_bodyHorizontal')
-            ).setOrigin(0).setDepth(5);
+            ).setOrigin(0).setDepth(6);
             this.sprites.push(spr);
         }
 
@@ -208,7 +208,7 @@ export default class SnakePlayer {
 
     syncSpritesToSegments() {
         while (this.sprites.length < this.segments.length) {
-            const spr = this.scene.add.image(0, 0, this.atlas, frameName('snake_bodyHorizontal')).setOrigin(0).setDepth(5);
+            const spr = this.scene.add.image(0, 0, this.atlas, frameName('snake_bodyHorizontal')).setOrigin(0).setDepth(6);
             this.sprites.push(spr);
         }
         while (this.sprites.length > this.segments.length) {

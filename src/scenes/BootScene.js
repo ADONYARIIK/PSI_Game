@@ -27,7 +27,7 @@ export default class BootScene extends Phaser.Scene {
             this.registry.set('baseDmg', 2);
             this.registry.set('coins', 0);
             this.registry.set('scores', 0);
-            this.registry.set('level', 0);
+            this.registry.set('level', 1);
             this.registry.set('playerLength', 3);
             this.registry.set('silverKeys', 0);
             this.registry.set('goldKeys', 0);

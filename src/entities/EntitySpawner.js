@@ -30,9 +30,10 @@ export class EntitySpawner {
     spawnAllEntities() {
         for (const room of this.rooms) {
             if (room.type === 'start' || room.isCorridor) continue;
-
             this.spawnEntitiesInRoom(room);
         }
+
+        this.spawnExits();
     }
 
     spawnEntitiesInRoom(room) {
@@ -76,6 +77,12 @@ export class EntitySpawner {
     }
 
     isValidSpawnPosition(x, y) {
+        const tileKey = `${x},${y}`;
+
+        if (this.mapTiles[tileKey] === 'D' || this.mapTiles[tileKey] === 'E') {
+            return false
+        }
+
         const neighbors = [
             `${x - 1},${y}`, `${x + 1},${y}`,
             `${x},${y - 1}`, `${x},${y + 1}`
@@ -182,12 +189,11 @@ export class EntitySpawner {
 
             this.scene.tweens.add({
                 targets: food,
-                scaleX: 0.8,
-                scaleY: 0.8,
+                y: food.y-3,
                 duration: 800,
                 yoyo: true,
                 repeat: -1,
-                ease: 'Sine.easeInOut'
+                ease: 'ease'
             });
 
             if (!this.scene.items) this.scene.items = [];
@@ -383,6 +389,39 @@ export class EntitySpawner {
             return true;
         } catch (error) {
             console.error('Error creating enemy:', enemyData.key, error);
+            return false;
+        }
+    }
+
+    spawnExits() {
+        for (const room of this.rooms) {
+            if (room.hasExit) {
+                const exitX = room.x + Math.floor(room.width / 2);
+                const exitY = room.y + Math.floor(room.height / 2);
+                this.createExit(exitX, exitY);
+            }
+        }
+    }
+
+    createExit(x, y) {
+        const wx = x * TILE_SIZE;
+        const wy = y * TILE_SIZE;
+
+        try {
+            const exit = this.scene.add.sprite(wx, wy, 'sprites', frameName(`${TEXTURES.exitClose[0]}`))
+                .setOrigin(0)
+                .setDepth(5);
+
+            exit.type = 'exit';
+            exit.subType = 'levelExit';
+            exit.gridX = x;
+            exit.gridY = y;
+            exit.isInteractive = true;
+
+            if (!this.scene.exits) this.scene.exits = [];
+            this.scene.exits.push(exit);
+        } catch (error) {
+            console.error('Error creating exit:', error);
             return false;
         }
     }

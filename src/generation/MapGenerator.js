@@ -530,6 +530,7 @@ function placeSpecialRooms(scene, rooms, mapTiles, roomTiles) {
     placeTreasureRoom(edgeRooms);
     placeBossRoom(rooms, edgeRooms);
     placeSecretRooms(scene, rooms, mapTiles, roomTiles);
+    placeExit(rooms, mapTiles, roomTiles);
 }
 
 function findEdgeRooms(rooms) {
@@ -674,4 +675,44 @@ function overlapsAny(rooms, x, y, w, h, gap = 1) {
         ) return true;
     }
     return false;
+}
+
+function placeExit(rooms, mapTiles, roomTiles) {
+    const startRoom = rooms.find(r => r.isStart);
+    const candidateRooms = rooms.filter(room =>
+        !room.isStart &&
+        room.type !== 'boss' &&
+        room.type !== 'treasure' &&
+        room.type !== 'secret'
+    );
+
+    if (candidateRooms.length === 0) {
+        candidateRooms.push(...rooms.filter(room => !room.isStart));
+    };
+
+    let farthestRoom = candidateRooms[0];
+    let maxDistance = 0;
+
+    for (const room of candidateRooms) {
+        const distance = Math.abs(room.x - startRoom.x) + Math.abs(room.y - startRoom.y);
+        if (distance > maxDistance) {
+            maxDistance = distance;
+            farthestRoom = room;
+        }
+    }
+
+    const exitX = farthestRoom.x + Math.floor(farthestRoom.width / 2);
+    const exitY = farthestRoom.y + Math.floor(farthestRoom.height / 2);
+
+    farthestRoom.hasExit = true;
+    const exitKey = `${exitX},${exitY}`;
+    mapTiles[exitKey] = 'E';
+
+    roomTiles[exitKey] = {
+        roomId: `${farthestRoom.x},${farthestRoom.y}-${farthestRoom.width}x${farthestRoom.height}`,
+        isExit: true,
+        isRoom: true
+    };
+
+    return { x: exitX, y: exitY };
 }

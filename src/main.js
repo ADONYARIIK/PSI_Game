@@ -7,6 +7,7 @@ import AuthorsScene from './scenes/AuthorsScene.js';
 import MusicScene from './scenes/MusicScene.js';
 import SettingsScene from './scenes/SettingsScene.js';
 import ShopScene from './scenes/ShopScene.js';
+import GameOverScene from './scenes/GameOverScene.js';
 
 const config = {
   type: Phaser.AUTO,
@@ -15,7 +16,7 @@ const config = {
   backgroundColor: '#000000',
   pixelArt: true,
   parent: 'game-container',
-  scene: [BootScene, MainMenu, GameScene, UIScene, AuthorsScene, MusicScene, SettingsScene, ShopScene],
+  scene: [BootScene, MainMenu, GameScene, UIScene, AuthorsScene, MusicScene, SettingsScene, ShopScene, GameOverScene],
   scale: {
     autoCenter: Phaser.Scale.CENTER_BOTH
   }

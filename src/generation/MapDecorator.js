@@ -11,8 +11,7 @@ export class MapDecorator {
 
         this.DEPTH = {
             FLOOR_DECOR: 4,
-            WALL_DECOR: 100,
-            CHEST: 6,
+            WALL_DECOR: 100
         };
     }
 

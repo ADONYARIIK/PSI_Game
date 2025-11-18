@@ -6,6 +6,9 @@ export default class UIScene extends Phaser.Scene {
         super('UIScene');
         this.activeItems = [];
         this.shopItems = [];
+        this.effectIcons = [];
+        this.effectTooltips = [];
+        this.currentTooltip = null;
     }
 
     create() {
@@ -111,17 +114,12 @@ export default class UIScene extends Phaser.Scene {
             let frame;
             let scale;
 
-            switch (item.subType) {
-                case 'smallRedFlask':
-                case 'bigRedFlask':
-                case 'smallBlueFlask':
-                case 'bigBlueFlask':
-                    frame = `${item.subType}_01`;
-                    scale = 2.5;
-                    break;
-                default:
-                    frame = item.subType;
-                    scale = 1.5;
+            if (item.type === 'potion') {
+                frame = frameName(`${item.subType}_01`);
+                scale = 2.5;
+            } else {
+                frame = frameName(item.subType);
+                scale = 1.5;
             }
 
             const itemSprite = this.add.image(slot.x + 24, slot.y + 24, 'sprites', frameName(`${frame}`)).setScale(scale).setInteractive({ useHandCursor: true });
@@ -191,36 +189,141 @@ export default class UIScene extends Phaser.Scene {
     }
 
     createEffectsDisplay() {
-        this.effectsContainer = this.add.container(1000, 50);
-
-        const effectsBackground = this.add.rectangle(0, 0, 200, 100, 0x000000, 0.7).setOrigin(1, 0);
-        this.effectsContainer.add(effectsBackground);
-
-        const effectsTitle = this.add.text(-190, 5, 'Active Effects:', {
-            fontSize: '14px',
-            fill: '#ffffff'
-        });
-        this.effectsContainer.add(effectsTitle);
-
+        if (this.effectsContainer) {
+            this.effectsContainer.destroy();
+        }
+        this.effectsContainer = this.add.container(1075, 150);
         this.effectsContainer.setDepth(1000);
         this.effectsContainer.setScrollFactor(0);
+
+        const effectsTitle = this.add.text(-100, -30, 'Active Effects', {
+            fontSize: '16px',
+            fill: '#ffffff',
+            fontStyle: 'bold'
+        }).setOrigin(0, 0);
+
+        this.effectsContainer.add(effectsTitle);
+
+        this.effectIcons = [];
+        this.effectTooltips = [];
     }
 
     updateEffects(effects) {
-        this.effectsContainer.getAll().forEach((child, index) => {
-            if (index > 1) {
-                child.destroy();
-            }
+        this.effectIcons.forEach(icon => {
+            if (icon.container) icon.container.destroy();
         });
+        this.effectIcons = [];
+        
+        this.hideEffectTooltip();
 
         effects.forEach((effect, index) => {
-            const effectText = this.add.text(-190, 25 + (index * 16),
-                `${effect.description} (${effect.turnsLeft})`, {
-                fontSize: '12px',
-                fill: this.getEffectColor(effect.type)
+            const x = -100 + (index * 45);
+            const y = 10;
+
+            let frame;
+            let scale;
+
+            const isPotion = effect.itemSubType && (
+                effect.itemSubType.includes('Flask') ||
+                effect.itemSubType === 'smallRedFlask' ||
+                effect.itemSubType === 'bigRedFlask' ||
+                effect.itemSubType === 'smallBlueFlask' ||
+                effect.itemSubType === 'bigBlueFlask'
+            );
+
+            if (isPotion) {
+                frame = frameName(`${effect.itemSubType}_01`);
+                scale = 2.5;
+            } else {
+                frame = frameName(effect.itemSubType);
+                scale = 1.5;
+            }
+
+            const effectContainer = this.add.container(x, y);
+
+            const effectIcon = this.add.image(0, 0, 'sprites', frame)
+                .setScale(scale)
+                .setInteractive({ useHandCursor: true });
+
+            const turnsText = this.add.text(15, -15, effect.turnsLeft.toString(), {
+                fontSize: '14px',
+                fill: '#ffffff',
+                stroke: '#000000',
+                strokeThickness: 3,
+                fontStyle: 'bold'
+            }).setOrigin(0.5);
+
+            effectContainer.add([effectIcon, turnsText]);
+            this.effectsContainer.add(effectContainer);
+
+            const effectData = {
+                container: effectContainer,
+                icon: effectIcon,
+                effect: effect
+            };
+
+            this.effectIcons.push(effectData);
+
+            effectIcon.on('pointerover', () => {
+                this.showEffectTooltip(effect, effectIcon);
             });
-            this.effectsContainer.add(effectText);
+            effectIcon.on('pointerout', () => {
+                this.hideEffectTooltip();
+            });
         });
+    }
+
+    showEffectTooltip(effect, icon) {
+        this.hideEffectTooltip();
+
+        const tooltip = this.add.container(icon.x + this.effectsContainer.x, icon.y + this.effectsContainer.y - 50);
+        const background = this.add.graphics();
+        background.fillStyle(0x000000, 0.9);
+        background.fillRect(-80, -40, 160, 80);
+
+        const nameText = this.add.text(0, -25, this.getEffectDisplayName(effect), {
+            fontSize: '14px',
+            fill: '#ffffff',
+            align: 'center',
+            fontStyle: 'bold'
+        }).setOrigin(0.5);
+
+        const descText = this.add.text(0, -5, effect.description, {
+            fontSize: '12px',
+            fill: '#cccccc',
+            align: 'center'
+        }).setOrigin(0.5);
+
+        const turnsText = this.add.text(0, 15, `Turns left: ${effect.turnsLeft}`, {
+            fontSize: '11px',
+            fill: '#aaaaaa',
+            align: 'center'
+        }).setOrigin(0.5);
+
+        tooltip.add([background, nameText, descText, turnsText]);
+        tooltip.setDepth(1001);
+        tooltip.setScrollFactor(0);
+
+        this.currentTooltip = tooltip;
+    }
+
+    hideEffectTooltip() {
+        if (this.currentTooltip) {
+            this.currentTooltip.destroy();
+            this.currentTooltip = null;
+        }
+    }
+
+    getEffectDisplayName(effect) {
+        const names = {
+            'regen': 'Regeneration',
+            'shield': 'Shield',
+            'damageBoost': 'Damage Boost',
+            'vampireDamage': 'Vampire Damage',
+            'doubleMove': 'Double Move'
+        };
+
+        return names[effect.type] || effect.type;
     }
 
     getEffectColor(effectType) {

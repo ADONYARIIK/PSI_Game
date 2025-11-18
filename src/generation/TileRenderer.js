@@ -8,6 +8,7 @@ export function drawTiles(scene, mapTiles, roomTiles) {
     drawFloor(scene, mapTiles);
     drawFloorEdges(scene, mapTiles);
     drawAllWalls(scene, mapTiles, roomTiles);
+    drawExits(scene, roomTiles);
 }
 
 function drawFloor(scene, mapTiles) {
@@ -94,7 +95,7 @@ function drawFloorEdgeByPosition(scene, wx, wy, position, textures) {
             addFloorEdge(scene, wx, wy, textures.edge, false, true);
             break;
         case 'left':
-            addFloorEdge(scene, wx, wy+TILE_SIZE, textures.edge, false, false, -90);
+            addFloorEdge(scene, wx, wy + TILE_SIZE, textures.edge, false, false, -90);
             break;
         case 'right':
             addFloorEdge(scene, wx + TILE_SIZE, wy, textures.edge, false, false, 90);
@@ -381,4 +382,18 @@ function getTextures() {
     };
 
     return baseTextures;
+}
+
+function drawExits(scene, roomTiles) {
+    for (const[key, roomInfo] of Object.entries(roomTiles)) {
+        if (roomInfo.isExit) {
+            const [x, y] = key.split(',').map(Number);
+            const wx = x * TILE_SIZE;
+            const wy = y * TILE_SIZE;
+
+            scene.add.image(wx, wy, atlas, frameName(`${TEXTURES.exitClose[0]}`))
+                .setOrigin(0)
+                .setDepth(5);
+        }
+    }
 }
