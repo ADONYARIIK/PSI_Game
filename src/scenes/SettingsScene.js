@@ -4,7 +4,9 @@ export default class SettingsScene extends Phaser.Scene {
     constructor() {
         super('SettingsScene');
     }
-
+    preload(){
+        this.music = this.registry.get('music');
+    }
     create() {
         //видимый контейнер
         const settingsBox = this.add.image(0, 0, 'gui', 'settingsBox.png').setScale(0.4);
@@ -20,41 +22,41 @@ export default class SettingsScene extends Phaser.Scene {
         container.add(soundText);
 
         // вкл/выкл музыку
-        this.time.delayedCall(100, () => {
-
-            const music = this.registry.get('music');
-
-            const soundOff = this.add.image(0, 70, 'gui', "soundOff.png").setScale(0.1).setVisible(false).setInteractive({ useHandCursor: true });
-            soundOff.on('pointerover', () => {
-                this.scaleUpBtn(soundOff, 0.12);
-            });
-            soundOff.on('pointerout', () => {
-                this.scaleDownBtn(soundOff, 0.1);
-            });
-            if (!music.isPlaying) {
-                soundOff.setVisible(true);
-            }
-            const soundOn = this.add.image(0, 70, 'gui', "soundOn.png").setScale(0.1).setInteractive({ useHandCursor: true });
-            soundOn.on('pointerover', () => {
-                this.scaleUpBtn(soundOn, 0.12);
-            });
-            soundOn.on('pointerout', () => {
-                this.scaleDownBtn(soundOn, 0.1);
-            });
 
 
+        
 
-
-            soundOn.on('pointerdown', () => {
-                soundOff.setVisible(true);
-                music.stop();
-                soundOff.on('pointerdown', () => {
-                    soundOff.setVisible(false);
-                    music.play();
-                })
-            })
-            container.add([soundOn, soundOff]);
+        const soundOff = this.add.image(0, 70, 'gui', "soundOff.png").setScale(0.1).setVisible(false).setInteractive({ useHandCursor: true });
+        soundOff.on('pointerover', () => {
+            this.scaleUpBtn(soundOff, 0.12);
         });
+        soundOff.on('pointerout', () => {
+            this.scaleDownBtn(soundOff, 0.1);
+        });
+        if (!this.music.isPlaying) {
+            soundOff.setVisible(true);
+        }
+        const soundOn = this.add.image(0, 70, 'gui', "soundOn.png").setScale(0.1).setInteractive({ useHandCursor: true });
+        soundOn.on('pointerover', () => {
+            this.scaleUpBtn(soundOn, 0.12);
+        });
+        soundOn.on('pointerout', () => {
+            this.scaleDownBtn(soundOn, 0.1);
+        });
+
+
+
+
+        soundOn.on('pointerdown', () => {
+            soundOff.setVisible(true);
+            this.music.stop();
+            soundOff.on('pointerdown', () => {
+                soundOff.setVisible(false);
+                this.music.play();
+            })
+        })
+        container.add([soundOn, soundOff]);
+
 
         //кнопка домой
         const home = this.add.image(0, -80, 'gui', 'home.png').setScale(0.07).setInteractive({ useHandCursor: true });
@@ -72,6 +74,7 @@ export default class SettingsScene extends Phaser.Scene {
         home.on('pointerdown', () => {
             this.scene.stop('GameScene');
             this.scene.stop('UIScene');
+            this.scene.stop('ShopScene');
             this.scene.start('MainMenuScene');
         });
 

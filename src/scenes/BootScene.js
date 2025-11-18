@@ -51,5 +51,8 @@ export default class BootScene extends Phaser.Scene {
 
         //добавление музыки и аудио
         this.load.audio('theme', './src/assets/audio/music/cottagecore.mp3');
+
+        //врееменные изображения
+        this.load.image('refresh', './src/assets/sprites/NewSprites/refresh.png');
     }
 }
