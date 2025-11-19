@@ -20,8 +20,6 @@ export const TEXTURES = {
     bigRedFlask: Array.from({ length: 4 }, (_, i) => `bigRedFlask_${String(i + 1).padStart(2, '0')}`),
     smallBlueFlask: Array.from({ length: 4 }, (_, i) => `smallBlueFlask_${String(i + 1).padStart(2, '0')}`),
     bigBlueFlask: Array.from({ length: 4 }, (_, i) => `bigBlueFlask_${String(i + 1).padStart(2, '0')}`),
-    // silverKey: Array.from({ length: 4 }, (_, i) => `silverKey_${String(i + 1).padStart(2, '0')}`),
-    // goldKey: Array.from({ length: 4 }, (_, i) => `goldKey_${String(i + 1).padStart(2, '0')}`),
 
     enemy: {
         priestSpear: Array.from({ length: 4 }, (_, i) => `priest1_${String(i + 1).padStart(2, '0')}`),
@@ -149,18 +147,7 @@ export const ITEM_PROPERTIES = {
         damageReduction: 1,
         immediate: false,
         price: 10
-    },
-
-    // silverKey: {
-    //     type: 'key',
-    //     keyType: 'silver',
-    //     immediate: true
-    // },
-    // goldKey: {
-    //     type: 'key',
-    //     keyType: 'gold',
-    //     immediate: true
-    // }
+    }
 };
 
 export const SPAWN_WEIGHTS = {
@@ -191,12 +178,7 @@ export const SPAWN_WEIGHTS = {
         { key: 'bigRedFlask', weight: 2 },// увеличивает макс хп на 2
         { key: 'smallBlueFlask', weight: 5 },// даёт щит уменьшающий урон на 1 в течении трёх ходов
         { key: 'bigBlueFlask', weight: 1 }// даёт постоянный щит уменьшающий урон 1 но уменьшает макс урон на 1
-    ],
-
-    // key: [
-    //     { key: 'silverKey', weight: 3 },
-    //     { key: 'goldKey', weight: 1 }
-    // ]
+    ]
 };
 
 export const ENEMY_STATS = {
@@ -215,7 +197,6 @@ export const SPAWN_COUNTS = {
     food: { min: 1, max: 4, largeBonus: 1 },
     coin: { min: 1, max: 6, largeBonus: 2 },
     potion: { min: 1, max: 2, largeBonus: 1 },
-    // key: { min: 1, max: 1, largeBonus: 0 },
     enemy: { min: 0, max: 3, largeBonus: 1 }
 };
 

@@ -5,8 +5,8 @@ export default class MainMenuScene extends Phaser.Scene {
         super('MainMenuScene');
     }
 
-    preload(){
-         this.music = this.registry.get('music');
+    preload() {
+        this.music = this.registry.get('music');
     }
 
     create() {
@@ -25,7 +25,7 @@ export default class MainMenuScene extends Phaser.Scene {
             this.scaleDownBtn(startBtn, 0.15);
         });
         startBtn.on('pointerdown', () => {
-            this.scene.start('ShopScene');
+            this.scene.start('GameScene');
         });
 
         //задержка что бы create успел проверить есть ли музыка
@@ -52,10 +52,10 @@ export default class MainMenuScene extends Phaser.Scene {
 
         soundOn.on('pointerdown', () => {
             soundOff.setVisible(true);
-             this.music.stop();
+            this.music.stop();
             soundOff.on('pointerdown', () => {
                 soundOff.setVisible(false);
-                 this.music.play();
+                this.music.play();
             })
         })
 

@@ -21,17 +21,17 @@ export default class UIScene extends Phaser.Scene {
         this.add.image(0, 80, 'sprites', 'snake_headRight.png').setOrigin(0).setScale(2);
         const lengthCount = this.registry.get('playerLength');
 
-        const heartText = this.add.text(40, -10, `${heartsCount}`, { fontFamily: '"Jacquard 12"', fontSize: '48px', fill: '#fff' });
-        const coinText = this.add.text(35, 30, `${coinsCount}`, { fontFamily: '"Jacquard 12"', fontSize: '48px', fill: '#fff' });
-        const lengthText = this.add.text(40, 70, `${lengthCount}`, { fontFamily: '"Jacquard 12"', fontSize: '48px', fill: '#fff' });
+        this.heartText = this.add.text(40, -10, `${heartsCount}`, { fontFamily: '"Jacquard 12"', fontSize: '48px', fill: '#fff' });
+        this.coinText = this.add.text(35, 30, `${coinsCount}`, { fontFamily: '"Jacquard 12"', fontSize: '48px', fill: '#fff' });
+        this.lengthText = this.add.text(40, 70, `${lengthCount}`, { fontFamily: '"Jacquard 12"', fontSize: '48px', fill: '#fff' });
 
         this.registry.events.on('changedata', (parent, key, data) => {
             if (key === 'hp') {
-                heartText.setText(`${data}`);
+                this.heartText.setText(`${data}`);
             } else if (key === 'coins') {
-                coinText.setText(`${data}`);
+                this.coinText.setText(`${data}`);
             } else if (key === 'playerLength') {
-                lengthText.setText(`${data}`);
+                this.lengthText.setText(`${data}`);
             }
         });
 
@@ -107,8 +107,6 @@ export default class UIScene extends Phaser.Scene {
             this.activeItems.push(itemSprite);
         });
     }
-
-
 
     useInventoryItem(index) {
         this.registry.events.emit('useInventoryItem', index);
@@ -312,22 +310,26 @@ export default class UIScene extends Phaser.Scene {
     createShopSlots() {
         if (this.shopSlots) this.shopSlots.forEach(slot => slot.destroy());
         this.shopSlots = [];
+        this.shopSlotNumbers = [];
 
         const slotPositions = [
-            { x: 970, y: 0 },
-            { x: 1020, y: 0 },
-            { x: 1070, y: 0 }
+            { x: 970, y: 40 },
+            { x: 1020, y: 40 },
+            { x: 1070, y: 40 }
         ];
 
         slotPositions.forEach((pos, index) => {
-            const slot = this.add.image(pos.x, pos.y, 'gui', 'slot.png').setOrigin(0).setScale(2);
+            const slot = this.add.image(pos.x, pos.y, 'gui', 'slot.png')
+                .setOrigin(0)
+                .setScale(2);
 
-            this.add.text(pos.x + 12, pos.y + 12, (index + 1).toString(), {
+            const numberText = this.add.text(pos.x + 12, pos.y + 12, (index + 1).toString(), {
                 fontSize: '16px',
                 fill: '#000000'
             }).setOrigin(0.5);
 
             this.shopSlots.push(slot);
+            this.shopSlotNumbers.push(numberText);
         })
     }
 

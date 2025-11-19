@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import TurnManager from '../systems/TurnManager.js';
-import { Directions } from '../entities/consts.js';
+import { Directions, ITEM_PROPERTIES, TILE_SIZE, frameName } from '../entities/consts.js';
 import { generateMap } from '../generation/MapGenerator.js';
 import { createSnake } from '../utils/createHelper.js';
 
@@ -39,7 +39,11 @@ export default class GameScene extends Phaser.Scene {
             return;
         }
 
-        this.player = createSnake(this, this.mapData.start, 'Right');
+        this.rooms = this.mapData.rooms;
+
+        this.spawnShopItems();
+
+        this.player = createSnake(this, this.mapData.start, 'Right', this.registry.get('length'));
 
         if (!this.player) {
             console.error('Failed to create snake');
@@ -296,17 +300,6 @@ export default class GameScene extends Phaser.Scene {
 
     applyItemEffects(item) {
         const effects = [];
-
-        if (item.keyType) {
-            if (item.keyType === 'silver') {
-                this.registry.set('silverKeys', this.registry.get('silverKeys') + 1);
-                effects.push({ text: `+Silver Key`, color: 'silver' })
-            } else if (item.keyType === 'gold') {
-                this.registry.set('goldKeys', this.registry.get('goldKeys') + 1);
-                effects.push({ text: `+Gold Key`, color: 'gold' })
-            }
-            return;
-        }
 
         if (item.healthGain) {
             const currentHP = this.registry.get('hp');
@@ -649,11 +642,14 @@ export default class GameScene extends Phaser.Scene {
     completeLevel() {
         console.log('Level completed! Going to shop...');
 
+        const currentLength = this.player.getLength();
+        this.registry.set('length', currentLength);
+
         this.registry.set('level', this.registry.get('level') + 1);
 
         this.showFloatingText('Level Complete!', 'gold', this.player.headSprite.x, this.player.headSprite.y - 20);
 
-        this.time.delayedCall(1000, () => {
+        this.time.delayedCall(500, () => {
             this.scene.start('ShopScene');
         });
     }
@@ -666,5 +662,114 @@ export default class GameScene extends Phaser.Scene {
 
         this.scene.launch('GameOverScene');
         this.scene.bringToTop('GameOverScene');
+    }
+
+    spawnShopItems() {
+        const purchasedItems = this.registry.get('playerItems') || [];
+
+        if (purchasedItems.length === 0) return;
+
+        const startRoom = this.mapData.rooms.find(room => room.isStart);
+        if (!startRoom) {
+            console.error('Start room not found');
+            return;
+        }
+
+        const floorPositions = [];
+        for (let x = startRoom.x + 1; x < startRoom.x + startRoom.width - 1; x++) {
+            for (let y = startRoom.y + 1; y < startRoom.y + startRoom.height - 1; y++) {
+                const tileKey = `${x},${y}`;
+                if (this.mapTiles[tileKey] === '.' && this.isValidSpawnPosition(x, y)) {
+                    floorPositions.push({ x, y });
+                }
+            }
+        }
+
+        const shuffledPositions = [...floorPositions].sort(() => 0.5 - Math.random());
+
+        purchasedItems.forEach((itemKey, index) => {
+            if (index < shuffledPositions.length) {
+                const pos = shuffledPositions[index];
+                this.createShopItem(itemKey, pos.x, pos.y);
+            }
+        });
+
+        this.registry.set('playerItems', []);
+        this.scene.get('UIScene').updateShopItems();
+    }
+
+    createShopItem(itemKey, gridX, gridY) {
+        const worldX = gridX * TILE_SIZE;
+        const worldY = gridY * TILE_SIZE;
+        const itemProps = ITEM_PROPERTIES[itemKey];
+
+        if (!itemProps) {
+            console.error('Item properties not found for:', itemKey);
+            return;
+        }
+
+        try {
+            let frame;
+
+            if (itemProps.type === 'potion') {
+                frame = frameName(`${itemKey}_01`);
+            } else {
+                frame = frameName(itemKey);
+            }
+
+            const item = this.add.image(worldX + TILE_SIZE / 6, worldY + TILE_SIZE / 6, 'sprites', frame)
+                .setOrigin(0)
+                .setDepth(10)
+                .setScale(0.7);
+
+            Object.keys(itemProps).forEach(prop => {
+                item[prop] = itemProps[prop];
+            });
+
+            item.type = itemProps.type;
+            item.subType = itemKey;
+            item.gridX = gridX;
+            item.gridY = gridY;
+            item.immediate = itemProps.immediate || false;
+
+            this.tweens.add({
+                targets: item,
+                y: item.y - 3,
+                duration: 800,
+                yoyo: true,
+                repeat: -1,
+                ease: 'ease'
+            });
+
+            if (!this.items) this.items = [];
+            this.items.push(item);
+
+            console.log(`Created shop item: ${itemKey} at (${gridX}, ${gridY})`);
+        } catch (error) {
+            console.error('Error creating shop item:', itemKey, error);
+        }
+    }
+
+    isValidSpawnPosition(x, y) {
+        const tileKey = `${x},${y}`;
+
+        if (!this.mapTiles[tileKey]) {
+            return false;
+        }
+
+        if (this.mapTiles[tileKey] !== '.') {
+            return false;
+        }
+
+        const neighbors = [
+            `${x - 1},${y}`, `${x + 1},${y}`,
+            `${x},${y - 1}`, `${x},${y + 1}`
+        ];
+
+        const hasDoor = neighbors.some(neighbor =>
+            this.mapTiles[neighbor] === 'D' || this.mapTiles[neighbor] === 'E'
+        );
+
+        return !hasDoor;
     }
 }

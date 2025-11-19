@@ -52,10 +52,6 @@ export class EntitySpawner {
             this.spawnPotion(room, floorPositions);
         }
 
-        // if (Math.random() < this.spawnRates.key) {
-        //     this.spawnKey(room, floorPositions);
-        // }
-
         if (room.type !== 'treasure' && Math.random() < this.spawnRates.enemy) {
             this.spawnEnemy(room, floorPositions);
         }
@@ -106,11 +102,6 @@ export class EntitySpawner {
         this.spawnRandomEntities(positions, count, 'potion');
     }
 
-    // spawnKey(room, positions) {
-    //     const count = this.getSpawnCountForRoom(room, 'key');
-    //     this.spawnRandomEntities(positions, count, 'key');
-    // }
-
     spawnEnemy(room, positions) {
         const count = this.getSpawnCountForRoom(room, 'enemy');
         this.spawnRandomEntities(positions, count, 'enemy');
@@ -157,9 +148,6 @@ export class EntitySpawner {
             case 'potion':
                 entityCreated = this.createPotion(worldX, worldY);
                 break;
-            // case 'key':
-            //     entityCreated = this.createKey(worldX, worldY);
-            //     break;
             case 'enemy':
                 entityCreated = this.createEnemy(worldX, worldY);
                 break;
@@ -176,7 +164,7 @@ export class EntitySpawner {
         const foodProps = ITEM_PROPERTIES[foodType];
 
         try {
-            const food = this.scene.add.sprite(x+TILE_SIZE/4, y+TILE_SIZE/4, 'sprites', frameName(`${foodType}`))
+            const food = this.scene.add.sprite(x+TILE_SIZE/6, y+TILE_SIZE/6, 'sprites', frameName(`${foodType}`))
                 .setOrigin(0)
                 .setDepth(10)
                 .setScale(0.7);
@@ -289,54 +277,6 @@ export class EntitySpawner {
             return false;
         }
     }
-
-    // createKey(x, y) {
-    //     const keyTypeObj = Phaser.Math.RND.weightedPick(this.keyWeights);
-    //     const keyType = keyTypeObj.key;
-    //     const keyFrames = TEXTURES[keyType];
-    //     const keyProps = ITEM_PROPERTIES[keyType];
-
-    //     if (!keyFrames) {
-    //         console.error('Key frames not found for type:', keyType);
-    //         return;
-    //     }
-
-    //     try {
-    //         const firstFrame = keyFrames[0];
-    //         const key = this.scene.add.sprite(x, y, 'sprites', frameName(`${firstFrame}`))
-    //             .setOrigin(0)
-    //             .setDepth(10);
-
-    //         const animKey = `${keyType}_anim`;
-    //         if (!this.scene.anims.exists(animKey)) {
-    //             const frames = keyFrames.map(frame => ({
-    //                 key: 'sprites',
-    //                 frame: frameName(`${frame}`)
-    //             }));
-
-    //             this.scene.anims.create({
-    //                 key: animKey,
-    //                 frames: frames,
-    //                 frameRate: 6,
-    //                 repeat: -1
-    //             });
-    //         }
-
-    //         Object.assign(key, keyProps);
-    //         key.play(animKey);
-    //         key.type = 'key';
-    //         key.subType = keyType;
-    //         key.gridX = Math.floor(x / TILE_SIZE);
-    //         key.gridY = Math.floor(y / TILE_SIZE);
-
-    //         if (!this.scene.items) this.scene.items = [];
-    //         this.scene.items.push(key);
-    //         return true;
-    //     } catch (error) {
-    //         console.error('Error creating key:', keyType, error);
-    //         return false;
-    //     }
-    // }
 
     createEnemy(x, y) {
         const enemyData = Phaser.Math.RND.weightedPick(this.enemyWeights);

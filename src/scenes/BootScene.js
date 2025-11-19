@@ -17,20 +17,17 @@ export default class BootScene extends Phaser.Scene {
         this.loadAssets();
 
         this.load.on('complete', () => {
-            // const spriteFrames = this.textures.get('sprites').getFrameNames();
-            // console.log('🔍 Все кадры атласа "sprites":', spriteFrames);
             logo.destroy();
 
             this.registry.set('hp', 10);
             this.registry.set('maxHP', 10);
             this.registry.set('dmg', 2);
             this.registry.set('baseDmg', 2);
-            this.registry.set('coins', 0);
+            this.registry.set('permanentShield', 0);
+            this.registry.set('coins', 10);
             this.registry.set('scores', 0);
             this.registry.set('level', 1);
             this.registry.set('playerLength', 3);
-            this.registry.set('silverKeys', 0);
-            this.registry.set('goldKeys', 0);
             this.registry.set('playerInventory', [null, null, null, null, null]);
             this.registry.set('playerItems', []);
             this.registry.set('shopRefresh', 1);

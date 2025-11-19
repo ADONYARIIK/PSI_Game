@@ -224,7 +224,7 @@ export default class ShopScene extends Phaser.Scene {
 
     generatePrice(value) {
         const modul = Phaser.Math.Between(1, 3);
-        const price = Math.ceil(value * (this.registry.get('level')) / modul);
+        const price = Math.ceil(value * (this.registry.get('level') - 1) / modul);
         return price;
     }
 
@@ -233,6 +233,8 @@ export default class ShopScene extends Phaser.Scene {
             this.showMessage('You don\'t have enough coins!', '#ff0000', this.refreshPriceText.x - 20, this.refreshPriceText.y - 20);
             return;
         }
+        this.registry.set('coins', this.registry.get('coins') - this.registry.get('refreshPrice'));
+
         const refreshPrice = this.registry.get('refreshPrice') + Phaser.Math.Between(1, 2);
         this.registry.set('refreshPrice', refreshPrice)
         this.refreshPriceText.setText(`${refreshPrice}`);
@@ -258,6 +260,8 @@ export default class ShopScene extends Phaser.Scene {
             this.showMessage('No space in inventory!', '#ff0000', item.x, item.y);
             return;
         }
+
+        this.registry.set('coins', this.registry.get('coins') - price);
 
         playerItems.push(item.itemKey);
         this.registry.set('playerItems', playerItems);
