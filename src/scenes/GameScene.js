@@ -14,10 +14,13 @@ export default class GameScene extends Phaser.Scene {
         this.activeEffects = [];
         this.floatingTextQueue = [];
         this.isShowingFloatingText = false;
-        this.isGameOver = false;
     }
 
     create() {
+        this.lastLength = this.registry.get('playerLength');
+
+        console.log(this.registry.get('level'), this.registry.get('coins'), this.registry.get('playerLength'), this.registry.get('scores'));
+
         this.scene.launch('SettingsScene');
         this.scene.bringToTop('SettingsScene');
         this.scene.launch('UIScene');
@@ -29,8 +32,10 @@ export default class GameScene extends Phaser.Scene {
         overlay.setScrollFactor(0);
         overlay.setDepth(999);
 
-        // this.mapData = generateMap(this, Phaser.Math.Between(5, 15));
-        this.mapData = generateMap(this, 3);
+        // this.mapData = generateMap(this, 15);
+
+        const roomCount = Math.min(3 + this.registry.get('level') * 2, 15);
+        this.mapData = generateMap(this, roomCount);
 
         this.mapTiles = this.mapData.mapTiles;
 
@@ -41,14 +46,16 @@ export default class GameScene extends Phaser.Scene {
 
         this.rooms = this.mapData.rooms;
 
-        this.spawnShopItems();
-
         this.player = createSnake(this, this.mapData.start, 'Right', this.registry.get('length'));
 
         if (!this.player) {
             console.error('Failed to create snake');
             return;
         }
+
+        this.spawnShopItems();
+
+        this.recalculateStats();
 
         this.cameras.main.setBounds(
             this.mapData.bounds.left,
@@ -59,14 +66,6 @@ export default class GameScene extends Phaser.Scene {
 
         // this.cameras.main.startFollow(this.player.headSprite);
         this.cameras.main.setZoom(2.5);
-
-        // this.cameras.main.zoom = 1;
-        // this.cameras.main.zoom = 1.5;
-        // this.cameras.main.setScroll(0, 0);
-
-        // console.log('Camera bounds:', this.cameras.main.getBounds());
-        // console.log('Snake position:', this.player.headSprite.x, this.player.headSprite.y);
-        // console.log('Start room:', mapData.start);
 
         if (!this.items) this.items = [];
         if (!this.enemies) this.enemies = [];
@@ -108,44 +107,25 @@ export default class GameScene extends Phaser.Scene {
                     const tileKey = `${gridX},${gridY}`;
                     const tile = this.mapData.mapTiles[tileKey];
 
-                    if (tile === '#') {
-                        console.log(`Wall collision at (${gridX},${gridY})`);
-                        this.gameOver();
-                        return true;
-                    }
-
-                    return false;
+                    return tile === '#';
                 },
                 getEntityAt: (worldX, worldY) => {
                     const exit = this.exits.find(e => e.gridX === worldX && e.gridY === worldY);
-                    if (exit) {
-                        console.log(`Found exit at grid(${worldX},${worldY})`);
-                        return exit;
-                    }
+                    if (exit) return exit;
 
                     const item = this.items.find(it => {
-                        const itemGridX = it.gridX;
-                        const itemGridY = it.gridY;
-                        const match = itemGridX === worldX && itemGridY === worldY;
-                        if (match) console.log(`Found item: ${it.type} at grid(${itemGridX},${itemGridY})`);
-                        return match;
+                        it.gridX === worldX && it.gridY === worldY;
                     });
                     if (item) return item;
 
                     const enemy = this.enemies.find(e => {
-                        const enemyGridX = e.gridX;
-                        const enemyGridY = e.gridY;
-                        const match = enemyGridX === worldX && enemyGridY === worldY;
-                        if (match) console.log(`Found enemy: ${e.subType} at grid(${enemyGridX},${enemyGridY})`);
-                        return match;
+                        e.gridX === worldX && e.gridY === worldY;
                     });
                     if (enemy) return enemy;
 
                     return null;
                 },
                 onEat: (item) => {
-                    console.log(`Eating item: ${item.type}`);
-
                     if (item.type === 'exit') {
                         this.completeLevel();
                         return;
@@ -154,8 +134,6 @@ export default class GameScene extends Phaser.Scene {
                     this.handleItemCollection(item);
                 },
                 onCollide: (entity) => {
-                    console.log(`Collision with: ${entity.type} ${entity.subType}`);
-
                     if (entity.type === 'exit') {
                         this.completeLevel();
                         return;
@@ -166,7 +144,23 @@ export default class GameScene extends Phaser.Scene {
                 getPlayerHead: () => ({
                     x: this.player.segments[0].x,
                     y: this.player.segments[0].y
-                })
+                }),
+                isSnakeAt: (x, y) => {
+                    return this.player.occupancy.has(`${x},${y}`);
+                },
+                getEnemyAt: (x, y, excludeEnemy = null) => {
+                    return this.enemies.find(e =>
+                        e.gridX === x && e.gridY === y && e !== excludeEnemy
+                    );
+                },
+                onSelfCollision: () => {
+                    console.log('Self collision detected!');
+                    this.gameOver();
+                },
+                onWallCollision: () => {
+                    console.log('Wall collision detected!');
+                    this.gameOver();
+                }
             });
         });
 
@@ -176,6 +170,7 @@ export default class GameScene extends Phaser.Scene {
 
     update() {
         this.registry.set('playerLength', this.player.getLength());
+        this.updateStatsFromLength();
 
         const cam = this.cameras.main;
 
@@ -309,8 +304,15 @@ export default class GameScene extends Phaser.Scene {
         }
 
         if (item.maxHealthIncrease) {
-            const currentMaxHP = this.registry.get('maxHP');
-            this.registry.set('maxHP', currentMaxHP + item.maxHealthIncrease);
+            const currentMaxHP = this.registry.get('baseMaxHP');
+            this.registry.set('baseMaxHP', currentMaxHP + item.maxHealthIncrease);
+
+            this.recalculateStats();
+
+            const currentHP = this.registry.get('hp');
+            const newMaxHP = this.registry.get('maxHP');
+            this.registry.set('hp', Math.min(newMaxHP, currentHP + item.maxHealthIncrease));
+
             effects.push({ text: `Max HP +${item.maxHealthIncrease}`, color: 'yellow' })
         }
 
@@ -583,6 +585,7 @@ export default class GameScene extends Phaser.Scene {
 
         if (enemy.health <= 0) {
             // this.showDeathEffect(enemy.x, enemy.y);
+            this.showFloatingText(`${enemy.subType} slayed`, 'red');
             enemy.destroy();
             this.enemies = this.enemies.filter(e => e !== enemy);
             this.registry.set('scores', this.registry.get('scores') + 30);
@@ -593,7 +596,7 @@ export default class GameScene extends Phaser.Scene {
             enemyDamage = Math.max(0, enemyDamage - playerShield);
 
             if (enemyDamage > 0) {
-                this.registry.set('hp', this.registry.get('hp') - enemyDamage);
+                this.registry.set('hp', Math.max(0, this.registry.get('hp') - enemyDamage));
 
                 this.time.delayedCall(400, () => {
                     this.showFloatingText(`HP -${enemyDamage}`, '#ff0000');
@@ -655,13 +658,26 @@ export default class GameScene extends Phaser.Scene {
     }
 
     gameOver() {
-        if (this.isGameOver) return;
+        if (this.registry.get('isGameOver')) return;
 
-        this.isGameOver = true;
+        this.registry.set('isGameOver', true);
         console.log('Game Over - Player died');
 
-        this.scene.launch('GameOverScene');
-        this.scene.bringToTop('GameOverScene');
+        this.turnManager.locked = true;
+
+        const gameOverData = {
+            level: this.registry.get('level') || 1,
+            scores: this.registry.get('scores') || 0,
+            coins: this.registry.get('coins') || 0,
+            playerLength: this.registry.get('playerLength') || 3
+        };
+
+        this.scene.stop('UIScene');
+        this.scene.stop('SettingsScene');
+
+        this.time.delayedCall(400, () => {
+            this.scene.start('GameOverScene', gameOverData);
+        });
     }
 
     spawnShopItems() {
@@ -771,5 +787,52 @@ export default class GameScene extends Phaser.Scene {
         );
 
         return !hasDoor;
+    }
+
+    updateStatsFromLength() {
+        const currentLength = this.registry.get('playerLength');
+
+        if (currentLength === this.lastLength) {
+            return
+        }
+
+        this.recalculateStats();
+        this.lastLength = currentLength;
+
+        const length = currentLength - 3;
+        if (length % 5 === 0 && length > 0) {
+            this.showFloatingText('Max HP +1', 'green');
+        }
+        if (length % 10 === 0 && length > 3) {
+            this.showFloatingText('Damage +1!', 'red');
+        }
+        if (length % 20 === 0 && length > 3) {
+            this.showFloatingText('Shield +1!', 'blue');
+        }
+    }
+
+    recalculateStats() {
+        const length = this.registry.get('playerLength') - 3;
+
+        const baseMaxHP = this.registry.get('baseMaxHP');
+        const hpBonus = Math.floor(length / 5);
+        const newMaxHP = baseMaxHP + hpBonus;
+
+        const baseDmg = this.registry.get('baseDmg');
+        const dmgBonus = Math.floor(length / 10);
+        const newDmg = baseDmg + dmgBonus;
+
+        const baseShield = this.registry.get('basePermanentShield');
+        const shieldBonus = Math.floor(length / 20);
+        const newShield = baseShield + shieldBonus;
+
+        this.registry.set('maxHP', newMaxHP);
+        this.registry.set('dmg', newDmg);
+        this.registry.set('permanentShield', newShield);
+
+        const currentHP = this.registry.get('hp');
+        if (currentHP > newMaxHP) {
+            this.registry.set('hp', newMaxHP);
+        }
     }
 }

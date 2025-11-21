@@ -4,73 +4,48 @@ export default class SettingsScene extends Phaser.Scene {
     constructor() {
         super('SettingsScene');
     }
-    preload(){
-        this.music = this.registry.get('music');
-    }
+
     create() {
-        //видимый контейнер
+        this.music = this.registry.get('music') || this.registry.get('backgroundMusic');
+
         const settingsBox = this.add.image(0, 0, 'gui', 'settingsBox.png').setScale(0.4);
-
-        //кнопка выхода 
         const exit = this.add.image(155, -215, 'gui', "exit.png").setScale(0.05).setInteractive({ useHandCursor: true });
-
-        //контейнер
         const container = this.add.container(500, 300, [settingsBox, exit]).setAlpha(0).setVisible(false);
 
-        //текст
         const soundText = this.add.text(-40, -10, 'Sound', { fontFamily: '"Jacquard 12"', fontSize: '32px', fill: '#ffffffff' });
         container.add(soundText);
 
-        // вкл/выкл музыку
-
-
-        
-
-        const soundOff = this.add.image(0, 70, 'gui', "soundOff.png").setScale(0.1).setVisible(false).setInteractive({ useHandCursor: true });
-        soundOff.on('pointerover', () => {
-            this.scaleUpBtn(soundOff, 0.12);
-        });
-        soundOff.on('pointerout', () => {
-            this.scaleDownBtn(soundOff, 0.1);
-        });
-        if (!this.music.isPlaying) {
-            soundOff.setVisible(true);
-        }
         const soundOn = this.add.image(0, 70, 'gui', "soundOn.png").setScale(0.1).setInteractive({ useHandCursor: true });
-        soundOn.on('pointerover', () => {
-            this.scaleUpBtn(soundOn, 0.12);
+        const soundOff = this.add.image(0, 70, 'gui', "soundOff.png").setScale(0.1).setInteractive({ useHandCursor: true });
+
+        [soundOn, soundOff].forEach(btn => {
+            btn.on('pointerover', () => this.scaleUpBtn(btn, 0.12));
+            btn.on('pointerout', () => this.scaleDownBtn(btn, 0.1));
         });
-        soundOn.on('pointerout', () => {
-            this.scaleDownBtn(soundOn, 0.1);
-        });
 
-
-
+        this.updateSoundButtons(soundOn, soundOff);
 
         soundOn.on('pointerdown', () => {
-            soundOff.setVisible(true);
-            this.music.stop();
-            soundOff.on('pointerdown', () => {
-                soundOff.setVisible(false);
+            if (this.music && this.music.isPlaying) {
+                this.music.stop();
+                this.updateSoundButtons(soundOn, soundOff);
+            }
+        });
+
+        soundOff.on('pointerdown', () => {
+            if (this.music && !this.music.isPlaying) {
                 this.music.play();
-            })
-        })
+                this.updateSoundButtons(soundOn, soundOff);
+            }
+        });
+
         container.add([soundOn, soundOff]);
 
-
-        //кнопка домой
         const home = this.add.image(0, -80, 'gui', 'home.png').setScale(0.07).setInteractive({ useHandCursor: true });
         container.add(home);
 
-
-        home.on('pointerover', () => {
-            this.scaleUpBtn(home, 0.09);
-        });
-        home.on('pointerout', () => {
-            this.scaleDownBtn(home, 0.07);
-        });
-
-        //закрытие всех сцен и возвращение в главное меню
+        home.on('pointerover', () => this.scaleUpBtn(home, 0.09));
+        home.on('pointerout', () => this.scaleDownBtn(home, 0.07));
         home.on('pointerdown', () => {
             this.scene.stop('GameScene');
             this.scene.stop('UIScene');
@@ -78,71 +53,64 @@ export default class SettingsScene extends Phaser.Scene {
             this.scene.start('MainMenuScene');
         });
 
-        //текст домой
         const homeText = this.add.text(-40, -160, 'Home', { fontFamily: '"Jacquard 12"', fontSize: '32px', fill: '#ffffffff' });
         container.add(homeText);
 
-
-
-        //иконка слева снизу экрана
         const settingsIcon = this.add.image(0, 589, 'gui', 'settingsIcon.png').setOrigin(0).setScale(0.05).setInteractive({ useHandCursor: true });
 
-        //переменная следящая за видимостью настроек
         let settingsVisible = false;
-
-        //открытие окна с настройками
         settingsIcon.on('pointerdown', () => {
-            if (!settingsVisible) {
+            settingsVisible = !settingsVisible;
+            if (settingsVisible) {
                 this.showSettings(container);
-                settingsVisible = true;
-            }
-            else {
+                this.updateSoundButtons(soundOn, soundOff);
+            } else {
                 this.hideSettings(container);
-                settingsVisible = false;
             }
         });
 
-        //кнопка выхода
         exit.on('pointerdown', () => {
-            this.hideSettings(container)
-        })
+            this.hideSettings(container);
+            settingsVisible = false;
+        });
     }
-    update() {
 
+    updateSoundButtons(soundOn, soundOff) {
+        if (this.music) {
+            const isPlaying = this.music.isPlaying;
+            soundOn.setVisible(isPlaying);
+            soundOff.setVisible(!isPlaying);
+        } else {
+            soundOn.setVisible(false);
+            soundOff.setVisible(true);
+        }
     }
+
     showSettings(obj) {
-        obj.setVisible(true)
+        obj.setVisible(true);
         this.tweens.add({
             targets: obj,
             alpha: 1,
             duration: 300,
             ease: 'Back.Out'
-        })
+        });
     }
+
     hideSettings(obj) {
-        obj.setVisible(false)
         this.tweens.add({
             targets: obj,
             alpha: 0,
             duration: 300,
-            ease: 'Back.In'
-        })
-    }
-    scaleUpBtn(obj, scale) {
-        this.tweens.add({
-            targets: obj,
-            scale: scale,
-            duration: 150,
-            ease: 'Power1'
-        });
-    }
-    scaleDownBtn(obj, scale) {
-        this.tweens.add({
-            targets: obj,
-            scale: scale,
-            duration: 150,
-            ease: 'Power2'
+            ease: 'Back.In',
+            onComplete: () => obj.setVisible(false)
         });
     }
 
+    scaleUpBtn(obj, scale) {
+        this.tweens.add({ targets: obj, scale, duration: 150, ease: 'Power1' });
+    }
+
+    scaleDownBtn(obj, scale) {
+        this.tweens.add({ targets: obj, scale, duration: 150, ease: 'Power2' });
+    }
 }

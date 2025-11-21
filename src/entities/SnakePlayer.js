@@ -121,37 +121,72 @@ export default class SnakePlayer {
         }
 
         const entity = getEntityAt(newHead.x, newHead.y);
-        let ate = false;
-        if (entity) {
-            if (entity.type && entity.type !== 'enemy') {
-                this.grow += entity.growAmount || 0;
-                await this._animateHeadEat(this.direction);
-                onEat(entity);
-                ate = true;
-            } else {
-                await this._animateHeadShock(this.direction);
-                onCollide(entity);
-                this.locked = false;
-                return { died: false, collideWith: entity };
-            }
-        } else {
-            await this._animateHeadMove(this.direction);
+
+        if (entity && entity.type === 'enemy') {
+            await this._animateHeadShock(this.direction);
+            onCollide(entity);
+            this.locked = false;
+            return { died: false, collideWith: entity };
         }
+
+        await this._animateAllSegments(newHead);
 
         this.segments.unshift(newHead);
         this.occupancy.add(this._key(newHead.x, newHead.y));
 
         if (this.grow > 0) {
             this.grow--;
-        } else {
+        }
+        else {
             const tail = this.segments.pop();
             this.occupancy.delete(this._key(tail.x, tail.y));
         }
 
         this.syncSpritesToSegments();
 
+        if (entity && entity.type !== 'enemy') {
+            if (entity.type && entity.type !== 'enemy') {
+                this.grow += entity.growAmount || 0;
+                await this._animateHeadEat(this.direction);
+                onEat(entity);
+            }
+        }
+
         this.locked = false;
-        return { died: false, ate, collideWith: entity || null };
+        return { died: false, ate: !!entity, collideWith: null };
+    }
+
+    async _animateAllSegments(newHead) {
+        const promises = [];
+
+        promises.push(this._animateHeadMove(this.direction));
+
+        if (this.segments.length > 1) {
+            for (let i = 1; i < this.segments.length; i++) {
+                const prevSeg = this.segments[i - 1];
+                const currSeg = this.segments[i];
+
+                if (prevSeg.x !== currSeg.x || prevSeg.y !== currSeg.y) {
+                    const sprite = this.sprites[i];
+                    promises.push(this._tweenSegment(sprite, prevSeg.x * TILE_SIZE, prevSeg.y * TILE_SIZE));
+                }
+            }
+        }
+
+        await Promise.all(promises);
+    }
+
+    _tweenSegment(sprite, targetX, targetY) {
+        return new Promise(resolve => {
+            this.scene.tweens.add({
+                targets: sprite,
+                x: targetX,
+                y: targetY,
+                duration: 180,
+                ease: 'Linear',
+                onComplete: resolve
+            });
+        });
     }
 
     _animateHeadMove(direction) {
@@ -295,5 +330,9 @@ export default class SnakePlayer {
 
     getLength() {
         return this.segments.length;
+    }
+
+    getDirection() {
+        return this.direction;
     }
 }

@@ -59,9 +59,9 @@ export const ITEM_PROPERTIES = {
     },
     cake: {
         type: 'food',
-        healthGain: 4,
-        maxHealthIncrease: 3,
-        lengthGain: 2,
+        healthGain: 2,
+        maxHealthIncrease: 2,
+        lengthGain: 4,
         immediate: false,
         price: 4
     },

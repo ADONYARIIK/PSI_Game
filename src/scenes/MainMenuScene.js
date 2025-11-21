@@ -6,14 +6,10 @@ export default class MainMenuScene extends Phaser.Scene {
     }
 
     preload() {
-        this.music = this.registry.get('music');
+        this.music = this.registry.get('backgroundMusic');
     }
 
     create() {
-        //запуск сцены 
-        if (!this.scene.isActive('MusicScene')) {
-            this.scene.launch('MusicScene');
-        }
         this.add.image(0, -200, "gui", "mainMenuBackground.png").setOrigin(0).setScale(1.1);
         this.add.image(200, -100, "gui", "mainMenuLogo.png").setOrigin(0).setScale(0.5);
 

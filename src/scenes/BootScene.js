@@ -10,7 +10,6 @@ export default class BootScene extends Phaser.Scene {
     }
 
     create() {
-
         const { width, height } = this.scale;
         const logo = this.add.image(width / 2, height / 2, 'logo').setScale(0.8);
 
@@ -19,11 +18,16 @@ export default class BootScene extends Phaser.Scene {
         this.load.on('complete', () => {
             logo.destroy();
 
-            this.registry.set('hp', 10);
-            this.registry.set('maxHP', 10);
-            this.registry.set('dmg', 2);
-            this.registry.set('baseDmg', 2);
+            const baseMaxHP = 10;
+            const baseDmg = 2;
+
+            this.registry.set('hp', baseMaxHP);
+            this.registry.set('maxHP', baseMaxHP);
+            this.registry.set('baseMaxHP', baseMaxHP);
+            this.registry.set('dmg', baseDmg);
+            this.registry.set('baseDmg', baseDmg);
             this.registry.set('permanentShield', 0);
+            this.registry.set('basePermanentShield', 0);
             this.registry.set('coins', 10);
             this.registry.set('scores', 0);
             this.registry.set('level', 1);
@@ -32,6 +36,11 @@ export default class BootScene extends Phaser.Scene {
             this.registry.set('playerItems', []);
             this.registry.set('shopRefresh', 1);
             this.registry.set('refreshPrice', 1);
+            this.registry.set('isGameOver', false);
+
+            const music = this.sound.add('theme', { loop: true, volume: 0.5 });
+            music.play();
+            this.registry.set('backgroundMusic', music);
 
             this.scene.start('MainMenuScene');
         })
