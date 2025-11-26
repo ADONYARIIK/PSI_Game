@@ -49,10 +49,6 @@ export default class SnakePlayer {
         this.locked = false;
     }
 
-    _key(x, y) {
-        return `${x},${y}`;
-    }
-
     enqueueDirection(dir) {
         if (!dir) return;
 
@@ -65,21 +61,6 @@ export default class SnakePlayer {
         if (this.inputQueue.length < this.maxInputQueue) {
             this.inputQueue.push(dir);
         }
-    }
-
-    _popNextDirection() {
-        if (this.inputQueue.length) return this.inputQueue.shift();
-        return this.direction;
-    }
-
-    _willSelfCollide(newHead, willRemoveTail) {
-        const key = this._key(newHead.x, newHead.y);
-        if (!this.occupancy.has(key)) return false;
-        if (willRemoveTail) {
-            const tail = this.segments[this.segments.length - 1];
-            if (tail.x === newHead.x && tail.y === newHead.y) return false;
-        }
-        return true;
     }
 
     async takeTurn(dir = null, helpers = {}) {
@@ -129,7 +110,7 @@ export default class SnakePlayer {
             return { died: false, collideWith: entity };
         }
 
-        await this._animateAllSegments(newHead);
+        await this._animateAllSegments();
 
         this.segments.unshift(newHead);
         this.occupancy.add(this._key(newHead.x, newHead.y));
@@ -144,19 +125,19 @@ export default class SnakePlayer {
 
         this.syncSpritesToSegments();
 
-        if (entity && entity.type !== 'enemy') {
-            if (entity.type && entity.type !== 'enemy') {
-                this.grow += entity.growAmount || 0;
-                await this._animateHeadEat(this.direction);
-                onEat(entity);
-            }
+        const entityAfterMove = getEntityAt(newHead.x, newHead.y);
+        if (entityAfterMove && entityAfterMove.type !== 'enemy') {
+            this.grow += entityAfterMove.growAmount || 0;
+            await this._animateHeadEat(this.direction);
+            onEat(entityAfterMove);
         }
 
         this.locked = false;
         return { died: false, ate: !!entity, collideWith: null };
     }
 
-    async _animateAllSegments(newHead) {
+
+    async _animateAllSegments() {
         const promises = [];
 
         promises.push(this._animateHeadMove(this.direction));
@@ -194,19 +175,19 @@ export default class SnakePlayer {
     }
 
     _animateHeadEat(direction) {
-        return this._tweenHeadToNextTile(direction, frameSequenceFor(direction, 'eat'));
+        return this._tweenHeadToNextTile(direction, frameSequenceFor(direction, 'eat', { duration: 200 }));
     }
 
     _animateHeadShock(direction) {
-        return this._tweenHeadToNextTile(direction, frameSequenceFor(direction, 'shock'), { shake: true });
+        return this._tweenHeadToNextTile(direction, frameSequenceFor(direction, 'shock'), { duration: 300, shake: true });
     }
 
     _tweenHeadToNextTile(direction, frames = [], options = {}) {
         const duration = options.duration || 180;
         const startX = this.headSprite.x;
         const startY = this.headSprite.y;
-        const endX = startX + direction.x * TILE_SIZE;
-        const endY = startY + direction.y * TILE_SIZE;
+        const endX = startX/* + direction.x * TILE_SIZE*/;
+        const endY = startY/* + direction.y * TILE_SIZE*/;
 
         return new Promise(resolve => {
             let frameIndex = 0;
@@ -240,6 +221,7 @@ export default class SnakePlayer {
             this.scene.tweens.add(tweenCfg);
         });
     }
+
 
     syncSpritesToSegments() {
         while (this.sprites.length < this.segments.length) {
@@ -318,6 +300,27 @@ export default class SnakePlayer {
             }
         }
     }
+
+
+    _key(x, y) {
+        return `${x},${y}`;
+    }
+
+    _popNextDirection() {
+        if (this.inputQueue.length) return this.inputQueue.shift();
+        return this.direction;
+    }
+
+    _willSelfCollide(newHead, willRemoveTail) {
+        const key = this._key(newHead.x, newHead.y);
+        if (!this.occupancy.has(key)) return false;
+        if (willRemoveTail) {
+            const tail = this.segments[this.segments.length - 1];
+            if (tail.x === newHead.x && tail.y === newHead.y) return false;
+        }
+        return true;
+    }
+
 
     debugLog() {
         console.log('Segments: ', this.segments);

@@ -93,6 +93,7 @@ export function chooseRoomTemplate(excludedTypes = [], prefferedTypes = []) {
     return pool.length > 0 ? Phaser.Utils.Array.GetRandom(pool) : { type: 'normal', ...RoomTemplates.normal };
 }
 
+
 function applyDecor(room, rules) {
     room.decorRules = rules;
 }

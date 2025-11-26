@@ -30,10 +30,32 @@ export class EntitySpawner {
     spawnAllEntities() {
         for (const room of this.rooms) {
             if (room.type === 'start' || room.isCorridor) continue;
-            this.spawnEntitiesInRoom(room);
+
+            if (room.type === 'boss') {
+                this.spawnBossInRoom(room);
+            } else {
+                this.spawnEntitiesInRoom(room);
+            }
         }
 
         this.spawnExits();
+    }
+
+
+    spawnBossInRoom(room) {
+        if (room.type !== 'boss') return;
+
+        const floorPositions = this.getFloorPositions(room);
+        if (floorPositions.length === 0) return;
+
+        const centerX = room.x + Math.floor(room.width / 2);
+        const centerY = room.y + Math.floor(room.height / 2);
+
+        let bossPosition = this.findValidBossPosition(centerX, centerY, room, floorPositions);
+
+        if (bossPosition) {
+            this.spawnBoss(bossPosition.x, bossPosition.y);
+        }
     }
 
     spawnEntitiesInRoom(room) {
@@ -52,39 +74,9 @@ export class EntitySpawner {
             this.spawnPotion(room, floorPositions);
         }
 
-        if (room.type !== 'treasure' && Math.random() < this.spawnRates.enemy) {
+        if (room.type !== 'treasure' && room.type !== 'boss' && Math.random() < this.spawnRates.enemy) {
             this.spawnEnemy(room, floorPositions);
         }
-    }
-
-    getFloorPositions(room) {
-        const positions = [];
-
-        for (let x = room.x + 1; x < room.x + room.width - 1; x++) {
-            for (let y = room.y + 1; y < room.y + room.height - 1; y++) {
-                const tileKey = `${x},${y}`;
-                if (this.mapTiles[tileKey] === '.' && this.isValidSpawnPosition(x, y)) {
-                    positions.push({ x, y });
-                }
-            }
-        }
-
-        return positions;
-    }
-
-    isValidSpawnPosition(x, y) {
-        const tileKey = `${x},${y}`;
-
-        if (this.mapTiles[tileKey] === 'D' || this.mapTiles[tileKey] === 'E') {
-            return false
-        }
-
-        const neighbors = [
-            `${x - 1},${y}`, `${x + 1},${y}`,
-            `${x},${y - 1}`, `${x},${y + 1}`
-        ];
-
-        return !neighbors.some(neighbor => this.mapTiles[neighbor] === 'D');
     }
 
     spawnFood(room, positions) {
@@ -107,56 +99,16 @@ export class EntitySpawner {
         this.spawnRandomEntities(positions, count, 'enemy');
     }
 
-    getSpawnCountForRoom(room, type) {
-        const config = this.spawnCounts[type];
-        let baseCount = Phaser.Math.Between(config.min, config.max);
-
-        const roomSize = room.width * room.height;
-        if (roomSize > 100) baseCount += config.largeBonus;
-
-        return baseCount;
-    }
-
-    spawnRandomEntities(positions, count, type) {
-        const shuffled = [...positions].sort(() => 0.5 - Math.random());
-        const spawnPositions = shuffled.slice(0, count);
-
-        for (const pos of spawnPositions) {
-            this.spawnEntity(pos.x, pos.y, type);
+    spawnExits() {
+        for (const room of this.rooms) {
+            if (room.hasExit) {
+                const exitX = room.x + Math.floor(room.width / 2);
+                const exitY = room.y + Math.floor(room.height / 2);
+                this.createExit(exitX, exitY);
+            }
         }
     }
 
-    spawnEntity(x, y, type) {
-        const key = `${x},${y}`;
-
-        if (this.occupiedPositions.has(key)) {
-            return;
-        }
-
-        const worldX = x * TILE_SIZE;
-        const worldY = y * TILE_SIZE;
-
-        let entityCreated = false;
-
-        switch (type) {
-            case 'food':
-                entityCreated = this.createFood(worldX, worldY);
-                break;
-            case 'coin':
-                entityCreated = this.createCoin(worldX, worldY);
-                break;
-            case 'potion':
-                entityCreated = this.createPotion(worldX, worldY);
-                break;
-            case 'enemy':
-                entityCreated = this.createEnemy(worldX, worldY);
-                break;
-        }
-
-        if (entityCreated) {
-            this.occupiedPositions.add(key);
-        }
-    }
 
     createFood(x, y) {
         const foodTypeObj = Phaser.Math.RND.weightedPick(this.foodWeights);
@@ -164,9 +116,9 @@ export class EntitySpawner {
         const foodProps = ITEM_PROPERTIES[foodType];
 
         try {
-            const food = this.scene.add.sprite(x+TILE_SIZE/6, y+TILE_SIZE/6, 'sprites', frameName(`${foodType}`))
-                .setOrigin(0)
-                .setDepth(10)
+            const food = this.scene.add.sprite(x, y, 'sprites', frameName(`${foodType}`))
+                .setOrigin(-0.3)
+                .setDepth(25)
                 .setScale(0.7);
 
             Object.assign(food, foodProps);
@@ -177,7 +129,7 @@ export class EntitySpawner {
 
             this.scene.tweens.add({
                 targets: food,
-                y: food.y-3,
+                y: food.y - 3,
                 duration: 800,
                 yoyo: true,
                 repeat: -1,
@@ -199,7 +151,7 @@ export class EntitySpawner {
         try {
             const coin = this.scene.add.sprite(x, y, 'sprites', frameName(`${coinFrame}`))
                 .setOrigin(0)
-                .setDepth(10);
+                .setDepth(25);
 
             if (!this.scene.anims.exists('coin_anim')) {
                 const frames = TEXTURES.coin.map(frame => ({
@@ -245,7 +197,7 @@ export class EntitySpawner {
             const firstFrame = potionFrames[0];
             const potion = this.scene.add.sprite(x, y, 'sprites', frameName(`${firstFrame}`))
                 .setOrigin(0)
-                .setDepth(10);
+                .setDepth(25);
 
             const animKey = `${potionType}_anim`;
             if (!this.scene.anims.exists(animKey)) {
@@ -291,7 +243,7 @@ export class EntitySpawner {
             const firstFrame = enemyFrames[0];
             const enemy = this.scene.add.sprite(x, y, 'sprites', frameName(`${firstFrame}`))
                 .setOrigin(0)
-                .setDepth(15);
+                .setDepth(30);
 
             const animKey = `${enemyData.key}_anim`;
             if (!this.scene.anims.exists(animKey)) {
@@ -311,6 +263,8 @@ export class EntitySpawner {
             enemy.play(animKey);
             enemy.type = 'enemy';
             enemy.subType = enemyData.key;
+            enemy.originalX = Math.floor(x / TILE_SIZE);
+            enemy.originalY = Math.floor(y / TILE_SIZE);
             enemy.gridX = Math.floor(x / TILE_SIZE);
             enemy.gridY = Math.floor(y / TILE_SIZE);
             enemy.health = enemyData.health;
@@ -321,8 +275,10 @@ export class EntitySpawner {
             enemy.sight = enemyData.sight;
             enemy.moveRadius = enemyData.moveRadius;
 
-            if (enemyData.lifesteal) enemy.lifesteal = true;
-            if (enemyData.moveCooldown) enemy.moveCooldown = enemyData.moveCooldown;
+            if (enemyData.lifesteal !== undefined) enemy.lifesteal = enemyData.lifesteal;
+            if (enemyData.moveCooldown !== undefined) enemy.moveCooldown = enemyData.moveCooldown;
+
+            enemy.moveCooldownCounter = 0;
 
             if (!this.scene.enemies) this.scene.enemies = [];
             this.scene.enemies.push(enemy);
@@ -330,16 +286,6 @@ export class EntitySpawner {
         } catch (error) {
             console.error('Error creating enemy:', enemyData.key, error);
             return false;
-        }
-    }
-
-    spawnExits() {
-        for (const room of this.rooms) {
-            if (room.hasExit) {
-                const exitX = room.x + Math.floor(room.width / 2);
-                const exitY = room.y + Math.floor(room.height / 2);
-                this.createExit(exitX, exitY);
-            }
         }
     }
 
@@ -364,5 +310,242 @@ export class EntitySpawner {
             console.error('Error creating exit:', error);
             return false;
         }
+    }
+
+    createBoss(x, y) {
+        const bossData = Phaser.Math.RND.weightedPick(this.enemyWeights);
+        const bossFrames = TEXTURES.enemy[bossData.key];
+
+        if (!bossFrames) {
+            console.error('Boss frames not found for type:', bossData.key);
+            return false;
+        }
+
+        try {
+            const firstFrame = bossFrames[0];
+            const boss = this.scene.add.sprite(x, y, 'sprites', frameName(`${firstFrame}`))
+                .setOrigin(0)
+                .setDepth(35)
+                .setScale(1.2);
+
+            const animKey = `${bossData.key}_anim`;
+            if (!this.scene.anims.exists(animKey)) {
+                const frames = bossFrames.map(frame => ({
+                    key: 'sprites',
+                    frame: frameName(`${frame}`)
+                }));
+
+                this.scene.anims.create({
+                    key: animKey,
+                    frames: frames,
+                    frameRate: 6,
+                    repeat: -1
+                });
+            }
+
+            boss.play(animKey);
+            boss.type = 'enemy';
+            boss.subType = bossData.key;
+            boss.gridX = Math.floor(x / TILE_SIZE);
+            boss.gridY = Math.floor(y / TILE_SIZE);
+
+            boss.health = bossData.health * 2;
+            boss.maxHealth = bossData.health * 2;
+            boss.damage = bossData.damage * 2;
+
+            if (bossData.key === 'skull') {
+                boss.shield = bossData.shield + 1;
+            } else if (bossData.key === 'vampire') {
+                boss.shield = Math.floor(bossData.shield * 1.5);
+            } else {
+                boss.shield = bossData.shield;
+            }
+
+            boss.range = bossData.range * 2;
+            boss.sight = bossData.sight * 2;
+            boss.moveRadius = bossData.moveRadius * 2;
+
+            if (bossData.lifesteal !== undefined) boss.lifesteal = bossData.lifesteal;
+            if (bossData.moveCooldown !== undefined) boss.moveCooldown = bossData.moveCooldown;
+
+            boss.moveCooldownCounter = 0;
+            boss.isBoss = true;
+
+            this.addBossEffects(boss);
+
+            if (!this.scene.enemies) this.scene.enemies = [];
+            this.scene.enemies.push(boss);
+            return true;
+        } catch (error) {
+            console.error('Error creating boss:', bossData.key, error);
+            return false;
+        }
+    }
+
+
+    getFloorPositions(room) {
+        const positions = [];
+
+        for (let x = room.x + 1; x < room.x + room.width - 1; x++) {
+            for (let y = room.y + 1; y < room.y + room.height - 1; y++) {
+                const tileKey = `${x},${y}`;
+                if (this.mapTiles[tileKey] === '.' && this.isValidSpawnPosition(x, y)) {
+                    positions.push({ x, y });
+                }
+            }
+        }
+
+        return positions;
+    }
+
+    isValidSpawnPosition(x, y) {
+        const tileKey = `${x},${y}`;
+        const tile = this.mapTiles[tileKey];
+
+        if (tile === '#' || tile === 'D' || tile === 'E') {
+            return false;
+        }
+
+        const neighbors = [
+            `${x - 1},${y}`, `${x + 1},${y}`,
+            `${x},${y - 1}`, `${x},${y + 1}`,
+            `${x - 1},${y - 1}`, `${x + 1},${y - 1}`,
+            `${x - 1},${y + 1}`, `${x + 1},${y + 1}`
+        ];
+
+        const nearDoor = neighbors.some(neighbor =>
+            this.mapTiles[neighbor] === 'D' || this.mapTiles[neighbor] === 'E'
+        );
+
+        if (nearDoor) return false;
+
+        return true;
+    }
+
+    getSpawnCountForRoom(room, type) {
+        const config = this.spawnCounts[type];
+        let baseCount = Phaser.Math.Between(config.min, config.max);
+
+        const roomSize = room.width * room.height;
+        if (roomSize > 100) baseCount += config.largeBonus;
+
+        return baseCount;
+    }
+
+    spawnRandomEntities(positions, count, type) {
+        const shuffled = [...positions].sort(() => 0.5 - Math.random());
+        const spawnPositions = shuffled.slice(0, count);
+
+        for (const pos of spawnPositions) {
+            this.spawnEntity(pos.x, pos.y, type);
+        }
+    }
+
+    spawnEntity(x, y, type) {
+        const key = `${x},${y}`;
+
+        if (this.occupiedPositions.has(key)) {
+            console.log(`Position ${key} already occupied, skipping ${type}`);
+            return;
+        }
+
+        if (!this.isValidSpawnPosition(x, y)) {
+            console.log(`Invalid spawn position ${key} for ${type}`);
+            return;
+        }
+
+        const worldX = x * TILE_SIZE;
+        const worldY = y * TILE_SIZE;
+
+        let entityCreated = false;
+
+        switch (type) {
+            case 'food':
+                entityCreated = this.createFood(worldX, worldY);
+                break;
+            case 'coin':
+                entityCreated = this.createCoin(worldX, worldY);
+                break;
+            case 'potion':
+                entityCreated = this.createPotion(worldX, worldY);
+                break;
+            case 'enemy':
+                entityCreated = this.createEnemy(worldX, worldY);
+                break;
+        }
+
+        if (entityCreated) {
+            this.occupiedPositions.add(key);
+        }
+    }
+
+
+    findValidBossPosition(centerX, centerY, room, floorPositions) {
+        if (this.isValidSpawnPosition(centerX, centerY) &&
+            !this.occupiedPositions.has(`${centerX},${centerY}`)) {
+            return { x: centerX, y: centerY };
+        }
+
+        const searchRadius = 3;
+        for (let radius = 1; radius <= searchRadius; radius++) {
+            for (let dx = -radius; dx <= radius; dx++) {
+                for (let dy = -radius; dy <= radius; dy++) {
+                    if (Math.abs(dx) === radius || Math.abs(dy) === radius) {
+                        const x = centerX + dx;
+                        const y = centerY + dy;
+
+                        if (x >= room.x + 1 && x < room.x + room.width - 1 &&
+                            y >= room.y + 1 && y < room.y + room.height - 1 &&
+                            this.isValidSpawnPosition(x, y) &&
+                            !this.occupiedPositions.has(`${x},${y}`)) {
+                            return { x, y };
+                        }
+                    }
+                }
+            }
+        }
+
+        return floorPositions.length > 0 ? floorPositions[0] : null;
+    }
+
+    spawnBoss(x, y) {
+        const key = `${x},${y}`;
+
+        if (this.occupiedPositions.has(key)) {
+            console.log(`Position ${key} already occupied, skipping boss`);
+            return;
+        }
+
+        if (!this.isValidSpawnPosition(x, y)) {
+            console.log(`Invalid spawn position ${key} for boss`);
+            return;
+        }
+
+        const worldX = x * TILE_SIZE;
+        const worldY = y * TILE_SIZE;
+
+        const bossCreated = this.createBoss(worldX, worldY);
+
+        if (bossCreated) {
+            this.occupiedPositions.add(key);
+            console.log(`Boss spawned at (${x}, ${y})`);
+        }
+    }
+
+    addBossEffects(boss) {
+        const glow = this.scene.add.circle(boss.x + 8, boss.y + 8, 12, 0xff0000, 0.3)
+            .setDepth(34);
+
+        this.scene.tweens.add({
+            targets: glow,
+            scaleX: 1.2,
+            scaleY: 1.2,
+            duration: 1000,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+        });
+
+        boss.glowEffect = glow;
     }
 }

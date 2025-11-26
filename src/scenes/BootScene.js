@@ -52,15 +52,10 @@ export default class BootScene extends Phaser.Scene {
         this.load.atlas('gui', './src/assets/atlas/gui_spritesheet.png', './src/assets/atlas/gui_spritesheet.json');
         this.load.atlas('sprites', './src/assets/atlas/spritesheet.png', './src/assets/atlas/spritesheet.json');
 
-        //Добавление фонтов
         WebFont.load({
             google: { families: ['Jacquard 12'] }
         });
 
-        //добавление музыки и аудио
         this.load.audio('theme', './src/assets/audio/music/cottagecore.mp3');
-
-        //врееменные изображения
-        this.load.image('refresh', './src/assets/sprites/NewSprites/refresh.png');
     }
 }

@@ -20,6 +20,7 @@ export class MapDecorator {
         this.placeCorridorDecor(this.density * 4);
     }
 
+
     placeRoomDecor() {
         for (const room of this.rooms) {
             this.placeDecorForRoom(room);
@@ -74,9 +75,11 @@ export class MapDecorator {
     }
 
     placeBossRoomDecor(bounds) {
-        this.placeTopWallDecor(bounds);
-        this.placeSideWallTorches(bounds);
-        this.placeRandomFloorDecor(bounds, this.density * 6);
+        this.placeTopWallTorches(bounds, 3);
+        this.placeSideWallTorches(bounds, 3);
+        this.placeRandomFloorDecor(bounds, this.density * 8);
+
+        this.placeBossRoomSpecialDecor(bounds);
     }
 
     placeSecretRoomDecor(bounds) {
@@ -90,6 +93,38 @@ export class MapDecorator {
         this.placeSideWallTorches(bounds);
         this.placeRandomFloorDecor(bounds, this.density * 3);
     }
+
+    placeBossRoomSpecialDecor(bounds) {
+        const corners = [
+            { x: bounds.x + 2, y: bounds.y + 2 },
+            { x: bounds.x + bounds.width - 3, y: bounds.y + 2 },
+            { x: bounds.x + 2, y: bounds.y + bounds.height - 3 },
+            { x: bounds.x + bounds.width - 3, y: bounds.y + bounds.height - 3 }
+        ];
+
+        corners.forEach(corner => {
+            if (this.isValidFloorPosition(corner.x, corner.y)) {
+                this.placeFloorDecor(corner.x, corner.y, 'bones');
+            }
+        });
+
+        const centerX = bounds.x + Math.floor(bounds.width / 2);
+        const centerY = bounds.y + Math.floor(bounds.height / 2);
+
+        const candlePositions = [
+            { x: centerX - 2, y: centerY - 2 },
+            { x: centerX + 2, y: centerY - 2 },
+            { x: centerX - 2, y: centerY + 2 },
+            { x: centerX + 2, y: centerY + 2 }
+        ];
+
+        candlePositions.forEach(pos => {
+            if (this.isValidFloorPosition(pos.x, pos.y)) {
+                this.placeCandle(pos.x, pos.y);
+            }
+        });
+    }
+
 
     placeTopWallDecor(bounds, specificCount = null) {
         let decorCount = specificCount;
@@ -173,34 +208,6 @@ export class MapDecorator {
         }
     }
 
-    isValidWallPosition(x, y) {
-        const tileKey = `${x},${y}`;
-
-        if (this.mapTiles[tileKey] !== '#') {
-            return false;
-        }
-
-        const roomInfo = this.roomTiles[tileKey];
-        if (roomInfo && roomInfo.isCorner) {
-            return false;
-        }
-
-        const neighbors = [
-            `${x},${y - 1}`,
-            `${x},${y + 1}`,
-            `${x - 1},${y}`,
-            `${x + 1},${y}`
-        ];
-
-        for (const neighborKey of neighbors) {
-            if (this.mapTiles[neighborKey] === 'D') {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     placeRandomFloorDecor(bounds, density) {
         for (let x = bounds.x + 1; x < bounds.x + bounds.width - 1; x++) {
             for (let y = bounds.y + 1; y < bounds.y + bounds.height - 1; y++) {
@@ -222,22 +229,6 @@ export class MapDecorator {
                 }
             }
         }
-    }
-
-    isNearWall(x, y) {
-        const neighbors = [
-            `${x - 1},${y}`,
-            `${x + 1},${y}`,
-            `${x},${y - 1}`,
-            `${x},${y + 1}`
-        ];
-
-        for (const neighborKey of neighbors) {
-            if (this.mapTiles[neighborKey] === '#') {
-                return true;
-            }
-        }
-        return false;
     }
 
     placeCorridorDecor(density) {
@@ -263,6 +254,7 @@ export class MapDecorator {
             }
         }
     }
+
 
     placeTorch(x, y, position) {
         const worldX = x * TILE_SIZE;
@@ -313,5 +305,76 @@ export class MapDecorator {
         const flipX = Math.random() < 0.5;
 
         createDecor(this.scene, worldX, worldY, { flipX }, type, this.DEPTH.FLOOR_DECOR);
+    }
+
+    placeCandle(x, y) {
+        const worldX = x * TILE_SIZE;
+        const worldY = y * TILE_SIZE;
+
+        createDecor(this.scene, worldX, worldY, {
+            animation: true
+        }, 'candlestick1', this.DEPTH.FLOOR_DECOR + 1);
+    }
+
+
+    isValidWallPosition(x, y) {
+        const tileKey = `${x},${y}`;
+
+        if (this.mapTiles[tileKey] !== '#') {
+            return false;
+        }
+
+        const roomInfo = this.roomTiles[tileKey];
+        if (roomInfo && roomInfo.isCorner) {
+            return false;
+        }
+
+        const neighbors = [
+            `${x},${y - 1}`,
+            `${x},${y + 1}`,
+            `${x - 1},${y}`,
+            `${x + 1},${y}`
+        ];
+
+        for (const neighborKey of neighbors) {
+            if (this.mapTiles[neighborKey] === 'D') {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    isNearWall(x, y) {
+        const neighbors = [
+            `${x - 1},${y}`,
+            `${x + 1},${y}`,
+            `${x},${y - 1}`,
+            `${x},${y + 1}`
+        ];
+
+        for (const neighborKey of neighbors) {
+            if (this.mapTiles[neighborKey] === '#') {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    isValidFloorPosition(x, y) {
+        const tileKey = `${x},${y}`;
+        return this.mapTiles[tileKey] === '.' &&
+            !this.isNearDoor(x, y);
+    }
+
+    isNearDoor(x, y) {
+        const neighbors = [
+            `${x - 1},${y}`, `${x + 1},${y}`,
+            `${x},${y - 1}`, `${x},${y + 1}`
+        ];
+
+        return neighbors.some(neighbor =>
+            this.mapTiles[neighbor] === 'D' || this.mapTiles[neighbor] === 'E'
+        );
     }
 }

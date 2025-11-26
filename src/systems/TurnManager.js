@@ -1,5 +1,3 @@
-import { TILE_SIZE } from "../entities/consts";
-
 export default class TurnManager {
     constructor(scene, player, enemies = []) {
         this.scene = scene;
@@ -12,6 +10,8 @@ export default class TurnManager {
         if (this.locked) return;
         this.locked = true;
 
+        const skipEnemyTurn = helpers.skipEnemyTurn || false;
+
         const result = await this.player.takeTurn(direction, helpers);
 
         if (result.died) {
@@ -20,9 +20,11 @@ export default class TurnManager {
             } else if (result.reason === 'wall' && helpers.onWallCollision) {
                 helpers.onWallCollision();
             }
-        } else if (!result.skipped) {
+        } else if (!result.skipped && !skipEnemyTurn) {
             for (const enemy of this.enemies) {
-                await this.moveEnemy(enemy, helpers);
+                if (enemy.active && enemy.health > 0) {
+                    await this.moveEnemy(enemy, helpers);
+                }
             }
 
             if (this.scene.processEndOfTurnEffects) {
@@ -34,7 +36,23 @@ export default class TurnManager {
         return result;
     }
 
+
     async moveEnemy(enemy, helpers = {}) {
+        if (!enemy.active || enemy.health <= 0) return;
+
+        if (enemy.isBoss) {
+            await this.moveBoss(enemy, helpers);
+            return;
+        }
+
+        if (enemy.moveCooldown && enemy.moveCooldown > 0) {
+            enemy.moveCooldownCounter = (enemy.moveCooldownCounter || 0) + 1;
+            if (enemy.moveCooldownCounter < enemy.moveCooldown) {
+                return;
+            }
+            enemy.moveCooldownCounter = 0;
+        }
+
         const enemyX = enemy.gridX;
         const enemyY = enemy.gridY;
 
@@ -44,7 +62,43 @@ export default class TurnManager {
 
         const distanceToPlayer = Math.abs(enemyX - playerX) + Math.abs(enemyY - playerY);
 
-        if (distanceToPlayer > enemy.sight) {
+        if (enemy.subType === 'skull') {
+            if (this.isPlayerInSameRoom(enemy, playerX, playerY)) {
+                return this.moveEnemyTowardsPlayer(enemy, helpers);
+            } else {
+                return this.moveEnemyRandomly(enemy, helpers);
+            }
+        }
+
+        if (enemy.subType === 'vampire') {
+            if (distanceToPlayer <= enemy.sight) {
+                return this.moveEnemyTowardsPlayer(enemy, helpers);
+            }
+            return;
+        }
+
+        if (distanceToPlayer <= enemy.sight) {
+            return this.moveEnemyTowardsPlayer(enemy, helpers);
+        } else {
+            return this.moveEnemyRandomly(enemy, helpers);
+        }
+    }
+
+    async moveEnemyTowardsPlayer(enemy, helpers) {
+        const enemyX = enemy.gridX;
+        const enemyY = enemy.gridY;
+
+        const playerHead = helpers.getPlayerHead();
+        const playerX = playerHead.x;
+        const playerY = playerHead.y;
+
+        const distanceToPlayer = Math.abs(enemyX - playerX) + Math.abs(enemyY - playerY);
+
+        if (distanceToPlayer <= enemy.range) {
+            console.log(`Enemy ${enemy.subType} is in range - attacking!`);
+            if (helpers.onEnemyAttack) {
+                helpers.onEnemyAttack(enemy);
+            }
             return;
         }
 
@@ -58,75 +112,172 @@ export default class TurnManager {
         const validDirections = directions.filter(({ dx, dy }) => {
             const newX = enemyX + dx;
             const newY = enemyY + dy;
-
-            if (this.scene.isWall(newX, newY)) return false;
-
-            const hasEnemy = helpers.getEnemyAt ? helpers.getEnemyAt(newX, newY, enemy) : false;
-            if (hasEnemy) return false;
-
-            const hasSnake = helpers.isSnakeAt ? helpers.isSnakeAt(newX, newY) : false;
-            if (hasSnake) return false;
-
-            return true;
+            return this.isValidEnemyMove(newX, newY, enemy, helpers);
         });
 
         if (validDirections.length === 0) return;
 
-        const isAdjacentToPlayer = distanceToPlayer === 1;
-
-        if (isAdjacentToPlayer) {
-            console.log(`Enemy ${enemy.subType} is adjacent to player and can attack`);
-        }
-
-        let bestDirection = validDirections[0];
+        let bestDirection = null;
         let bestDistance = distanceToPlayer;
 
         for (const dir of validDirections) {
             const newX = enemyX + dir.dx;
             const newY = enemyY + dir.dy;
-            const distance = Math.abs(newX - playerX) + Math.abs(newY - playerY);
+            const newDistance = Math.abs(newX - playerX) + Math.abs(newY - playerY);
 
-            if (distance < bestDistance) {
-                bestDistance = distance;
+            if (newDistance < bestDistance) {
+                bestDistance = newDistance;
                 bestDirection = dir;
             }
         }
 
-        if (Math.random() < 0.2 && validDirections.length > 1) {
+        if (!bestDirection && validDirections.length > 0) {
             bestDirection = Phaser.Utils.Array.GetRandom(validDirections);
         }
 
-        if (bestDistance <= distanceToPlayer || Math.random() < 0.7) {
-            const newGridX = enemyX + bestDirection.dx;
-            const newGridY = enemyY + bestDirection.dy;
+        if (bestDirection) {
+            const moveDistance = this.getEnemyMoveDistance(enemy, distanceToPlayer);
 
-            enemy.gridX = newGridX;
-            enemy.gridY = newGridY;
-            enemy.x = newGridX * 16;
-            enemy.y = newGridY * 16;
+            for (let i = 0; i < moveDistance; i++) {
+                if (!this.isValidEnemyMove(enemy.gridX + bestDirection.dx, enemy.gridY + bestDirection.dy, enemy, helpers)) {
+                    break;
+                }
 
-            await new Promise(res => setTimeout(res, 150));
+                await this.executeEnemyMove(enemy, bestDirection, helpers);
+
+                const newPlayerHead = helpers.getPlayerHead();
+                if (enemy.gridX === newPlayerHead.x && enemy.gridY === newPlayerHead.y) {
+                    console.log(`Enemy ${enemy.subType} moved onto player - attacking!`);
+                    if (helpers.onEnemyAttack) {
+                        helpers.onEnemyAttack(enemy);
+                    }
+                    break;
+                }
+            }
         }
     }
 
-    isPlayerFacingEnemy(playerHead, enemy, helpers) {
-        const player = helpers.getPlayer();
-        if (!player || !player.direction) return false;
+    async moveEnemyRandomly(enemy, helpers) {
+        const directions = [
+            { dx: 1, dy: 0 },
+            { dx: -1, dy: 0 },
+            { dx: 0, dy: 1 },
+            { dx: 0, dy: -1 }
+        ];
 
-        const dx = enemy.gridX - playerHead.x;
-        const dy = enemy.gridY - playerHead.y;
+        const validDirections = directions.filter(({ dx, dy }) => {
+            const newX = enemy.gridX + dx;
+            const newY = enemy.gridY + dy;
 
-        switch (player.direction.name) {
-            case 'Right':
-                return dx > 0 && Math.abs(dy) <= Math.abs(dx);
-            case 'Left':
-                return dx < 0 && Math.abs(dy) <= Math.abs(dx);
-            case 'Down':
-                return dy > 0 && Math.abs(dx) <= Math.abs(dy);
-            case 'Up':
-                return dy < 0 && Math.abs(dx) <= Math.abs(dy);
-            default:
-                return false;
+            if (enemy.moveRadius > 0) {
+                const spawnX = enemy.originalX || enemy.gridX;
+                const spawnY = enemy.originalY || enemy.gridY;
+                const distanceFromSpawn = Math.abs(newX - spawnX) + Math.abs(newY - spawnY);
+                if (distanceFromSpawn > enemy.moveRadius) {
+                    return false;
+                }
+            }
+
+            return this.isValidEnemyMove(newX, newY, enemy, helpers);
+        });
+
+        if (validDirections.length === 0) return;
+
+        const direction = Phaser.Math.RND.pick(validDirections);
+        const moveDistance = this.getEnemyMoveDistance(enemy, Infinity);
+
+        for (let i = 0; i < moveDistance; i++) {
+            if (!this.isValidEnemyMove(enemy.gridX + direction.dx, enemy.gridY + direction.dy, enemy, helpers)) {
+                break;
+            }
+
+            await this.executeEnemyMove(enemy, direction, helpers);
         }
+    }
+
+
+    async moveBoss(boss, helpers = {}) {
+        const bossX = boss.gridX;
+        const bossY = boss.gridY;
+
+        const playerHead = helpers.getPlayerHead();
+        const playerX = playerHead.x;
+        const playerY = playerHead.y;
+
+        const distanceToPlayer = Math.abs(bossX - playerX) + Math.abs(bossY - playerY);
+
+        if (distanceToPlayer <= boss.sight) {
+            await this.moveEnemyTowardsPlayer(boss, helpers);
+        } else {
+            await this.patrolBossRoom(boss, helpers);
+        }
+    }
+
+    async patrolBossRoom(boss, helpers) {
+        const directions = [
+            { dx: 1, dy: 0 },
+            { dx: -1, dy: 0 },
+            { dx: 0, dy: 1 },
+            { dx: 0, dy: -1 }
+        ];
+
+        const validDirections = directions.filter(({ dx, dy }) => {
+            const newX = boss.gridX + dx;
+            const newY = boss.gridY + dy;
+            return this.isValidEnemyMove(newX, newY, boss, helpers);
+        });
+
+        if (validDirections.length === 0) return;
+
+        const direction = Phaser.Math.RND.pick(validDirections);
+        await this.executeEnemyMove(boss, direction, helpers);
+    }
+
+
+    isPlayerInSameRoom(enemy, playerX, playerY) {
+        const roomSize = 10;
+        return Math.abs(enemy.gridX - playerX) <= roomSize &&
+            Math.abs(enemy.gridY - playerY) <= roomSize;
+    }
+
+    getEnemyMoveDistance(enemy, distanceToPlayer) {
+        if (enemy.subType === 'vampire' && distanceToPlayer <= 6) {
+            return 2;
+        }
+
+        if (enemy.subType === 'priestHand' && distanceToPlayer > enemy.sight) {
+            return 2;
+        }
+
+        return 1;
+    }
+
+    isValidEnemyMove(x, y, enemy, helpers) {
+        if (helpers.isWallAt && helpers.isWallAt(x, y)) return false;
+
+        if (helpers.getEnemyAt) {
+            const otherEnemy = helpers.getEnemyAt(x, y, enemy);
+            if (otherEnemy) return false;
+        }
+
+        return true;
+    }
+
+    async executeEnemyMove(enemy, direction, helpers) {
+        const newGridX = enemy.gridX + direction.dx;
+        const newGridY = enemy.gridY + direction.dy;
+
+        enemy.gridX = newGridX;
+        enemy.gridY = newGridY;
+
+        this.scene.tweens.add({
+            targets: enemy,
+            x: newGridX * 16,
+            y: newGridY * 16,
+            duration: 200,
+            ease: 'Power1'
+        });
+
+        await this.scene.time.delayedCall(200);
     }
 }

@@ -23,6 +23,42 @@ export default class UIScene extends Phaser.Scene {
         this.updateShopItems();
     }
 
+    shutdown() {
+        this.isShuttingDown = true;
+
+        this.registry.events.off('changedata');
+
+        this.activeItems = [];
+        this.shopItems = [];
+        this.effectIcons = [];
+        this.effectTooltips = [];
+
+        this.hideEffectTooltip();
+        this.hideItemTooltip();
+
+        this.safeDestroy(this.heartText);
+        this.safeDestroy(this.coinText);
+        this.safeDestroy(this.lengthText);
+        this.safeDestroy(this.scoresText);
+        this.safeDestroy(this.effectsContainer);
+
+        if (this.inventorySlots) {
+            this.inventorySlots.forEach(slot => this.safeDestroy(slot));
+            this.inventorySlots = [];
+        }
+
+        if (this.shopSlots) {
+            this.shopSlots.forEach(slot => this.safeDestroy(slot));
+            this.shopSlots = [];
+        }
+
+        if (this.shopSlotNumbers) {
+            this.shopSlotNumbers.forEach(text => this.safeDestroy(text));
+            this.shopSlotNumbers = [];
+        }
+    }
+
+
     initializeUIElements() {
         this.safeDestroy(this.heartText);
         this.safeDestroy(this.coinText);
@@ -82,11 +118,6 @@ export default class UIScene extends Phaser.Scene {
         });
     }
 
-    formatScores(scores) {
-        const scoreNum = parseInt(scores);
-        return scoreNum.toString().padStart(8, '0');
-    }
-
     createInventorySlots() {
         if (this.inventorySlots) {
             this.inventorySlots.forEach(slot => this.safeDestroy(slot));
@@ -118,6 +149,58 @@ export default class UIScene extends Phaser.Scene {
             this.inventorySlots.push(slot);
         });
     }
+
+    createShopSlots() {
+        if (this.shopSlots) {
+            this.shopSlots.forEach(slot => this.safeDestroy(slot));
+        }
+        this.shopSlots = [];
+
+        if (this.shopSlotNumbers) {
+            this.shopSlotNumbers.forEach(text => this.safeDestroy(text));
+        }
+        this.shopSlotNumbers = [];
+
+        const slotPositions = [
+            { x: 970, y: 40 },
+            { x: 1020, y: 40 },
+            { x: 1070, y: 40 }
+        ];
+
+        slotPositions.forEach((pos, index) => {
+            const slot = this.add.image(pos.x, pos.y, 'gui', 'slot.png')
+                .setOrigin(0)
+                .setScale(2);
+
+            const numberText = this.add.text(pos.x + 12, pos.y + 12, (index + 1).toString(), {
+                fontSize: '16px',
+                fill: '#000000'
+            }).setOrigin(0.5);
+
+            this.shopSlots.push(slot);
+            this.shopSlotNumbers.push(numberText);
+        });
+    }
+
+    createEffectsDisplay() {
+        this.safeDestroy(this.effectsContainer);
+
+        this.effectsContainer = this.add.container(1075, 150);
+        this.effectsContainer.setDepth(1000);
+        this.effectsContainer.setScrollFactor(0);
+
+        const effectsTitle = this.add.text(-100, -30, 'Active Effects', {
+            fontSize: '16px',
+            fill: '#ffffff',
+            fontStyle: 'bold'
+        }).setOrigin(0, 0);
+
+        this.effectsContainer.add(effectsTitle);
+
+        this.effectIcons = [];
+        this.effectTooltips = [];
+    }
+
 
     updateInventory() {
         if (this.isShuttingDown) return;
@@ -165,85 +248,6 @@ export default class UIScene extends Phaser.Scene {
                 console.error('Error creating inventory item:', error);
             }
         });
-    }
-
-    useInventoryItem(index) {
-        if (this.isShuttingDown) return;
-        this.registry.events.emit('useInventoryItem', index);
-    }
-
-    showItemInfo(item, x, y) {
-        if (this.isShuttingDown) return;
-
-        try {
-            const tooltip = this.add.container(x, y - 50);
-            const background = this.add.graphics();
-            background.fillStyle(0x000000, 0.8);
-            background.fillRect(-60, -30, 120, 60);
-
-            const nameText = this.add.text(0, -15, item.subType, {
-                fontSize: '14px',
-                fill: '#ffffff',
-                align: 'center'
-            }).setOrigin(0.5);
-
-            const typeText = this.add.text(0, 0, `Type: ${item.type}`, {
-                fontSize: '12px',
-                fill: '#cccccc'
-            }).setOrigin(0.5);
-
-            const descText = this.add.text(0, 15, this.getItemDescription(item), {
-                fontSize: '10px',
-                fill: '#aaaaaa',
-                align: 'center'
-            }).setOrigin(0.5);
-
-            tooltip.add([background, nameText, typeText, descText]);
-            tooltip.setDepth(1000);
-
-            this.time.delayedCall(3000, () => {
-                this.safeDestroy(tooltip);
-            });
-        } catch (error) {
-            console.error('Error showing item info:', error);
-        }
-    }
-
-    getItemDescription(item) {
-        try {
-            const props = item.properties;
-            let description = '';
-
-            if (props.healthGain) description += `+${props.healthGain} HP \n`;
-            if (props.maxHealthIncrease) description += `+${props.maxHealthIncrease} Max HP \n`;
-            if (props.lengthGain) description += `+${props.lengthGain} Length `;
-            if (props.shield) description += `Shield: ${props.shield} \n`;
-            if (props.regen) description += `Regen: ${props.regen} \n`;
-            if (props.damageBoost) description += `Dmg+: ${props.damageBoost} \n`;
-
-            return description || 'No description';
-        } catch (error) {
-            return 'Error loading description';
-        }
-    }
-
-    createEffectsDisplay() {
-        this.safeDestroy(this.effectsContainer);
-
-        this.effectsContainer = this.add.container(1075, 150);
-        this.effectsContainer.setDepth(1000);
-        this.effectsContainer.setScrollFactor(0);
-
-        const effectsTitle = this.add.text(-100, -30, 'Active Effects', {
-            fontSize: '16px',
-            fill: '#ffffff',
-            fontStyle: 'bold'
-        }).setOrigin(0, 0);
-
-        this.effectsContainer.add(effectsTitle);
-
-        this.effectIcons = [];
-        this.effectTooltips = [];
     }
 
     updateEffects(effects) {
@@ -323,95 +327,6 @@ export default class UIScene extends Phaser.Scene {
         });
     }
 
-    showEffectTooltip(effect, icon) {
-        if (this.isShuttingDown) return;
-
-        this.hideEffectTooltip();
-
-        try {
-            const tooltip = this.add.container(icon.x + this.effectsContainer.x, icon.y + this.effectsContainer.y - 50);
-            const background = this.add.graphics();
-            background.fillStyle(0x000000, 0.9);
-            background.fillRect(-80, -40, 160, 80);
-
-            const nameText = this.add.text(0, -25, this.getEffectDisplayName(effect), {
-                fontSize: '14px',
-                fill: '#ffffff',
-                align: 'center',
-                fontStyle: 'bold'
-            }).setOrigin(0.5);
-
-            const descText = this.add.text(0, -5, effect.description, {
-                fontSize: '12px',
-                fill: '#cccccc',
-                align: 'center'
-            }).setOrigin(0.5);
-
-            const turnsText = this.add.text(0, 15, `Turns left: ${effect.turnsLeft}`, {
-                fontSize: '11px',
-                fill: '#aaaaaa',
-                align: 'center'
-            }).setOrigin(0.5);
-
-            tooltip.add([background, nameText, descText, turnsText]);
-            tooltip.setDepth(1001);
-            tooltip.setScrollFactor(0);
-
-            this.currentTooltip = tooltip;
-        } catch (error) {
-            console.error('Error showing effect tooltip:', error);
-        }
-    }
-
-    hideEffectTooltip() {
-        this.safeDestroy(this.currentTooltip);
-        this.currentTooltip = null;
-    }
-
-    getEffectDisplayName(effect) {
-        const names = {
-            'regen': 'Regeneration',
-            'shield': 'Shield',
-            'damageBoost': 'Damage Boost',
-            'vampireDamage': 'Vampire Damage',
-            'doubleMove': 'Double Move'
-        };
-
-        return names[effect.type] || effect.type;
-    }
-
-    createShopSlots() {
-        if (this.shopSlots) {
-            this.shopSlots.forEach(slot => this.safeDestroy(slot));
-        }
-        this.shopSlots = [];
-
-        if (this.shopSlotNumbers) {
-            this.shopSlotNumbers.forEach(text => this.safeDestroy(text));
-        }
-        this.shopSlotNumbers = [];
-
-        const slotPositions = [
-            { x: 970, y: 40 },
-            { x: 1020, y: 40 },
-            { x: 1070, y: 40 }
-        ];
-
-        slotPositions.forEach((pos, index) => {
-            const slot = this.add.image(pos.x, pos.y, 'gui', 'slot.png')
-                .setOrigin(0)
-                .setScale(2);
-
-            const numberText = this.add.text(pos.x + 12, pos.y + 12, (index + 1).toString(), {
-                fontSize: '16px',
-                fill: '#000000'
-            }).setOrigin(0.5);
-
-            this.shopSlots.push(slot);
-            this.shopSlotNumbers.push(numberText);
-        });
-    }
-
     updateShopItems() {
         if (this.isShuttingDown) return;
 
@@ -469,6 +384,94 @@ export default class UIScene extends Phaser.Scene {
         });
     }
 
+
+    useInventoryItem(index) {
+        if (this.isShuttingDown) return;
+        this.registry.events.emit('useInventoryItem', index);
+    }
+
+    showItemInfo(item, x, y) {
+        if (this.isShuttingDown) return;
+
+        try {
+            const tooltip = this.add.container(x, y - 50);
+            const background = this.add.graphics();
+            background.fillStyle(0x000000, 0.8);
+            background.fillRect(-60, -30, 120, 60);
+
+            const nameText = this.add.text(0, -15, item.subType, {
+                fontSize: '14px',
+                fill: '#ffffff',
+                align: 'center'
+            }).setOrigin(0.5);
+
+            const typeText = this.add.text(0, 0, `Type: ${item.type}`, {
+                fontSize: '12px',
+                fill: '#cccccc'
+            }).setOrigin(0.5);
+
+            const descText = this.add.text(0, 15, this.getItemDescription(item), {
+                fontSize: '10px',
+                fill: '#aaaaaa',
+                align: 'center'
+            }).setOrigin(0.5);
+
+            tooltip.add([background, nameText, typeText, descText]);
+            tooltip.setDepth(1000);
+
+            this.time.delayedCall(3000, () => {
+                this.safeDestroy(tooltip);
+            });
+        } catch (error) {
+            console.error('Error showing item info:', error);
+        }
+    }
+
+    showEffectTooltip(effect, icon) {
+        if (this.isShuttingDown) return;
+
+        this.hideEffectTooltip();
+
+        try {
+            const tooltip = this.add.container(icon.x + this.effectsContainer.x, icon.y + this.effectsContainer.y - 50);
+            const background = this.add.graphics();
+            background.fillStyle(0x000000, 0.9);
+            background.fillRect(-80, -40, 160, 80);
+
+            const nameText = this.add.text(0, -25, this.getEffectDisplayName(effect), {
+                fontSize: '14px',
+                fill: '#ffffff',
+                align: 'center',
+                fontStyle: 'bold'
+            }).setOrigin(0.5);
+
+            const descText = this.add.text(0, -5, effect.description, {
+                fontSize: '12px',
+                fill: '#cccccc',
+                align: 'center'
+            }).setOrigin(0.5);
+
+            const turnsText = this.add.text(0, 15, `Turns left: ${effect.turnsLeft}`, {
+                fontSize: '11px',
+                fill: '#aaaaaa',
+                align: 'center'
+            }).setOrigin(0.5);
+
+            tooltip.add([background, nameText, descText, turnsText]);
+            tooltip.setDepth(1001);
+            tooltip.setScrollFactor(0);
+
+            this.currentTooltip = tooltip;
+        } catch (error) {
+            console.error('Error showing effect tooltip:', error);
+        }
+    }
+
+    hideEffectTooltip() {
+        this.safeDestroy(this.currentTooltip);
+        this.currentTooltip = null;
+    }
+
     showItemTooltip(sprite, x, y) {
         if (this.isShuttingDown) return;
 
@@ -509,6 +512,36 @@ export default class UIScene extends Phaser.Scene {
         }
     }
 
+    hideItemTooltip() {
+        this.shopItems.forEach(item => {
+            this.safeDestroy(item.tooltip);
+        });
+    }
+
+
+    formatScores(scores) {
+        const scoreNum = parseInt(scores);
+        return scoreNum.toString().padStart(8, '0');
+    }
+
+    getItemDescription(item) {
+        try {
+            const props = item.properties;
+            let description = '';
+
+            if (props.healthGain) description += `+${props.healthGain} HP \n`;
+            if (props.maxHealthIncrease) description += `+${props.maxHealthIncrease} Max HP \n`;
+            if (props.lengthGain) description += `+${props.lengthGain} Length `;
+            if (props.shield) description += `Shield: ${props.shield} \n`;
+            if (props.regen) description += `Regen: ${props.regen} \n`;
+            if (props.damageBoost) description += `Dmg+: ${props.damageBoost} \n`;
+
+            return description || 'No description';
+        } catch (error) {
+            return 'Error loading description';
+        }
+    }
+
     getShopItemDescription(properties) {
         try {
             let description = '';
@@ -530,10 +563,16 @@ export default class UIScene extends Phaser.Scene {
         }
     }
 
-    hideItemTooltip() {
-        this.shopItems.forEach(item => {
-            this.safeDestroy(item.tooltip);
-        });
+    getEffectDisplayName(effect) {
+        const names = {
+            'regen': 'Regeneration',
+            'shield': 'Shield',
+            'damageBoost': 'Damage Boost',
+            'vampireDamage': 'Vampire Damage',
+            'doubleMove': 'Double Move'
+        };
+
+        return names[effect.type] || effect.type;
     }
 
     safeDestroy(obj) {
@@ -541,41 +580,6 @@ export default class UIScene extends Phaser.Scene {
             if (obj.destroy) {
                 obj.destroy();
             }
-        }
-    }
-
-    shutdown() {
-        this.isShuttingDown = true;
-
-        this.registry.events.off('changedata');
-
-        this.activeItems = [];
-        this.shopItems = [];
-        this.effectIcons = [];
-        this.effectTooltips = [];
-
-        this.hideEffectTooltip();
-        this.hideItemTooltip();
-
-        this.safeDestroy(this.heartText);
-        this.safeDestroy(this.coinText);
-        this.safeDestroy(this.lengthText);
-        this.safeDestroy(this.scoresText);
-        this.safeDestroy(this.effectsContainer);
-
-        if (this.inventorySlots) {
-            this.inventorySlots.forEach(slot => this.safeDestroy(slot));
-            this.inventorySlots = [];
-        }
-
-        if (this.shopSlots) {
-            this.shopSlots.forEach(slot => this.safeDestroy(slot));
-            this.shopSlots = [];
-        }
-
-        if (this.shopSlotNumbers) {
-            this.shopSlotNumbers.forEach(text => this.safeDestroy(text));
-            this.shopSlotNumbers = [];
         }
     }
 }

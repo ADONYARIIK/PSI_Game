@@ -37,122 +37,6 @@ export function generateMap(scene, numRooms = 20) {
     return { rooms, start, bounds, mapTiles, roomTiles };
 }
 
-function calculateMapBounds(mapTiles) {
-    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-
-    for (const key of Object.keys(mapTiles)) {
-        const [x, y] = key.split(',').map(Number);
-        minX = Math.min(minX, x);
-        minY = Math.min(minY, y);
-        maxX = Math.max(maxX, x);
-        maxY = Math.max(maxY, y);
-    }
-
-    const padding = 6;
-    const left = (minX - padding) * TILE_SIZE;
-    const top = (minY - padding) * TILE_SIZE;
-    const right = (maxX + padding) * TILE_SIZE;
-    const bottom = (maxY + padding) * TILE_SIZE;
-
-    return {
-        left,
-        top,
-        width: right - left,
-        height: bottom - top
-    };
-}
-
-function addCorridorWalls(mapTiles) {
-    const corridorTiles = [];
-
-    for (const [key, value] of Object.entries(mapTiles)) {
-        if (value === '.' || value === 'C' || value === 'D') {
-            const [x, y] = key.split(',').map(Number);
-            corridorTiles.push({ x, y });
-        }
-    }
-
-    for (const tile of corridorTiles) {
-        const { x, y } = tile;
-
-        const neighbors = [
-            { dx: -1, dy: -1 }, { dx: 0, dy: -1 }, { dx: 1, dy: -1 },
-            { dx: -1, dy: 0 }, { dx: 1, dy: 0 },
-            { dx: -1, dy: 1 }, { dx: 0, dy: 1 }, { dx: 1, dy: 1 }
-        ];
-
-        for (const { dx, dy } of neighbors) {
-            const nx = x + dx;
-            const ny = y + dy;
-            const key = `${nx},${ny}`;
-
-            if (!mapTiles[key]) {
-                mapTiles[key] = '#';
-            }
-        }
-    }
-
-    cleanupCorridorWalls(mapTiles);
-}
-
-function cleanupCorridorWalls(mapTiles) {
-    const wallsToRemove = [];
-
-    for (const [key, value] of Object.entries(mapTiles)) {
-        if (value === '#') {
-            const [x, y] = key.split(',').map(Number);
-
-            if (isBlockingImportantPath(mapTiles, x, y)) {
-                wallsToRemove.push(key);
-            }
-        }
-    }
-
-    for (const key of wallsToRemove) {
-        delete mapTiles[key];
-    }
-}
-
-function isBlockingImportantPath(mapTiles, x, y) {
-    const left = mapTiles[`${x - 1},${y}`];
-    const right = mapTiles[`${x + 1},${y}`];
-
-    const up = mapTiles[`${x},${y - 1}`];
-    const down = mapTiles[`${x},${y + 1}`];
-
-    if ((left === '.' || left === 'C' || left === 'D') && (right === '.' || right === 'C' || right === 'D')) {
-        return true;
-    }
-
-    if ((up === '.' || up === 'C' || up === 'D') && (down === '.' || down === 'C' || down === 'D')) {
-        return true;
-    }
-
-    const topLeft = mapTiles[`${x - 1},${y - 1}`];
-    const topRight = mapTiles[`${x + 1},${y - 1}`];
-    const bottomLeft = mapTiles[`${x - 1},${y + 1}`];
-    const bottomRight = mapTiles[`${x + 1},${y + 1}`];
-
-    if ((topLeft === '.' || topLeft === 'C' || topLeft === 'D') && (bottomRight === '.' || bottomRight === 'C' || bottomRight === 'D')) {
-        const horizontalClear = !mapTiles[`${x - 1},${y}`] && !mapTiles[`${x + 1},${y}`];
-        const verticalClear = !mapTiles[`${x},${y - 1}`] && !mapTiles[`${x},${y + 1}`];
-
-        if (horizontalClear || verticalClear) {
-            return true;
-        }
-    }
-
-    if ((topRight === '.' || topRight === 'C' || topRight === 'D') && (bottomLeft === '.' || bottomLeft === 'C' || bottomLeft === 'D')) {
-        const horizontalClear = !mapTiles[`${x - 1},${y}`] && !mapTiles[`${x + 1},${y}`];
-        const verticalClear = !mapTiles[`${x},${y - 1}`] && !mapTiles[`${x},${y + 1}`];
-
-        if (horizontalClear || verticalClear) {
-            return true;
-        }
-    }
-
-    return false;
-}
 
 function generateRoomsAroundStart(scene, rooms, mapTiles, roomTiles, targetRoomCount) {
     const directions = [
@@ -314,6 +198,15 @@ function connectAllRooms(rooms, mapTiles, roomTiles) {
         }
     }
 }
+
+function placeSpecialRooms(scene, rooms, mapTiles, roomTiles) {
+    const edgeRooms = findEdgeRooms(rooms);
+    placeTreasureRoom(edgeRooms);
+    placeBossRoom(rooms, edgeRooms, mapTiles, roomTiles);
+    placeSecretRooms(scene, rooms, mapTiles, roomTiles);
+    placeExit(rooms, mapTiles, roomTiles);
+}
+
 
 function createConnection(roomA, roomB, direction) {
     if (!roomA.connections) roomA.connections = [];
@@ -525,13 +418,6 @@ function createVerticalCorridor(map, roomTiles, topRoom, bottomRoom, centerA, ce
     }
 }
 
-function placeSpecialRooms(scene, rooms, mapTiles, roomTiles) {
-    const edgeRooms = findEdgeRooms(rooms);
-    placeTreasureRoom(edgeRooms);
-    placeBossRoom(rooms, edgeRooms);
-    placeSecretRooms(scene, rooms, mapTiles, roomTiles);
-    placeExit(rooms, mapTiles, roomTiles);
-}
 
 function findEdgeRooms(rooms) {
     return rooms.filter(room =>
@@ -552,7 +438,7 @@ function placeTreasureRoom(edgeRooms) {
     }
 }
 
-function placeBossRoom(rooms, edgeRooms) {
+function placeBossRoom(rooms, edgeRooms, mapTiles, roomTiles) {
     const bossCandidates = edgeRooms.filter(room =>
         room.type !== 'treasure' &&
         getConnectionCount(room) <= 2
@@ -567,9 +453,37 @@ function placeBossRoom(rooms, edgeRooms) {
         }, bossCandidates[0]);
 
         farthestRoom.type = 'boss';
+
+        if (farthestRoom.width < 12 || farthestRoom.height < 12) {
+            farthestRoom.width = Math.max(farthestRoom.width, 12);
+            farthestRoom.height = Math.max(farthestRoom.height, 12);
+
+            const roomKey = `${farthestRoom.x},${farthestRoom.y}-${farthestRoom.width}x${farthestRoom.height}`;
+            for (let i = 0; i < farthestRoom.width; i++) {
+                for (let j = 0; j < farthestRoom.height; j++) {
+                    const x = farthestRoom.x + i;
+                    const y = farthestRoom.y + j;
+                    const isWall = i === 0 || j === 0 || i === farthestRoom.width - 1 || j === farthestRoom.height - 1;
+                    const isCorner = (i === 0 && j === 0) || (i === 0 && j === farthestRoom.height - 1) ||
+                        (i === farthestRoom.width - 1 && j === 0) || (i === farthestRoom.width - 1 && j === farthestRoom.height - 1);
+
+                    mapTiles[`${x},${y}`] = isWall ? '#' : '.';
+
+                    roomTiles[`${x},${y}`] = {
+                        roomId: roomKey,
+                        isWall: isWall,
+                        isRoom: true,
+                        isCorner: isCorner,
+                    };
+                }
+            }
+        }
+
         if (farthestRoom.connections.length > 2) {
             farthestRoom.connections = farthestRoom.connections.slice(0, 2);
         }
+
+        console.log(`Boss room placed at (${farthestRoom.x}, ${farthestRoom.y}) with size ${farthestRoom.width}x${farthestRoom.height}`);
     }
 }
 
@@ -629,54 +543,6 @@ function placeSecretRooms(scene, rooms, mapTiles, roomTiles) {
     }
 }
 
-function fillRoom(map, roomTiles, room) {
-    const roomId = `${room.x},${room.y}-${room.width}x${room.height}`;
-
-    for (let i = 0; i < room.width; i++) {
-        for (let j = 0; j < room.height; j++) {
-            const x = room.x + i;
-            const y = room.y + j;
-            const isWall = i === 0 || j === 0 || i === room.width - 1 || j === room.height - 1;
-            const isCorner = (i === 0 && j === 0) || (i === 0 && j === room.height - 1) ||
-                (i === room.width - 1 && j === 0) || (i === room.width - 1 && j === room.height - 1);
-
-            map[`${x},${y}`] = isWall ? '#' : '.';
-
-            roomTiles[`${x},${y}`] = {
-                roomId: roomId,
-                isWall: isWall,
-                isRoom: true,
-                isCorner: isCorner,
-            };
-        }
-    }
-}
-
-function getConnectionCount(room) {
-    return room.connections ? room.connections.length : 0;
-}
-
-function getOppositeDirection(dir) {
-    switch (dir) {
-        case 'right': return 'left';
-        case 'left': return 'right';
-        case 'up': return 'down';
-        case 'down': return 'up';
-    }
-}
-
-function overlapsAny(rooms, x, y, w, h, gap = 1) {
-    for (const r of rooms) {
-        if (
-            x - gap < r.x + r.width &&
-            x + w + gap > r.x &&
-            y - gap < r.y + r.height &&
-            y + h + gap > r.y
-        ) return true;
-    }
-    return false;
-}
-
 function placeExit(rooms, mapTiles, roomTiles) {
     const startRoom = rooms.find(r => r.isStart);
     const candidateRooms = rooms.filter(room =>
@@ -715,4 +581,171 @@ function placeExit(rooms, mapTiles, roomTiles) {
     };
 
     return { x: exitX, y: exitY };
+}
+
+
+function addCorridorWalls(mapTiles) {
+    const corridorTiles = [];
+
+    for (const [key, value] of Object.entries(mapTiles)) {
+        if (value === '.' || value === 'C' || value === 'D') {
+            const [x, y] = key.split(',').map(Number);
+            corridorTiles.push({ x, y });
+        }
+    }
+
+    for (const tile of corridorTiles) {
+        const { x, y } = tile;
+
+        const neighbors = [
+            { dx: -1, dy: -1 }, { dx: 0, dy: -1 }, { dx: 1, dy: -1 },
+            { dx: -1, dy: 0 }, { dx: 1, dy: 0 },
+            { dx: -1, dy: 1 }, { dx: 0, dy: 1 }, { dx: 1, dy: 1 }
+        ];
+
+        for (const { dx, dy } of neighbors) {
+            const nx = x + dx;
+            const ny = y + dy;
+            const key = `${nx},${ny}`;
+
+            if (!mapTiles[key]) {
+                mapTiles[key] = '#';
+            }
+        }
+    }
+
+    cleanupCorridorWalls(mapTiles);
+}
+
+function cleanupCorridorWalls(mapTiles) {
+    const wallsToRemove = [];
+
+    for (const [key, value] of Object.entries(mapTiles)) {
+        if (value === '#') {
+            const [x, y] = key.split(',').map(Number);
+
+            if (isBlockingImportantPath(mapTiles, x, y)) {
+                wallsToRemove.push(key);
+            }
+        }
+    }
+
+    for (const key of wallsToRemove) {
+        delete mapTiles[key];
+    }
+}
+
+function isBlockingImportantPath(mapTiles, x, y) {
+    const left = mapTiles[`${x - 1},${y}`];
+    const right = mapTiles[`${x + 1},${y}`];
+
+    const up = mapTiles[`${x},${y - 1}`];
+    const down = mapTiles[`${x},${y + 1}`];
+
+    if ((left === '.' || left === 'C' || left === 'D') && (right === '.' || right === 'C' || right === 'D')) {
+        return true;
+    }
+
+    if ((up === '.' || up === 'C' || up === 'D') && (down === '.' || down === 'C' || down === 'D')) {
+        return true;
+    }
+
+    const topLeft = mapTiles[`${x - 1},${y - 1}`];
+    const topRight = mapTiles[`${x + 1},${y - 1}`];
+    const bottomLeft = mapTiles[`${x - 1},${y + 1}`];
+    const bottomRight = mapTiles[`${x + 1},${y + 1}`];
+
+    if ((topLeft === '.' || topLeft === 'C' || topLeft === 'D') && (bottomRight === '.' || bottomRight === 'C' || bottomRight === 'D')) {
+        const horizontalClear = !mapTiles[`${x - 1},${y}`] && !mapTiles[`${x + 1},${y}`];
+        const verticalClear = !mapTiles[`${x},${y - 1}`] && !mapTiles[`${x},${y + 1}`];
+
+        if (horizontalClear || verticalClear) {
+            return true;
+        }
+    }
+
+    if ((topRight === '.' || topRight === 'C' || topRight === 'D') && (bottomLeft === '.' || bottomLeft === 'C' || bottomLeft === 'D')) {
+        const horizontalClear = !mapTiles[`${x - 1},${y}`] && !mapTiles[`${x + 1},${y}`];
+        const verticalClear = !mapTiles[`${x},${y - 1}`] && !mapTiles[`${x},${y + 1}`];
+
+        if (horizontalClear || verticalClear) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+function fillRoom(map, roomTiles, room) {
+    const roomId = `${room.x},${room.y}-${room.width}x${room.height}`;
+
+    for (let i = 0; i < room.width; i++) {
+        for (let j = 0; j < room.height; j++) {
+            const x = room.x + i;
+            const y = room.y + j;
+            const isWall = i === 0 || j === 0 || i === room.width - 1 || j === room.height - 1;
+            const isCorner = (i === 0 && j === 0) || (i === 0 && j === room.height - 1) ||
+                (i === room.width - 1 && j === 0) || (i === room.width - 1 && j === room.height - 1);
+
+            map[`${x},${y}`] = isWall ? '#' : '.';
+
+            roomTiles[`${x},${y}`] = {
+                roomId: roomId,
+                isWall: isWall,
+                isRoom: true,
+                isCorner: isCorner,
+            };
+        }
+    }
+}
+
+function calculateMapBounds(mapTiles) {
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+
+    for (const key of Object.keys(mapTiles)) {
+        const [x, y] = key.split(',').map(Number);
+        minX = Math.min(minX, x);
+        minY = Math.min(minY, y);
+        maxX = Math.max(maxX, x);
+        maxY = Math.max(maxY, y);
+    }
+
+    const padding = 6;
+    const left = (minX - padding) * TILE_SIZE;
+    const top = (minY - padding) * TILE_SIZE;
+    const right = (maxX + padding) * TILE_SIZE;
+    const bottom = (maxY + padding) * TILE_SIZE;
+
+    return {
+        left,
+        top,
+        width: right - left,
+        height: bottom - top
+    };
+}
+
+function getConnectionCount(room) {
+    return room.connections ? room.connections.length : 0;
+}
+
+function getOppositeDirection(dir) {
+    switch (dir) {
+        case 'right': return 'left';
+        case 'left': return 'right';
+        case 'up': return 'down';
+        case 'down': return 'up';
+    }
+}
+
+function overlapsAny(rooms, x, y, w, h, gap = 1) {
+    for (const r of rooms) {
+        if (
+            x - gap < r.x + r.width &&
+            x + w + gap > r.x &&
+            y - gap < r.y + r.height &&
+            y + h + gap > r.y
+        ) return true;
+    }
+    return false;
 }

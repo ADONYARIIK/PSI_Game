@@ -32,7 +32,6 @@ export default class GameOverScene extends Phaser.Scene {
             this.cameras.main.centerX,
             this.cameras.main.centerY - 50,
             `Level Reached: ${this.gameData.level}\n\nFinal Score: ${this.gameData.scores}\n\nCoins Collected: ${this.gameData.coins}\n\nSnake Length: ${this.gameData.playerLength}`,
-            // `Level Reached: ${level}\n\nFinal Score: ${scores}\n\nCoins Collected: ${coins}\n\nSnake Length: ${playerLength}`,
             {
                 fontFamily: '"Jacquard 12"',
                 fontSize: '32px',

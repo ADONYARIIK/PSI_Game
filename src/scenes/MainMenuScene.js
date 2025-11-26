@@ -24,10 +24,6 @@ export default class MainMenuScene extends Phaser.Scene {
             this.scene.start('GameScene');
         });
 
-        //задержка что бы create успел проверить есть ли музыка
-
-
-
         const soundOn = this.add.image(1000, 400, 'gui', "soundOn.png").setScale(0.1).setInteractive({ useHandCursor: true });
         soundOn.on('pointerover', () => {
             this.scaleUpBtn(soundOn, 0.12);

@@ -12,8 +12,6 @@ export default class GameScene extends Phaser.Scene {
         this.exits = [];
         this.playerInventory = [];
         this.activeEffects = [];
-        this.floatingTextQueue = [];
-        this.isShowingFloatingText = false;
     }
 
     create() {
@@ -31,8 +29,6 @@ export default class GameScene extends Phaser.Scene {
         overlay.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height);
         overlay.setScrollFactor(0);
         overlay.setDepth(999);
-
-        // this.mapData = generateMap(this, 15);
 
         const roomCount = Math.min(3 + this.registry.get('level') * 2, 15);
         this.mapData = generateMap(this, roomCount);
@@ -64,11 +60,15 @@ export default class GameScene extends Phaser.Scene {
             this.mapData.bounds.height
         );
 
-        // this.cameras.main.startFollow(this.player.headSprite);
+        this.cameras.main.startFollow(this.player.headSprite, false, 0.05, 0.05);
         this.cameras.main.setZoom(2.5);
 
         if (!this.items) this.items = [];
         if (!this.enemies) this.enemies = [];
+
+        this.enemies.forEach(enemy => {
+            enemy.isBeingProcessed = false;
+        });
 
         this.turnManager = new TurnManager(this, this.player, this.enemies);
 
@@ -85,7 +85,6 @@ export default class GameScene extends Phaser.Scene {
 
         this.input.keyboard.on('keydown', (event) => {
             if (this.turnManager.locked) return;
-            // console.log('Key pressed:', event.code);
 
             let dir = null;
             switch (event.code) {
@@ -99,68 +98,133 @@ export default class GameScene extends Phaser.Scene {
 
             this.player.enqueueDirection(dir);
 
-            this.turnManager.processTurn(dir, {
-                isWallAt: (worldX, worldY) => {
-                    const gridX = Math.round(worldX);
-                    const gridY = Math.round(worldY);
+            if (this.hasDoubleMove()) {
+                this.processDoubleMoveTurn(dir, {
+                    isWallAt: (worldX, worldY) => {
+                        const gridX = Math.round(worldX);
+                        const gridY = Math.round(worldY);
+                        const tileKey = `${gridX},${gridY}`;
+                        const tile = this.mapData.mapTiles[tileKey];
+                        return tile === '#';
+                    },
+                    getEntityAt: (worldX, worldY) => {
+                        const exit = this.exits.find(e => e.gridX === worldX && e.gridY === worldY);
+                        if (exit) return exit;
 
-                    const tileKey = `${gridX},${gridY}`;
-                    const tile = this.mapData.mapTiles[tileKey];
+                        const enemy = this.enemies.find(e =>
+                            e.gridX === worldX && e.gridY === worldY && e.active
+                        );
+                        if (enemy) return enemy;
 
-                    return tile === '#';
-                },
-                getEntityAt: (worldX, worldY) => {
-                    const exit = this.exits.find(e => e.gridX === worldX && e.gridY === worldY);
-                    if (exit) return exit;
+                        const item = this.items.find(it => it.gridX === worldX && it.gridY === worldY);
+                        if (item) return item;
 
-                    const item = this.items.find(it => {
-                        it.gridX === worldX && it.gridY === worldY;
-                    });
-                    if (item) return item;
+                        return null;
+                    },
+                    getEnemyAt: (x, y, excludeEnemy = null) => {
+                        return this.enemies.find(e =>
+                            e.gridX === x && e.gridY === y && e !== excludeEnemy && e.active
+                        );
+                    },
+                    onEat: (item) => {
+                        if (item.type === 'exit') {
+                            this.completeLevel();
+                            return;
+                        }
+                        this.handleItemCollection(item);
+                    },
+                    onCollide: (entity) => {
+                        if (entity.type === 'exit') {
+                            this.completeLevel();
+                            return;
+                        }
+                        this.handleEnemyCollision(entity);
+                    },
+                    getPlayerHead: () => ({
+                        x: this.player.segments[0].x,
+                        y: this.player.segments[0].y
+                    }),
+                    isSnakeAt: (x, y) => {
+                        return this.player.occupancy.has(`${x},${y}`);
+                    },
+                    onEnemyAttack: (enemy) => {
+                        this.handleEnemyAttack(enemy);
+                    },
+                    onSelfCollision: () => {
+                        console.log('Self collision detected!');
+                        this.gameOver();
+                    },
+                    onWallCollision: () => {
+                        console.log('Wall collision detected!');
+                        this.gameOver();
+                    },
+                    skipEnemyTurn: false
+                });
+            } else {
+                this.turnManager.processTurn(dir, {
+                    isWallAt: (worldX, worldY) => {
+                        const gridX = Math.round(worldX);
+                        const gridY = Math.round(worldY);
+                        const tileKey = `${gridX},${gridY}`;
+                        const tile = this.mapData.mapTiles[tileKey];
+                        return tile === '#';
+                    },
+                    getEntityAt: (worldX, worldY) => {
+                        const exit = this.exits.find(e => e.gridX === worldX && e.gridY === worldY);
+                        if (exit) return exit;
 
-                    const enemy = this.enemies.find(e => {
-                        e.gridX === worldX && e.gridY === worldY;
-                    });
-                    if (enemy) return enemy;
+                        const enemy = this.enemies.find(e =>
+                            e.gridX === worldX && e.gridY === worldY && e.active
+                        );
+                        if (enemy) return enemy;
 
-                    return null;
-                },
-                onEat: (item) => {
-                    if (item.type === 'exit') {
-                        this.completeLevel();
-                        return;
+                        const item = this.items.find(it => it.gridX === worldX && it.gridY === worldY);
+                        if (item) return item;
+
+                        return null;
+                    },
+                    getEnemyAt: (x, y, excludeEnemy = null) => {
+                        return this.enemies.find(e =>
+                            e.gridX === x && e.gridY === y && e !== excludeEnemy && e.active
+                        );
+                    },
+                    onEat: (item) => {
+                        if (item.type === 'exit') {
+                            this.completeLevel();
+                            return;
+                        }
+                        this.handleItemCollection(item);
+                    },
+                    onCollide: (entity) => {
+                        if (entity.type === 'exit') {
+                            this.completeLevel();
+                            return;
+                        }
+                        this.handleEnemyCollision(entity);
+                    },
+                    getPlayerHead: () => ({
+                        x: this.player.segments[0].x,
+                        y: this.player.segments[0].y
+                    }),
+                    isSnakeAt: (x, y) => {
+                        return this.player.occupancy.has(`${x},${y}`);
+                    },
+                    onEnemyAttack: (enemy) => {
+                        this.handleEnemyAttack(enemy);
+                    },
+                    onSelfCollision: () => {
+                        console.log('Self collision detected!');
+                        this.gameOver();
+                    },
+                    onWallCollision: () => {
+                        console.log('Wall collision detected!');
+                        this.gameOver();
                     }
+                });
+            }
 
-                    this.handleItemCollection(item);
-                },
-                onCollide: (entity) => {
-                    if (entity.type === 'exit') {
-                        this.completeLevel();
-                        return;
-                    }
-
-                    this.handleEnemyCollision(entity);
-                },
-                getPlayerHead: () => ({
-                    x: this.player.segments[0].x,
-                    y: this.player.segments[0].y
-                }),
-                isSnakeAt: (x, y) => {
-                    return this.player.occupancy.has(`${x},${y}`);
-                },
-                getEnemyAt: (x, y, excludeEnemy = null) => {
-                    return this.enemies.find(e =>
-                        e.gridX === x && e.gridY === y && e !== excludeEnemy
-                    );
-                },
-                onSelfCollision: () => {
-                    console.log('Self collision detected!');
-                    this.gameOver();
-                },
-                onWallCollision: () => {
-                    console.log('Wall collision detected!');
-                    this.gameOver();
-                }
+            this.time.delayedCall(50, () => {
+                this.checkEnemyPlayerCollisions();
             });
         });
 
@@ -187,30 +251,143 @@ export default class GameScene extends Phaser.Scene {
         }
     }
 
-    isWall(gridX, gridY) {
-        const tileKey = `${gridX},${gridY}`;
-        const tile = this.mapData.mapTiles[tileKey];
-        return tile === '#';
+
+    processDoubleMoveTurn(direction, helpers) {
+        return new Promise((resolve) => {
+            let movesLeft = 2;
+            let finalResult = { completed: true };
+
+            const processNextMove = async () => {
+                if (movesLeft <= 0) {
+                    resolve(finalResult);
+                    return;
+                }
+
+                const moveHelpers = {
+                    ...helpers,
+                    skipEnemyTurn: movesLeft > 1
+                };
+
+                const result = await this.turnManager.processTurn(direction, moveHelpers);
+                finalResult = result;
+
+                if (result.died) {
+                    resolve(result);
+                    return;
+                }
+
+                movesLeft--;
+
+                if (movesLeft > 0 && !result.died) {
+                    this.time.delayedCall(150, processNextMove);
+                } else {
+                    resolve(result);
+                }
+            };
+
+            processNextMove();
+        });
     }
 
-    useInventoryItem(index) {
-        const inventory = this.registry.get('playerInventory') || [null, null, null, null, null];
 
-        if (index < 0 || index >= inventory.length || !inventory[index]) return;
+    checkEnemyPlayerCollisions() {
+        const head = this.player.segments[0];
+        const headGridX = Math.round(head.x);
+        const headGridY = Math.round(head.y);
 
-        const item = inventory[index];
-
-        this.applyItemEffects({
-            type: item.type,
-            subType: item.subType,
-            ...item.properties
+        this.enemies.forEach(enemy => {
+            if (enemy.active &&
+                enemy.gridX === headGridX &&
+                enemy.gridY === headGridY &&
+                !enemy.isBeingProcessed) {
+                console.log(`Enemy ${enemy.subType} stepped on player head!`);
+                this.handleEnemyAttack(enemy);
+            }
         });
+    }
 
-        inventory[index] = null;
-        this.registry.set('playerInventory', inventory);
+    handleEnemyAttack(enemy) {
+        if (!enemy.active || enemy.isBeingProcessed) return;
 
-        this.scene.get('UIScene').updateInventory();
-        console.log(`Used inventory item: ${item.subType}`);
+        enemy.isBeingProcessed = true;
+
+        console.log(`Enemy ${enemy.subType} attacks player!`);
+
+        const playerDamage = this.getPlayerDamage();
+        let totalDamage = playerDamage;
+
+        if (enemy.subType === 'vampire') {
+            totalDamage += this.getVampireDamageBonus();
+        }
+
+        const actualDamage = Math.max(1, totalDamage - (enemy.shield || 0));
+        enemy.health -= actualDamage;
+
+        this.showFloatingText(`HP -${actualDamage}`, '#ff4444', enemy.x, enemy.y);
+
+        if (enemy.health <= 0) {
+            if (enemy.isBoss) {
+                this.showFloatingText(`BOSS ${enemy.subType} DEFEATED!`, '#ff00ff', enemy.x, enemy.y);
+                this.registry.set('scores', this.registry.get('scores') + 100);
+
+                this.spawnBossReward(enemy.gridX, enemy.gridY);
+            } else {
+                this.showFloatingText(`${enemy.subType} slayed`, 'red');
+                this.registry.set('scores', this.registry.get('scores') + 30);
+            }
+
+            if (enemy.glowEffect) {
+                enemy.glowEffect.destroy();
+            }
+
+            enemy.destroy();
+            this.enemies = this.enemies.filter(e => e !== enemy);
+            enemy._isBeingProcessed = false;
+            return;
+        }
+
+        let enemyDamage = enemy.damage;
+        const playerShield = this.getPlayerShield();
+
+        enemyDamage = Math.max(0, enemyDamage - playerShield);
+
+        if (enemyDamage > 0) {
+            this.registry.set('hp', Math.max(0, this.registry.get('hp') - enemyDamage));
+
+            this.time.delayedCall(400, () => {
+                this.showFloatingText(`HP -${enemyDamage}`, '#ff0000');
+            });
+
+            if (enemy.lifesteal) {
+                this.time.delayedCall(800, () => {
+                    enemy.health = Math.min(enemy.maxHealth, enemy.health + 1);
+                    this.showFloatingText('+1 HP', '#ff00ff', enemy.x, enemy.y);
+                });
+            }
+
+            this.cameras.main.shake(100, 0.01);
+
+            if (this.registry.get('hp') <= 0) {
+                this.gameOver();
+            }
+        } else {
+            this.time.delayedCall(400, () => {
+                this.showFloatingText('Blocked!', '#00ffff');
+            });
+        }
+
+        this.time.delayedCall(100, () => {
+            if (enemy.active) {
+                enemy.isBeingProcessed = false;
+            }
+        });
+    }
+
+    handleEnemyCollision(enemy) {
+        if (!enemy.active || enemy.isBeingProcessed) return;
+
+        console.log(`Player collides with enemy ${enemy.subType}!`);
+        this.handleEnemyAttack(enemy);
     }
 
     handleItemCollection(item) {
@@ -267,6 +444,27 @@ export default class GameScene extends Phaser.Scene {
         }
     }
 
+
+    useInventoryItem(index) {
+        const inventory = this.registry.get('playerInventory') || [null, null, null, null, null];
+
+        if (index < 0 || index >= inventory.length || !inventory[index]) return;
+
+        const item = inventory[index];
+
+        this.applyItemEffects({
+            type: item.type,
+            subType: item.subType,
+            ...item.properties
+        });
+
+        inventory[index] = null;
+        this.registry.set('playerInventory', inventory);
+
+        this.scene.get('UIScene').updateInventory();
+        console.log(`Used inventory item: ${item.subType}`);
+    }
+
     getItemProperties(item) {
         const props = {};
         if (item.healthGain) props.healthGain = item.healthGain;
@@ -296,11 +494,22 @@ export default class GameScene extends Phaser.Scene {
     applyItemEffects(item) {
         const effects = [];
 
+        if (item.healthLoss) {
+            const currentHP = this.registry.get('hp');
+            this.registry.set('hp', Math.max(1, currentHP - item.healthLoss));
+            effects.push({ text: `-${item.healthLoss} HP`, color: 'red' });
+
+            if (this.registry.get('hp') <= 0) {
+                this.gameOver();
+                return;
+            }
+        }
+
         if (item.healthGain) {
             const currentHP = this.registry.get('hp');
             const maxHP = this.registry.get('maxHP');
             this.registry.set('hp', Math.min(maxHP, currentHP + item.healthGain));
-            effects.push({ text: `+${item.healthGain} HP`, color: 'green' })
+            effects.push({ text: `+${item.healthGain} HP`, color: 'green' });
         }
 
         if (item.maxHealthIncrease) {
@@ -313,39 +522,41 @@ export default class GameScene extends Phaser.Scene {
             const newMaxHP = this.registry.get('maxHP');
             this.registry.set('hp', Math.min(newMaxHP, currentHP + item.maxHealthIncrease));
 
-            effects.push({ text: `Max HP +${item.maxHealthIncrease}`, color: 'yellow' })
+            effects.push({ text: `Max HP +${item.maxHealthIncrease}`, color: 'yellow' });
         }
 
         if (item.lengthGain) {
             this.player.grow += item.lengthGain;
             this.registry.set('playerLength', this.player.getLength());
-            effects.push({ text: `Length +${item.lengthGain}`, color: 'cyan' })
-        }
-
-        if (item.healthLoss) {
-            const currentHP = this.registry.get('hp');
-            this.registry.set('hp', Math.max(1, currentHP - item.healthLoss));
-            effects.push({ text: `-${item.healthLoss} HP`, color: 'red' })
+            effects.push({ text: `Length +${item.lengthGain}`, color: 'cyan' });
         }
 
         if (item.lengthLoss) {
-            this.player.grow = Math.max(0, this.player.grow - item.lengthLoss);
-            if (this.player.grow === 0 && this.player.segments.length > 3) {
-                const segmentsToRemove = Math.min(item.lengthLoss, this.player.getLength() - 3);
-                for (let i = 0; i < segmentsToRemove; i++) {
-                    this.player.segments.pop();
+            const segmentsToRemove = Math.min(item.lengthLoss, this.player.getLength() - 3);
+
+            if (segmentsToRemove > 0) {
+                if (this.player.grow >= segmentsToRemove) {
+                    this.player.grow -= segmentsToRemove;
+                } else {
+                    const remaining = segmentsToRemove - this.player.grow;
+                    this.player.grow = 0;
+
+                    for (let i = 0; i < remaining && this.player.segments.length > 3; i++) {
+                        const tail = this.player.segments.pop();
+                        this.player.occupancy.delete(this.player._key(tail.x, tail.y));
+                    }
+                    this.player.syncSpritesToSegments();
                 }
-                this.player.syncSpritesToSegments();
+
+                this.registry.set('playerLength', this.player.getLength());
+                effects.push({ text: `Length -${item.lengthLoss}`, color: 'orange' });
             }
-            this.registry.set('playerLength', this.player.getLength());
-            effects.push({ text: `Length -${item.lengthLoss}`, color: 'orange' })
         }
 
         if (item.tempLength && item.tempLengthDuration) {
             this.player.grow += item.tempLength;
-            this.tempLengthSegments = item.tempLength;
-            this.tempLengthDuration = item.tempLengthDuration;
             this.registry.set('playerLength', this.player.getLength());
+
             this.activeEffects.push({
                 type: 'tempLength',
                 value: item.tempLength,
@@ -354,7 +565,7 @@ export default class GameScene extends Phaser.Scene {
                 description: `Temp Length +${item.tempLength}`,
                 itemSubType: item.subType
             });
-            effects.push({ text: `Temp Length +${item.tempLength}`, color: 'lightblue' })
+            effects.push({ text: `Temp Length +${item.tempLength}`, color: 'lightblue' });
         }
 
         if (item.regen && item.regenDuration) {
@@ -366,7 +577,7 @@ export default class GameScene extends Phaser.Scene {
                 description: `Regen +${item.regen} HP/turn`,
                 itemSubType: item.subType
             });
-            effects.push({ text: `Regen +${item.regen}/turn`, color: 'lime' })
+            effects.push({ text: `Regen +${item.regen}/turn`, color: 'lime' });
         }
 
         if (item.shield && item.shieldDuration) {
@@ -377,20 +588,20 @@ export default class GameScene extends Phaser.Scene {
                 turnsLeft: item.shieldDuration,
                 description: `Shield +${item.shield}`,
                 itemSubType: item.subType
-            })
-            effects.push({ text: `Shield +${item.shield}`, color: 'blue' })
+            });
+            effects.push({ text: `Shield +${item.shield}`, color: 'blue' });
         }
 
         if (item.permanentShield) {
             const currentShield = this.registry.get('permanentShield') || 0;
             this.registry.set('permanentShield', currentShield + item.permanentShield);
-            effects.push({ text: `Permanent Shield +${item.permanentShield}`, color: 'darkblue' })
+            effects.push({ text: `Permanent Shield +${item.permanentShield}`, color: 'darkblue' });
         }
 
         if (item.damageReduction) {
             const currentDmg = this.registry.get('dmg');
             this.registry.set('dmg', Math.max(1, currentDmg - item.damageReduction));
-            effects.push({ text: `Damage -${item.damageReduction}`, color: 'purple' })
+            effects.push({ text: `Damage -${item.damageReduction}`, color: 'purple' });
         }
 
         if (item.damageBoost && item.damageDuration) {
@@ -402,7 +613,7 @@ export default class GameScene extends Phaser.Scene {
                 description: `Dmg +${item.damageBoost}`,
                 itemSubType: item.subType
             });
-            effects.push({ text: `Damage +${item.damageBoost}`, color: 'red' })
+            effects.push({ text: `Damage +${item.damageBoost}`, color: 'red' });
         }
 
         if (item.vampireDamage && item.vampireDuration) {
@@ -414,7 +625,7 @@ export default class GameScene extends Phaser.Scene {
                 description: `Vampire Dmg +${item.vampireDamage}`,
                 itemSubType: item.subType
             });
-            effects.push({ text: `Vampire Damage +${item.vampireDamage}`, color: 'darkred' })
+            effects.push({ text: `Vampire Damage +${item.vampireDamage}`, color: 'darkred' });
         }
 
         if (item.doubleMove && item.doubleMoveDuration) {
@@ -426,7 +637,7 @@ export default class GameScene extends Phaser.Scene {
                 description: 'Double Move',
                 itemSubType: item.subType
             });
-            effects.push({ text: 'Double Move!', color: 'gold' })
+            effects.push({ text: 'Double Move!', color: 'gold' });
         }
 
         effects.forEach(effect => {
@@ -436,6 +647,7 @@ export default class GameScene extends Phaser.Scene {
         this.registry.set('scores', this.registry.get('scores') + 10);
         this.updateEffectsUI();
     }
+
 
     processEndOfTurnEffects() {
         const regenEffects = this.activeEffects.filter(effect => effect.type === 'regen');
@@ -450,37 +662,52 @@ export default class GameScene extends Phaser.Scene {
         });
 
         for (let i = this.activeEffects.length - 1; i >= 0; i--) {
-            this.activeEffects[i].turnsLeft--;
+            const effect = this.activeEffects[i];
 
-            if (this.activeEffects[i].turnsLeft <= 0) {
-                const expiredEffect = this.activeEffects[i];
+            if (effect.type === 'tempLength') {
+                effect.turnsLeft--;
 
-                if (expiredEffect.type === 'damageBoost') {
-                    this.showFloatingText('Damage boost ended', 'white');
-                } else if (expiredEffect.type === 'shield') {
-                    this.showFloatingText('Shield ended', 'white');
-                } else if (expiredEffect.type === 'doubleMove') {
-                    this.showFloatingText('Double move ended', 'white');
-                } else if (expiredEffect.type === 'vampireDamage') {
-                    this.showFloatingText('Vampire damage ended', 'white');
+                if (effect.turnsLeft <= 0) {
+                    const segmentsToRemove = Math.min(effect.value, this.player.getLength() - 3);
+
+                    if (segmentsToRemove > 0) {
+                        if (this.player.grow >= segmentsToRemove) {
+                            this.player.grow -= segmentsToRemove;
+                        } else {
+                            const remaining = segmentsToRemove - this.player.grow;
+                            this.player.grow = 0;
+
+                            for (let i = 0; i < remaining && this.player.segments.length > 3; i++) {
+                                const tail = this.player.segments.pop();
+                                this.player.occupancy.delete(this.player._key(tail.x, tail.y));
+                            }
+                            this.player.syncSpritesToSegments();
+                        }
+
+                        this.registry.set('playerLength', this.player.getLength());
+                        this.showFloatingText('Temp length ended', 'white');
+                    }
+
+                    this.activeEffects.splice(i, 1);
                 }
+            } else {
+                effect.turnsLeft--;
 
-                this.activeEffects.splice(i, 1);
-            }
-        }
+                if (effect.turnsLeft <= 0) {
+                    const expiredEffect = effect;
 
-        if (this.tempLengthDuration > 0) {
-            this.tempLengthDuration--;
-            if (this.tempLengthDuration <= 0 && this.tempLengthSegments > 0) {
-                const segmentsToRemove = Math.min(this.tempLengthSegments, this.player.getLength() - 3);
+                    if (expiredEffect.type === 'damageBoost') {
+                        this.showFloatingText('Damage boost ended', 'white');
+                    } else if (expiredEffect.type === 'shield') {
+                        this.showFloatingText('Shield ended', 'white');
+                    } else if (expiredEffect.type === 'doubleMove') {
+                        this.showFloatingText('Double move ended', 'white');
+                    } else if (expiredEffect.type === 'vampireDamage') {
+                        this.showFloatingText('Vampire damage ended', 'white');
+                    }
 
-                for (let i = 0; i < segmentsToRemove; i++) {
-                    this.player.segments.pop();
+                    this.activeEffects.splice(i, 1);
                 }
-                this.player.syncSpritesToSegments();
-                this.tempLengthSegments = 0;
-                this.registry.set('playerLength', this.player.getLength());
-                this.showFloatingText('Temp length ended', 'white');
             }
         }
 
@@ -524,161 +751,53 @@ export default class GameScene extends Phaser.Scene {
         return this.activeEffects.some(effect => effect.type === 'doubleMove');
     }
 
-    showFloatingText(text, color = 'ffffff', x = null, y = null) {
-        this.floatingTextQueue.push({
-            text: text.toString(),
-            color: color,
-            x: x !== null ? x : this.player.headSprite.x + 3,
-            y: y !== null ? y : this.player.headSprite.y - 10
-        })
+    updateStatsFromLength() {
+        const currentLength = this.registry.get('playerLength');
 
-        if (!this.isShowingFloatingText) {
-            this.processFloatingTextQueue();
+        if (currentLength === this.lastLength) {
+            return
+        }
+
+        this.recalculateStats();
+        this.lastLength = currentLength;
+
+        const length = currentLength - 3;
+        if (length % 5 === 0 && length > 0) {
+            this.showFloatingText('Max HP +1', 'green');
+        }
+        if (length % 10 === 0 && length > 3) {
+            this.showFloatingText('Damage +1!', 'red');
+        }
+        if (length % 20 === 0 && length > 3) {
+            this.showFloatingText('Shield +1!', 'blue');
         }
     }
 
-    processFloatingTextQueue() {
-        if (this.floatingTextQueue.length === 0) {
-            this.isShowingFloatingText = false;
-            return;
-        }
+    recalculateStats() {
+        const length = this.registry.get('playerLength') - 3;
 
-        this.isShowingFloatingText = true;
-        const message = this.floatingTextQueue.shift();
+        const baseMaxHP = this.registry.get('baseMaxHP');
+        const hpBonus = Math.floor(length / 5);
+        const newMaxHP = baseMaxHP + hpBonus;
 
-        const floatingText = this.add.text(message.x, message.y, message.text, {
-            fontSize: '12px',
-            fill: message.color,
-            stroke: '#000000',
-            strokeThickness: 3
-        }).setDepth(100);
+        const baseDmg = this.registry.get('baseDmg');
+        const dmgBonus = Math.floor(length / 10);
+        const newDmg = baseDmg + dmgBonus;
 
-        this.tweens.add({
-            targets: floatingText,
-            y: message.y - 30,
-            alpha: 0,
-            duration: 1000,
-            ease: 'Power2',
-            onComplete: () => {
-                floatingText.destroy();
-                this.processFloatingTextQueue();
-            }
-        });
-    }
+        const baseShield = this.registry.get('basePermanentShield');
+        const shieldBonus = Math.floor(length / 20);
+        const newShield = baseShield + shieldBonus;
 
-    handleEnemyCollision(enemy) {
-        const playerDamage = this.getPlayerDamage();
-        let totalDamage = playerDamage;
+        this.registry.set('maxHP', newMaxHP);
+        this.registry.set('dmg', newDmg);
+        this.registry.set('permanentShield', newShield);
 
-        if (enemy.subType && enemy.subType === 'vampire') {
-            totalDamage += this.getVampireDamageBonus();
-        }
-
-        const actualDamage = Math.max(1, totalDamage - (enemy.shield || 0));
-        enemy.health -= actualDamage;
-
-        this.showFloatingText(`HP -${actualDamage}`, '#ff4444', enemy.x, enemy.y);
-
-        if (enemy.getData('updateHealthBar')) {
-            enemy.getData('updateHealthBar')();
-        }
-
-        if (enemy.health <= 0) {
-            // this.showDeathEffect(enemy.x, enemy.y);
-            this.showFloatingText(`${enemy.subType} slayed`, 'red');
-            enemy.destroy();
-            this.enemies = this.enemies.filter(e => e !== enemy);
-            this.registry.set('scores', this.registry.get('scores') + 30);
-        } else {
-            let enemyDamage = enemy.damage;
-            const playerShield = this.getPlayerShield();
-
-            enemyDamage = Math.max(0, enemyDamage - playerShield);
-
-            if (enemyDamage > 0) {
-                this.registry.set('hp', Math.max(0, this.registry.get('hp') - enemyDamage));
-
-                this.time.delayedCall(400, () => {
-                    this.showFloatingText(`HP -${enemyDamage}`, '#ff0000');
-                });
-
-                if (enemy.lifesteal) {
-                    this.time.delayedCall(800, () => {
-                        enemy.health = Math.min(enemy.maxHealth, enemy.health + 1);
-                        this.showFloatingText('+1 HP', '#ff00ff', enemy.x, enemy.y);
-                    });
-                }
-
-                this.cameras.main.shake(100, 0.01);
-
-                if (this.registry.get('hp') <= 0) {
-                    this.gameOver();
-                }
-            } else {
-                this.time.delayedCall(400, () => {
-                    this.showFloatingText('Blocked!', '#00ffff');
-                });
-            }
+        const currentHP = this.registry.get('hp');
+        if (currentHP > newMaxHP) {
+            this.registry.set('hp', newMaxHP);
         }
     }
 
-    // showDeathEffect(x, y) {
-    //     const particles = this.add.particles('sprites');
-
-    //     const emitter = particles.createEmitter({
-    //         frame: 'skull_01.png',
-    //         x: x + 8,
-    //         y: y + 8,
-    //         speed: { min: 20, max: 50 },
-    //         angle: { min: 0, max: 360 },
-    //         scale: { start: 0.5, end: 0 },
-    //         lifespan: 800,
-    //         quantity: 5
-    //     });
-
-    //     this.time.delayedCall(800, () => {
-    //         particles.destroy();
-    //     });
-    // }
-
-
-    completeLevel() {
-        console.log('Level completed! Going to shop...');
-
-        const currentLength = this.player.getLength();
-        this.registry.set('length', currentLength);
-
-        this.registry.set('level', this.registry.get('level') + 1);
-
-        this.showFloatingText('Level Complete!', 'gold', this.player.headSprite.x, this.player.headSprite.y - 20);
-
-        this.time.delayedCall(500, () => {
-            this.scene.start('ShopScene');
-        });
-    }
-
-    gameOver() {
-        if (this.registry.get('isGameOver')) return;
-
-        this.registry.set('isGameOver', true);
-        console.log('Game Over - Player died');
-
-        this.turnManager.locked = true;
-
-        const gameOverData = {
-            level: this.registry.get('level') || 1,
-            scores: this.registry.get('scores') || 0,
-            coins: this.registry.get('coins') || 0,
-            playerLength: this.registry.get('playerLength') || 3
-        };
-
-        this.scene.stop('UIScene');
-        this.scene.stop('SettingsScene');
-
-        this.time.delayedCall(400, () => {
-            this.scene.start('GameOverScene', gameOverData);
-        });
-    }
 
     spawnShopItems() {
         const purchasedItems = this.registry.get('playerItems') || [];
@@ -766,6 +885,48 @@ export default class GameScene extends Phaser.Scene {
         }
     }
 
+    spawnBossReward(x, y) {
+        const worldX = x * TILE_SIZE;
+        const worldY = y * TILE_SIZE;
+
+        const rewards = ['bigRedFlask', 'bigBlueFlask', 'cake'];
+        const rewardType = Phaser.Utils.Array.GetRandom(rewards);
+
+        const reward = this.add.image(worldX, worldY, 'sprites', frameName(rewardType))
+            .setOrigin(0)
+            .setDepth(25)
+            .setScale(0.8);
+
+        const rewardProps = ITEM_PROPERTIES[rewardType];
+        Object.assign(reward, rewardProps);
+        reward.type = rewardProps.type;
+        reward.subType = rewardType;
+        reward.gridX = x;
+        reward.gridY = y;
+        reward.immediate = false;
+
+        this.tweens.add({
+            targets: reward,
+            y: reward.y - 5,
+            duration: 1000,
+            yoyo: true,
+            repeat: -1,
+            ease: 'ease'
+        });
+
+        if (!this.items) this.items = [];
+        this.items.push(reward);
+
+        console.log(`Boss reward spawned: ${rewardType}`);
+    }
+
+
+    isWall(gridX, gridY) {
+        const tileKey = `${gridX},${gridY}`;
+        const tile = this.mapData.mapTiles[tileKey];
+        return tile === '#';
+    }
+
     isValidSpawnPosition(x, y) {
         const tileKey = `${x},${y}`;
 
@@ -789,50 +950,78 @@ export default class GameScene extends Phaser.Scene {
         return !hasDoor;
     }
 
-    updateStatsFromLength() {
-        const currentLength = this.registry.get('playerLength');
+    showFloatingText(text, color = 'ffffff', x = null, y = null) {
+        const targetX = x !== null ? x : this.player.headSprite.x + 3;
+        const targetY = y !== null ? y : this.player.headSprite.y - 10;
 
-        if (currentLength === this.lastLength) {
-            return
-        }
+        const floatingText = this.add.text(targetX, targetY, text.toString(), {
+            fontSize: '12px',
+            fill: color,
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setDepth(100);
 
-        this.recalculateStats();
-        this.lastLength = currentLength;
+        const offsetX = (Math.random() - 0.5) * 50;
+        const offsetY = (Math.random() - 0.5) * 30;
 
-        const length = currentLength - 3;
-        if (length % 5 === 0 && length > 0) {
-            this.showFloatingText('Max HP +1', 'green');
-        }
-        if (length % 10 === 0 && length > 3) {
-            this.showFloatingText('Damage +1!', 'red');
-        }
-        if (length % 20 === 0 && length > 3) {
-            this.showFloatingText('Shield +1!', 'blue');
-        }
+        this.tweens.add({
+            targets: floatingText,
+            x: targetX + offsetX,
+            y: targetY - 40 + offsetY,
+            alpha: 0,
+            duration: 1000,
+            ease: 'Power2',
+            onComplete: () => {
+                floatingText.destroy();
+            }
+        });
     }
 
-    recalculateStats() {
-        const length = this.registry.get('playerLength') - 3;
 
-        const baseMaxHP = this.registry.get('baseMaxHP');
-        const hpBonus = Math.floor(length / 5);
-        const newMaxHP = baseMaxHP + hpBonus;
+    completeLevel() {
+        console.log('Level completed! Going to shop...');
 
-        const baseDmg = this.registry.get('baseDmg');
-        const dmgBonus = Math.floor(length / 10);
-        const newDmg = baseDmg + dmgBonus;
+        const currentLength = this.player.getLength();
+        this.registry.set('length', currentLength);
 
-        const baseShield = this.registry.get('basePermanentShield');
-        const shieldBonus = Math.floor(length / 20);
-        const newShield = baseShield + shieldBonus;
+        this.registry.set('level', this.registry.get('level') + 1);
 
-        this.registry.set('maxHP', newMaxHP);
-        this.registry.set('dmg', newDmg);
-        this.registry.set('permanentShield', newShield);
+        this.showFloatingText('Level Complete!', 'gold', this.player.headSprite.x, this.player.headSprite.y - 20);
 
-        const currentHP = this.registry.get('hp');
-        if (currentHP > newMaxHP) {
-            this.registry.set('hp', newMaxHP);
+        this.time.delayedCall(500, () => {
+            this.scene.start('ShopScene');
+        });
+    }
+
+    gameOver() {
+        if (this.registry.get('isGameOver')) return;
+
+        this.registry.set('isGameOver', true);
+        console.log('Game Over - Player died');
+
+        this.turnManager.locked = true;
+
+        const length = this.registry.get('playerLength');
+        const level = this.registry.get('level');
+        const coins = this.registry.get('coins');
+
+        for (let i = 0; i < length - 3; i++) {
+            this.registry.set('scores', this.registry.get('scores') + length * level)
         }
+        const scores = this.registry.get('scores');
+
+        const gameOverData = {
+            level: level,
+            scores: scores,
+            coins: coins,
+            playerLength: length
+        };
+
+        this.scene.stop('UIScene');
+        this.scene.stop('SettingsScene');
+
+        this.time.delayedCall(400, () => {
+            this.scene.start('GameOverScene', gameOverData);
+        });
     }
 }

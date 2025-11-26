@@ -40,7 +40,7 @@ export default class ShopScene extends Phaser.Scene {
 
         this.add.image(550, 590, 'gui', 'itemBox.png').setScale(0.18);
 
-        const refresh = this.add.image(526, 590, 'refresh')
+        const refresh = this.add.image(526, 590, 'gui', 'refresh.png')
             .setScale(2.5)
             .setInteractive({ useHandCursor: true });
 
@@ -63,6 +63,7 @@ export default class ShopScene extends Phaser.Scene {
             this.refresh();
         });
     }
+
 
     createShopSlots() {
         const slotPositions = [
@@ -222,6 +223,7 @@ export default class ShopScene extends Phaser.Scene {
         })
     }
 
+
     generatePrice(value) {
         const modul = Phaser.Math.Between(1, 3);
         const price = Math.ceil(value * (this.registry.get('level') - 1) / modul);
@@ -281,6 +283,7 @@ export default class ShopScene extends Phaser.Scene {
             }
         });
     }
+
 
     showItemTooltip(item, properties) {
         const tooltip = this.add.container(item.x, item.y - 80);

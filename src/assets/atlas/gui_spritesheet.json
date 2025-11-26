@@ -4,7 +4,7 @@
 			"image": "gui_spritesheet",
 			"format": "RGBA8888",
 			"size": {
-				"w": 4608,
+				"w": 5120,
 				"h": 4608
 			},
 			"scale": 1,
@@ -87,8 +87,8 @@
 						"h": 1536
 					},
 					"frame": {
-						"x": 0,
-						"y": 2048,
+						"x": 1536,
+						"y": 1024,
 						"w": 1024,
 						"h": 1536
 					}
@@ -108,14 +108,14 @@
 						"h": 1200
 					},
 					"frame": {
-						"x": 1024,
+						"x": 0,
 						"y": 2048,
 						"w": 900,
 						"h": 1200
 					}
 				},
 				{
-					"filename": "nextLvl.png",
+					"filename": "authors.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -129,8 +129,8 @@
 						"h": 1024
 					},
 					"frame": {
-						"x": 1536,
-						"y": 1024,
+						"x": 900,
+						"y": 2560,
 						"w": 1024,
 						"h": 1024
 					}
@@ -151,7 +151,7 @@
 					},
 					"frame": {
 						"x": 1924,
-						"y": 2048,
+						"y": 2560,
 						"w": 1024,
 						"h": 1024
 					}
@@ -220,7 +220,28 @@
 					}
 				},
 				{
-					"filename": "authors.png",
+					"filename": "walls.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 1024,
+						"h": 1024
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 1024,
+						"h": 1024
+					},
+					"frame": {
+						"x": 2948,
+						"y": 3072,
+						"w": 1024,
+						"h": 1024
+					}
+				},
+				{
+					"filename": "nextLvl.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -256,55 +277,13 @@
 					},
 					"frame": {
 						"x": 1024,
-						"y": 3248,
+						"y": 3584,
 						"w": 1024,
 						"h": 1024
 					}
 				},
 				{
 					"filename": "soundOff.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 1024,
-						"h": 1024
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 1024,
-						"h": 1024
-					},
-					"frame": {
-						"x": 2048,
-						"y": 3072,
-						"w": 1024,
-						"h": 1024
-					}
-				},
-				{
-					"filename": "settingsIcon.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 1024,
-						"h": 1024
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 1024,
-						"h": 1024
-					},
-					"frame": {
-						"x": 3072,
-						"y": 3072,
-						"w": 1024,
-						"h": 1024
-					}
-				},
-				{
-					"filename": "walls.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -325,6 +304,27 @@
 					}
 				},
 				{
+					"filename": "settingsIcon.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 1024,
+						"h": 1024
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 1024,
+						"h": 1024
+					},
+					"frame": {
+						"x": 4096,
+						"y": 0,
+						"w": 1024,
+						"h": 1024
+					}
+				},
+				{
 					"filename": "shopItem.png",
 					"rotated": false,
 					"trimmed": false,
@@ -339,8 +339,8 @@
 						"h": 36
 					},
 					"frame": {
-						"x": 1924,
-						"y": 3072,
+						"x": 2560,
+						"y": 2048,
 						"w": 24,
 						"h": 36
 					}
@@ -360,8 +360,8 @@
 						"h": 36
 					},
 					"frame": {
-						"x": 1948,
-						"y": 3072,
+						"x": 2560,
+						"y": 2084,
 						"w": 24,
 						"h": 36
 					}
@@ -381,8 +381,8 @@
 						"h": 24
 					},
 					"frame": {
-						"x": 1972,
-						"y": 3072,
+						"x": 2560,
+						"y": 2120,
 						"w": 24,
 						"h": 24
 					}
@@ -402,8 +402,8 @@
 						"h": 24
 					},
 					"frame": {
-						"x": 1996,
-						"y": 3072,
+						"x": 2560,
+						"y": 2144,
 						"w": 24,
 						"h": 24
 					}
@@ -423,8 +423,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 2020,
-						"y": 3072,
+						"x": 2560,
+						"y": 2168,
 						"w": 16,
 						"h": 16
 					}
@@ -444,8 +444,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 2020,
-						"y": 3088,
+						"x": 2576,
+						"y": 2168,
 						"w": 16,
 						"h": 16
 					}
@@ -465,8 +465,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 1972,
-						"y": 3096,
+						"x": 2584,
+						"y": 2048,
 						"w": 16,
 						"h": 16
 					}
@@ -486,8 +486,29 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 1988,
-						"y": 3096,
+						"x": 2584,
+						"y": 2064,
+						"w": 16,
+						"h": 16
+					}
+				},
+				{
+					"filename": "refresh.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 16,
+						"h": 16
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 2584,
+						"y": 2080,
 						"w": 16,
 						"h": 16
 					}

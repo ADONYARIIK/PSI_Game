@@ -11,6 +11,31 @@ export function drawTiles(scene, mapTiles, roomTiles) {
     drawExits(scene, roomTiles);
 }
 
+
+function drawAbyss(scene, mapTiles) {
+    const abyssFrame = TEXTURES.abyss;
+    const keys = Object.keys(mapTiles);
+    const coords = keys.map(k => k.split(',').map(Number));
+
+    let minX = Math.min(...coords.map(c => c[0])) - 6;
+    let maxX = Math.max(...coords.map(c => c[0])) + 6;
+    let minY = Math.min(...coords.map(c => c[1])) - 6;
+    let maxY = Math.max(...coords.map(c => c[1])) + 6;
+
+    for (let y = minY; y <= maxY; y++) {
+        for (let x = minX; x <= maxX; x++) {
+            if (!mapTiles[`${x},${y}`]) {
+                scene.add.image(
+                    x * TILE_SIZE,
+                    y * TILE_SIZE,
+                    atlas,
+                    frameName(`${abyssFrame}`)
+                ).setOrigin(0).setDepth(0);
+            }
+        }
+    }
+}
+
 function drawFloor(scene, mapTiles) {
     for (const [key, value] of Object.entries(mapTiles)) {
         const [x, y] = key.split(',').map(Number);
@@ -65,7 +90,6 @@ function drawFloorEdges(scene, mapTiles) {
             else if (downWall && rightWall && hasUp && hasLeft) {
                 floorPosition = 'right-bottom-corner';
             }
-            // Края
             else if (upWall && hasDown && hasLeft && hasRight) {
                 floorPosition = 'top';
             }
@@ -85,6 +109,47 @@ function drawFloorEdges(scene, mapTiles) {
         }
     }
 }
+
+function drawAllWalls(scene, mapTiles, roomTiles) {
+    const wallData = [];
+
+    for (const [key, value] of Object.entries(mapTiles)) {
+        if (value === '#') {
+            const [x, y] = key.split(',').map(Number);
+            const wx = x * TILE_SIZE;
+            const wy = y * TILE_SIZE;
+
+            wallData.push({ x, y, wx, wy, roomInfo: roomTiles[key] });
+        }
+    }
+
+    for (const wall of wallData) {
+        if (wall.roomInfo && wall.roomInfo.isRoom) {
+            drawRoomWall(scene, mapTiles, wall.x, wall.y, wall.wx, wall.wy);
+        }
+    }
+
+    for (const wall of wallData) {
+        if (!wall.roomInfo || !wall.roomInfo.isRoom) {
+            drawCorridorWall(scene, mapTiles, wall.x, wall.y, wall.wx, wall.wy);
+        }
+    }
+}
+
+function drawExits(scene, roomTiles) {
+    for (const [key, roomInfo] of Object.entries(roomTiles)) {
+        if (roomInfo.isExit) {
+            const [x, y] = key.split(',').map(Number);
+            const wx = x * TILE_SIZE;
+            const wy = y * TILE_SIZE;
+
+            scene.add.image(wx, wy, atlas, frameName(`${TEXTURES.exitClose[0]}`))
+                .setOrigin(0)
+                .setDepth(5);
+        }
+    }
+}
+
 
 function drawFloorEdgeByPosition(scene, wx, wy, position, textures) {
     switch (position) {
@@ -114,55 +179,6 @@ function drawFloorEdgeByPosition(scene, wx, wy, position, textures) {
             break;
         default:
             break;
-    }
-}
-
-function addFloorEdge(scene, wx, wy, textureList, flipX = false, flipY = false, rotation = 0) {
-    const frame = Phaser.Utils.Array.GetRandom(textureList);
-
-    const img = scene.add.image(wx, wy, atlas, frameName(`${frame}`))
-        .setOrigin(0)
-        .setDepth(3);
-
-    if (flipX) img.flipX = true;
-    if (flipY) img.flipY = true;
-    if (rotation !== 0) {
-        img.setAngle(rotation);
-    }
-}
-
-function getFloorTextures() {
-    const baseTextures = {
-        edge: TEXTURES.floorEdge,
-        corner: TEXTURES.floorEdgeCorner
-    };
-
-    return baseTextures;
-}
-
-function drawAllWalls(scene, mapTiles, roomTiles) {
-    const wallData = [];
-
-    for (const [key, value] of Object.entries(mapTiles)) {
-        if (value === '#') {
-            const [x, y] = key.split(',').map(Number);
-            const wx = x * TILE_SIZE;
-            const wy = y * TILE_SIZE;
-
-            wallData.push({ x, y, wx, wy, roomInfo: roomTiles[key] });
-        }
-    }
-
-    for (const wall of wallData) {
-        if (wall.roomInfo && wall.roomInfo.isRoom) {
-            drawRoomWall(scene, mapTiles, wall.x, wall.y, wall.wx, wall.wy);
-        }
-    }
-
-    for (const wall of wallData) {
-        if (!wall.roomInfo || !wall.roomInfo.isRoom) {
-            drawCorridorWall(scene, mapTiles, wall.x, wall.y, wall.wx, wall.wy);
-        }
     }
 }
 
@@ -337,27 +353,18 @@ function drawWallByPosition(scene, wx, wy, position, textures) {
     }
 }
 
-function drawAbyss(scene, mapTiles) {
-    const abyssFrame = TEXTURES.abyss;
-    const keys = Object.keys(mapTiles);
-    const coords = keys.map(k => k.split(',').map(Number));
 
-    let minX = Math.min(...coords.map(c => c[0])) - 6;
-    let maxX = Math.max(...coords.map(c => c[0])) + 6;
-    let minY = Math.min(...coords.map(c => c[1])) - 6;
-    let maxY = Math.max(...coords.map(c => c[1])) + 6;
+function addFloorEdge(scene, wx, wy, textureList, flipX = false, flipY = false, rotation = 0) {
+    const frame = Phaser.Utils.Array.GetRandom(textureList);
 
-    for (let y = minY; y <= maxY; y++) {
-        for (let x = minX; x <= maxX; x++) {
-            if (!mapTiles[`${x},${y}`]) {
-                scene.add.image(
-                    x * TILE_SIZE,
-                    y * TILE_SIZE,
-                    atlas,
-                    frameName(`${abyssFrame}`)
-                ).setOrigin(0).setDepth(0);
-            }
-        }
+    const img = scene.add.image(wx, wy, atlas, frameName(`${frame}`))
+        .setOrigin(0)
+        .setDepth(3);
+
+    if (flipX) img.flipX = true;
+    if (flipY) img.flipY = true;
+    if (rotation !== 0) {
+        img.setAngle(rotation);
     }
 }
 
@@ -371,6 +378,15 @@ function addWall(scene, wx, wy, textureList, flipX = false) {
     if (flipX) img.flipX = true;
 }
 
+function getFloorTextures() {
+    const baseTextures = {
+        edge: TEXTURES.floorEdge,
+        corner: TEXTURES.floorEdgeCorner
+    };
+
+    return baseTextures;
+}
+
 function getTextures() {
     const baseTextures = {
         floor: TEXTURES.floor,
@@ -382,18 +398,4 @@ function getTextures() {
     };
 
     return baseTextures;
-}
-
-function drawExits(scene, roomTiles) {
-    for (const[key, roomInfo] of Object.entries(roomTiles)) {
-        if (roomInfo.isExit) {
-            const [x, y] = key.split(',').map(Number);
-            const wx = x * TILE_SIZE;
-            const wy = y * TILE_SIZE;
-
-            scene.add.image(wx, wy, atlas, frameName(`${TEXTURES.exitClose[0]}`))
-                .setOrigin(0)
-                .setDepth(5);
-        }
-    }
 }
